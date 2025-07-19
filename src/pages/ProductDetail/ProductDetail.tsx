@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-interface EventDetailsProps {}
+interface ProductDetailProps {}
 
-export const EventDetails: React.FC<EventDetailsProps> = () => {
+export const ProductDetail: React.FC<ProductDetailProps> = () => {
   return (
     <div>
-      <h1>Event Details Page</h1>
+      <h1>Product Details Page</h1>
     </div>
   );
 };

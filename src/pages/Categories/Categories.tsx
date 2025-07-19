@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-interface EventManagementProps {}
+interface CategoriesProps {}
 
-export const EventManagement: React.FC<EventManagementProps> = () => {
+export const Categories: React.FC<CategoriesProps> = () => {
   return (
     <div>
-      <h1>Event Management Page</h1>
+      <h1>Category Page</h1>
     </div>
   );
 };
