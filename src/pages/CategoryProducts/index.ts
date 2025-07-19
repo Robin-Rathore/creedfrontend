@@ -1,1 +1,1 @@
-export * from './Messaging'
+export * from './CategoryProducts'

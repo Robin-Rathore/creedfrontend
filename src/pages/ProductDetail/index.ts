@@ -1,1 +1,1 @@
-export * from './EventDetails'
+export * from './ProductDetail'

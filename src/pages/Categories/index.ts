@@ -1,1 +1,1 @@
-export * from './EventManagement'
+export * from './Categories'

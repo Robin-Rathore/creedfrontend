@@ -5,8 +5,14 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-
-  --background: oklch(1 0 0);
+  --lightest: #b8d4c4; /* very light sage green */
+  --lighter: #8fb8a0; /* light sage green */
+  --light: #6a9c7c; /* medium sage green */
+  --medium: #4a7f5e; /* darker sage green */
+  --dark: #2d5040; /* medium-dark green */
+  --darker: #1a3528; /* darker green */
+  --darkest: #0e1e16; /* your original dark (now darkest) */
+  --background: oklch(100% 0.00011 271.152);
 
   --foreground: oklch(0.13 0.028 261.692);
 
@@ -74,7 +80,13 @@
 }
 
 .dark {
-
+  --lightest: #b8d4c4; /* very light sage green */
+  --lighter: #8fb8a0; /* light sage green */
+  --light: #6a9c7c; /* medium sage green */
+  --medium: #4a7f5e; /* darker sage green */
+  --dark: #2d5040; /* medium-dark green */
+  --darker: #1a3528; /* darker green */
+  --darkest: #0e1e16; /* your original dark (now darkest) */
   --background: oklch(0.13 0.028 261.692);
 
   --foreground: oklch(0.985 0.002 247.839);
@@ -141,7 +153,6 @@
 }
 
 @theme inline {
-
   --color-background: var(--background);
 
   --color-foreground: var(--foreground);
