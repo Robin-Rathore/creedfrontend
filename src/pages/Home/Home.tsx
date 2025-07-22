@@ -66,9 +66,9 @@ export const Home: React.FC = () => {
     <div className="min-h-screen">
       <PremiumHeroSection />
       <HeroSection />
-      <FeaturesSection />
       <CategoriesSection />
       <FeaturedProductsSection />
+      <FeaturesSection />
       <VideoSection />
       <NewsletterSection />
     </div>

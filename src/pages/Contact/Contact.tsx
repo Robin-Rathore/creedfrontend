@@ -2,9 +2,9 @@
 
 import type React from "react";
 import { motion } from "framer-motion";
-import { HeroSection, StorySection, TeamSection } from "./components";
+import { ContactHero, ContactForm } from "./components";
 
-export const About: React.FC = () => {
+export const Contact: React.FC = () => {
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -13,9 +13,8 @@ export const About: React.FC = () => {
       transition={{ duration: 0.5 }}
       className="min-h-screen"
     >
-      <HeroSection />
-      <StorySection />
-      <TeamSection />
+      <ContactHero />
+      <ContactForm />
     </motion.div>
   );
 };
