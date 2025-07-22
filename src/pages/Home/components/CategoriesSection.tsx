@@ -1,20 +1,23 @@
-import type React from "react"
-import { Link } from "react-router-dom"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Droplets, Utensils, Coffee, Package } from "lucide-react"
-import { useCategories } from "@/queries/hooks/category/useCategories"
+//@ts-nocheck
+import type React from "react";
+import { Link } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Droplets, Utensils, Coffee, Package } from "lucide-react";
+import { useCategories } from "@/queries/hooks/category/useCategories";
+import { getImageUrl } from "@/utils/getImageUrl";
 
 export const CategoriesSection: React.FC = () => {
-  const { data: categories, isLoading } = useCategories({ featured: true })
+  const { data: categories, isLoading } = useCategories({ featured: true });
+  console.log("Categories data:", categories);
 
   const categoryIcons = {
     "Water Bottles": Droplets,
     "Lunch Boxes": Utensils,
     "Coffee Mugs": Coffee,
     default: Package,
-  }
+  };
 
   if (isLoading) {
     return (
@@ -23,7 +26,8 @@ export const CategoriesSection: React.FC = () => {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Shop by Category</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore our carefully curated categories of premium products designed for your lifestyle
+              Explore our carefully curated categories of premium products
+              designed for your lifestyle
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -42,7 +46,7 @@ export const CategoriesSection: React.FC = () => {
           </div>
         </div>
       </section>
-    )
+    );
   }
 
   return (
@@ -51,45 +55,65 @@ export const CategoriesSection: React.FC = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Shop by Category</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Explore our carefully curated categories of premium products designed for your lifestyle
+            Explore our carefully curated categories of premium products
+            designed for your lifestyle
           </p>
         </div>
 
         {categories && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {categories.slice(0, 6).map((category) => {
-              const IconComponent = categoryIcons[category.name as keyof typeof categoryIcons] || categoryIcons.default
+              const IconComponent =
+                categoryIcons[category.name as keyof typeof categoryIcons] ||
+                categoryIcons.default;
+
               return (
-                <Card key={category._id} className="group hover:shadow-lg transition-all duration-300 overflow-hidden">
+                <Card
+                  key={category._id}
+                  className="group hover:shadow-lg transition-all duration-300 overflow-hidden"
+                >
                   <CardContent className="p-0">
                     <div className="relative h-48 bg-gradient-to-br from-primary/10 to-accent/10">
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <IconComponent className="h-16 w-16 text-primary group-hover:scale-110 transition-transform" />
+                        <img src={category.image?.url} alt="" />
+
+                        <IconComponent
+                          className={`w-16 h-16 text-primary/60 ${
+                            category.image?.url ? "hidden" : ""
+                          }`}
+                        />
                       </div>
                       {category.productCount > 0 && (
-                        <Badge className="absolute top-4 right-4">{category.productCount} items</Badge>
+                        <Badge className="absolute top-4 right-4">
+                          {category.productCount} items
+                        </Badge>
                       )}
                     </div>
                     <div className="p-6">
-                      <h3 className="font-semibold text-lg mb-2">{category.name}</h3>
+                      <h3 className="font-semibold text-lg mb-2">
+                        {category.name}
+                      </h3>
                       <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                        {category.description || `Discover our premium ${category.name.toLowerCase()} collection`}
+                        {category.description ||
+                          `Discover our premium ${category.name.toLowerCase()} collection`}
                       </p>
                       <Button
                         variant="outline"
                         className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors bg-transparent"
                         asChild
                       >
-                        <Link to={`/categories/${category.slug}`}>Explore Collection</Link>
+                        <Link to={`/categories/${category.slug}`}>
+                          Explore Collection
+                        </Link>
                       </Button>
                     </div>
                   </CardContent>
                 </Card>
-              )
+              );
             })}
           </div>
         )}
       </div>
     </section>
-  )
-}
+  );
+};

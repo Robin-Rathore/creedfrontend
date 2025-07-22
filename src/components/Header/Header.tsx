@@ -50,6 +50,8 @@ export const Header: React.FC = () => {
     { href: "/about", label: "About" },
   ];
 
+  const toProfile = user?.role === "admin" ? "/admin" : "/profile";
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
@@ -130,7 +132,7 @@ export const Header: React.FC = () => {
                   </div>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem asChild>
-                    <Link to="/profile" className="cursor-pointer">
+                    <Link to={toProfile} className="cursor-pointer">
                       <User className="mr-2 h-4 w-4" />
                       Profile
                     </Link>
