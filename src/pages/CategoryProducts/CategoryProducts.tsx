@@ -24,17 +24,13 @@ import {
   ShoppingCart,
   SlidersHorizontal,
   X,
-  ChevronRight,
-  Package,
-  TrendingUp,
+  ArrowLeft,
 } from "lucide-react";
 import { useProducts } from "@/queries/hooks/product";
 import { useCategories } from "@/queries/hooks/category";
 import { useCart } from "@/queries/hooks/user";
 
-type CategoryProductssProps = {};
-
-export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
+export const CategoryProducts: React.FC = () => {
   const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const [viewMode, setViewMode] = useState("grid");
@@ -49,13 +45,13 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
   });
 
   const { data: categories } = useCategories();
-  const currentCategory = categories?.find((cat) => cat.slug === slug);
+  const category = categories?.find((cat) => cat.slug === slug);
 
   const { data: productsData, isLoading } = useProducts({
     page: filters.page,
     limit: 12,
-    category: currentCategory?._id,
     search: filters.search || undefined,
+    category: category?._id,
     minPrice: filters.minPrice
       ? Number.parseFloat(filters.minPrice)
       : undefined,
@@ -82,7 +78,7 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
-      page: key !== "page" ? 1 : value, // Reset page when other filters change
+      page: key !== "page" ? 1 : value,
     }));
   };
 
@@ -108,234 +104,6 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
     }
   };
 
-  const ProductCard = ({ product, index }: { product: any; index: number }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.1 }}
-      whileHover={{ y: -5 }}
-      className="group"
-    >
-      <Card className="overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300">
-        <div className="relative overflow-hidden">
-          <Link to={`/products/${product.slug}`}>
-            <img
-              src={
-                product.images?.[0]?.url ||
-                "/placeholder.svg?height=300&width=300"
-              }
-              alt={product.name}
-              className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          </Link>
-
-          {/* Badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
-            {product.isFeatured && (
-              <Badge className="bg-[var(--medium)] text-white">Featured</Badge>
-            )}
-            {product.comparePrice && product.comparePrice > product.price && (
-              <Badge variant="destructive">
-                -
-                {Math.round(
-                  ((product.comparePrice - product.price) /
-                    product.comparePrice) *
-                    100
-                )}
-                %
-              </Badge>
-            )}
-            {product.stock === 0 && (
-              <Badge variant="secondary">Out of Stock</Badge>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-              <Heart className="h-4 w-4" />
-            </Button>
-          </div>
-
-          {/* Quick Add to Cart */}
-          <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button
-              onClick={() => handleAddToCart(product)}
-              disabled={product.stock === 0}
-              className="w-full bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
-              size="sm"
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
-            </Button>
-          </div>
-        </div>
-
-        <CardContent className="p-4">
-          <div className="space-y-2">
-            <Link to={`/products/${product.slug}`}>
-              <h3 className="font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors line-clamp-2">
-                {product.name}
-              </h3>
-            </Link>
-
-            <div className="flex items-center gap-1">
-              <div className="flex items-center">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Star
-                    key={i}
-                    className={`h-4 w-4 ${
-                      i < Math.floor(product.ratings?.average || 0)
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300"
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-gray-600">
-                ({product.ratings?.count || 0})
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="text-lg font-bold text-gray-900">
-                  ${product.price.toLocaleString()}
-                </span>
-                {product.comparePrice &&
-                  product.comparePrice > product.price && (
-                    <span className="text-sm text-gray-500 line-through">
-                      ${product.comparePrice.toLocaleString()}
-                    </span>
-                  )}
-              </div>
-
-              {product.stock <= product.lowStockThreshold &&
-                product.stock > 0 && (
-                  <Badge variant="outline" className="text-xs text-orange-600">
-                    Only {product.stock} left
-                  </Badge>
-                )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-
-  const ProductListItem = ({
-    product,
-    index,
-  }: {
-    product: any;
-    index: number;
-  }) => (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.05 }}
-      className="group"
-    >
-      <Card className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300">
-        <CardContent className="p-4">
-          <div className="flex gap-4">
-            <Link to={`/products/${product.slug}`} className="flex-shrink-0">
-              <img
-                src={
-                  product.images?.[0]?.url ||
-                  "/placeholder.svg?height=120&width=120"
-                }
-                alt={product.name}
-                className="w-24 h-24 object-cover rounded-lg"
-              />
-            </Link>
-
-            <div className="flex-1 space-y-2">
-              <div className="flex items-start justify-between">
-                <div>
-                  <Link to={`/products/${product.slug}`}>
-                    <h3 className="font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors">
-                      {product.name}
-                    </h3>
-                  </Link>
-                </div>
-
-                <div className="text-right">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-bold text-gray-900">
-                      ${product.price.toLocaleString()}
-                    </span>
-                    {product.comparePrice &&
-                      product.comparePrice > product.price && (
-                        <span className="text-sm text-gray-500 line-through">
-                          ${product.comparePrice.toLocaleString()}
-                        </span>
-                      )}
-                  </div>
-                </div>
-              </div>
-
-              <p className="text-sm text-gray-600 line-clamp-2">
-                {product.shortDescription || product.description}
-              </p>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-1">
-                    <div className="flex items-center">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < Math.floor(product.ratings?.average || 0)
-                              ? "text-yellow-400 fill-current"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-sm text-gray-600">
-                      ({product.ratings?.count || 0})
-                    </span>
-                  </div>
-
-                  {product.stock <= product.lowStockThreshold &&
-                    product.stock > 0 && (
-                      <Badge
-                        variant="outline"
-                        className="text-xs text-orange-600"
-                      >
-                        Only {product.stock} left
-                      </Badge>
-                    )}
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-8 w-8 p-0 bg-transparent"
-                  >
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    onClick={() => handleAddToCart(product)}
-                    disabled={product.stock === 0}
-                    className="bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
-                    size="sm"
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    Add to Cart
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -357,7 +125,7 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
     );
   }
 
-  if (!currentCategory) {
+  if (!category) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -389,77 +157,91 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
           <Link to="/" className="hover:text-[var(--medium)]">
             Home
           </Link>
-          <ChevronRight className="h-4 w-4" />
+          <span>/</span>
           <Link to="/categories" className="hover:text-[var(--medium)]">
             Categories
           </Link>
-          <ChevronRight className="h-4 w-4" />
-          <span className="text-gray-900">{currentCategory.name}</span>
+          <span>/</span>
+          <span className="text-gray-900">{category.name}</span>
         </motion.nav>
 
         {/* Category Header */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="bg-white rounded-lg shadow-sm p-8 mb-8"
         >
-          <div className="flex items-center gap-4 mb-4">
-            {currentCategory.image?.url && (
-              <img
-                src={currentCategory.image.url || "/placeholder.svg"}
-                alt={currentCategory.name}
-                className="w-16 h-16 object-cover rounded-lg"
-              />
-            )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div>
-              <div className="flex items-center gap-2 mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {currentCategory.name}
-                </h1>
-                {currentCategory.isPopular && (
+              <div className="flex items-center gap-2 mb-4">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="p-0 h-auto"
+                >
+                  <Link
+                    to="/categories"
+                    className="flex items-center gap-1 text-[var(--medium)] hover:text-[var(--dark)]"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
+                    Back to Categories
+                  </Link>
+                </Button>
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                {category.name}
+              </h1>
+              <p className="text-gray-600 text-lg leading-relaxed mb-4">
+                {category.description}
+              </p>
+              <div className="flex items-center gap-4">
+                <Badge className="bg-[var(--lightest)] text-[var(--medium)] border-[var(--light)]">
+                  {productsData?.pagination?.totalItems || 0} Products
+                </Badge>
+                {category.isPopular && (
                   <Badge className="bg-[var(--medium)] text-white">
-                    <TrendingUp className="h-3 w-3 mr-1" />
-                    Popular
+                    Popular Category
                   </Badge>
                 )}
               </div>
-              {currentCategory.description && (
-                <p className="text-gray-600">{currentCategory.description}</p>
-              )}
             </div>
-          </div>
-
-          {/* Category Stats */}
-          <div className="flex items-center gap-6 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <Package className="h-4 w-4" />
-              {productsData?.pagination?.totalItems || 0} products
-            </div>
-            {currentCategory.subcategories?.length > 0 && (
-              <div>{currentCategory.subcategories.length} subcategories</div>
+            {category.image?.url && (
+              <div className="relative">
+                <img
+                  src={category.image.url || "/placeholder.svg"}
+                  alt={category.name}
+                  className="w-full h-64 object-cover rounded-lg shadow-sm"
+                />
+              </div>
             )}
           </div>
         </motion.div>
 
         {/* Subcategories */}
-        {currentCategory.subcategories?.length > 0 && (
+        {category.subcategories && category.subcategories.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="mb-8"
           >
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <h2 className="text-xl font-semibold text-gray-900 mb-4">
               Subcategories
             </h2>
             <div className="flex flex-wrap gap-2">
-              {currentCategory.subcategories.map((subcategory) => (
+              {category.subcategories.map((subcategory) => (
                 <Link
                   key={subcategory._id}
                   to={`/categories/${subcategory.slug}`}
-                  className="bg-white hover:bg-[var(--lightest)] border border-gray-200 hover:border-[var(--medium)] rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:text-[var(--medium)] transition-all duration-200"
+                  className="inline-block"
                 >
-                  {subcategory.name}
+                  <Badge
+                    variant="outline"
+                    className="hover:bg-[var(--lightest)] hover:border-[var(--medium)] transition-colors cursor-pointer"
+                  >
+                    {subcategory.name}
+                  </Badge>
                 </Link>
               ))}
             </div>
@@ -478,7 +260,7 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
-                placeholder="Search products..."
+                placeholder={`Search in ${category.name}...`}
                 value={filters.search}
                 onChange={(e) => updateFilter("search", e.target.value)}
                 className="pl-10"
@@ -607,7 +389,8 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
         >
           <p className="text-gray-600">
             Showing {productsData?.data?.length || 0} of{" "}
-            {productsData?.pagination?.totalItems || 0} products
+            {productsData?.pagination?.totalItems || 0} products in{" "}
+            {category.name}
           </p>
         </motion.div>
 
@@ -621,11 +404,130 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               <AnimatePresence>
                 {productsData?.data?.map((product, index) => (
-                  <ProductCard
+                  <motion.div
                     key={product._id}
-                    product={product}
-                    index={index}
-                  />
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ y: -5 }}
+                    className="group"
+                  >
+                    <Card className="overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300">
+                      <div className="relative overflow-hidden">
+                        <Link to={`/products/${product.slug}`}>
+                          <img
+                            src={
+                              product.images?.[0]?.url ||
+                              "/placeholder.svg?height=300&width=300"
+                            }
+                            alt={product.name}
+                            className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </Link>
+
+                        {/* Badges */}
+                        <div className="absolute top-3 left-3 flex flex-col gap-2">
+                          {product.isFeatured && (
+                            <Badge className="bg-[var(--medium)] text-white">
+                              Featured
+                            </Badge>
+                          )}
+                          {product.comparePrice &&
+                            product.comparePrice > product.price && (
+                              <Badge variant="destructive">
+                                -
+                                {Math.round(
+                                  ((product.comparePrice - product.price) /
+                                    product.comparePrice) *
+                                    100
+                                )}
+                                %
+                              </Badge>
+                            )}
+                          {product.stock === 0 && (
+                            <Badge variant="secondary">Out of Stock</Badge>
+                          )}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="h-8 w-8 p-0"
+                          >
+                            <Heart className="h-4 w-4" />
+                          </Button>
+                        </div>
+
+                        {/* Quick Add to Cart */}
+                        <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            onClick={() => handleAddToCart(product)}
+                            disabled={product.stock === 0}
+                            className="w-full bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
+                            size="sm"
+                          >
+                            <ShoppingCart className="h-4 w-4 mr-2" />
+                            Add to Cart
+                          </Button>
+                        </div>
+                      </div>
+
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <Link to={`/products/${product.slug}`}>
+                            <h3 className="font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors line-clamp-2">
+                              {product.name}
+                            </h3>
+                          </Link>
+
+                          <div className="flex items-center gap-1">
+                            <div className="flex items-center">
+                              {Array.from({ length: 5 }).map((_, i) => (
+                                <Star
+                                  key={i}
+                                  className={`h-4 w-4 ${
+                                    i <
+                                    Math.floor(product.ratings?.average || 0)
+                                      ? "text-yellow-400 fill-current"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                            <span className="text-sm text-gray-600">
+                              ({product.ratings?.count || 0})
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg font-bold text-gray-900">
+                                ${product.price.toLocaleString()}
+                              </span>
+                              {product.comparePrice &&
+                                product.comparePrice > product.price && (
+                                  <span className="text-sm text-gray-500 line-through">
+                                    ${product.comparePrice.toLocaleString()}
+                                  </span>
+                                )}
+                            </div>
+
+                            {product.stock <= product.lowStockThreshold &&
+                              product.stock > 0 && (
+                                <Badge
+                                  variant="outline"
+                                  className="text-xs text-orange-600"
+                                >
+                                  Only {product.stock} left
+                                </Badge>
+                              )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))}
               </AnimatePresence>
             </div>
@@ -633,11 +535,117 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
             <div className="space-y-4">
               <AnimatePresence>
                 {productsData?.data?.map((product, index) => (
-                  <ProductListItem
+                  <motion.div
                     key={product._id}
-                    product={product}
-                    index={index}
-                  />
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group"
+                  >
+                    <Card className="overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-300">
+                      <CardContent className="p-4">
+                        <div className="flex gap-4">
+                          <Link
+                            to={`/products/${product.slug}`}
+                            className="flex-shrink-0"
+                          >
+                            <img
+                              src={
+                                product.images?.[0]?.url ||
+                                "/placeholder.svg?height=120&width=120"
+                              }
+                              alt={product.name}
+                              className="w-24 h-24 object-cover rounded-lg"
+                            />
+                          </Link>
+
+                          <div className="flex-1 space-y-2">
+                            <div className="flex items-start justify-between">
+                              <div>
+                                <Link to={`/products/${product.slug}`}>
+                                  <h3 className="font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors">
+                                    {product.name}
+                                  </h3>
+                                </Link>
+                              </div>
+
+                              <div className="text-right">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-lg font-bold text-gray-900">
+                                    ${product.price.toLocaleString()}
+                                  </span>
+                                  {product.comparePrice &&
+                                    product.comparePrice > product.price && (
+                                      <span className="text-sm text-gray-500 line-through">
+                                        ${product.comparePrice.toLocaleString()}
+                                      </span>
+                                    )}
+                                </div>
+                              </div>
+                            </div>
+
+                            <p className="text-sm text-gray-600 line-clamp-2">
+                              {product.shortDescription || product.description}
+                            </p>
+
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-1">
+                                  <div className="flex items-center">
+                                    {Array.from({ length: 5 }).map((_, i) => (
+                                      <Star
+                                        key={i}
+                                        className={`h-4 w-4 ${
+                                          i <
+                                          Math.floor(
+                                            product.ratings?.average || 0
+                                          )
+                                            ? "text-yellow-400 fill-current"
+                                            : "text-gray-300"
+                                        }`}
+                                      />
+                                    ))}
+                                  </div>
+                                  <span className="text-sm text-gray-600">
+                                    ({product.ratings?.count || 0})
+                                  </span>
+                                </div>
+
+                                {product.stock <= product.lowStockThreshold &&
+                                  product.stock > 0 && (
+                                    <Badge
+                                      variant="outline"
+                                      className="text-xs text-orange-600"
+                                    >
+                                      Only {product.stock} left
+                                    </Badge>
+                                  )}
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 bg-transparent"
+                                >
+                                  <Heart className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  onClick={() => handleAddToCart(product)}
+                                  disabled={product.stock === 0}
+                                  className="bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
+                                  size="sm"
+                                >
+                                  <ShoppingCart className="h-4 w-4 mr-2" />
+                                  Add to Cart
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ))}
               </AnimatePresence>
             </div>
@@ -702,7 +710,7 @@ export const CategoryProducts: React.FC<CategoryProductssProps> = () => {
               <Search className="h-12 w-12 text-gray-400" />
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              No products found
+              No products found in {category.name}
             </h3>
             <p className="text-gray-600 mb-4">
               Try adjusting your search or filter criteria
