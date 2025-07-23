@@ -1,49 +1,58 @@
-import React from 'react';
-import { User, Heart, MapPin, CreditCard, Bell, Eye, Settings, LogOut } from 'lucide-react';
+import React from "react";
+import {
+  User,
+  Heart,
+  MapPin,
+  CreditCard,
+  Bell,
+  Eye,
+  Settings,
+  LogOut,
+} from "lucide-react";
 
 const sections = [
-  { 
-    key: 'profile', 
-    label: 'Profile Info', 
+  {
+    key: "profile",
+    label: "Profile Info",
     icon: User,
-    description: 'Personal details & preferences'
+    description: "Personal details & preferences",
   },
-  { 
-    key: 'wishlist', 
-    label: 'Wishlist', 
+  {
+    key: "wishlist",
+    label: "Wishlist",
     icon: Heart,
-    description: 'Saved items'
+    description: "Saved items",
   },
-  { 
-    key: 'addresses', 
-    label: 'Address Book', 
+  {
+    key: "addresses",
+    label: "Address Book",
     icon: MapPin,
-    description: 'Shipping & billing addresses'
+    description: "Shipping & billing addresses",
   },
-  { 
-    key: 'payments', 
-    label: 'Payment Methods', 
-    icon: CreditCard,
-    description: 'Saved cards & wallets'
-  },
-  { 
-    key: 'notifications', 
-    label: 'Notifications', 
-    icon: Bell,
-    description: 'Alerts & preferences'
-  },
-  { 
-    key: 'recently-viewed', 
-    label: 'Recently Viewed', 
-    icon: Eye,
-    description: 'Your browsing history'
-  },
-  { 
-    key: 'settings', 
-    label: 'Account Settings', 
-    icon: Settings,
-    description: 'Privacy & security'
-  }
+  // {
+  //   key: "payments",
+  //   label: "Payment Methods",
+  //   icon: CreditCard,
+  //   description: "Saved cards & wallets",
+  // },
+  // {
+  //   key: "notifications",
+  //   label: "Notifications",
+  //   icon: Bell,
+  //   description: "Alerts & preferences",
+  // },
+  // {
+  //   key: "recently-viewed",
+  //   label: "Recently Viewed",
+  //   icon: Eye,
+  //   description: "Your browsing history",
+  // },
+  // {
+  //   key: "settings",
+  //   label: "Account Settings",
+  //   icon: Settings,
+  //   description: "Privacy & security",
+  // },
 ];
 
 interface SidebarNavProps {
@@ -57,11 +66,11 @@ interface SidebarNavProps {
   };
 }
 
-const SidebarNav: React.FC<SidebarNavProps> = ({ 
-  current, 
-  onChange, 
+const SidebarNav: React.FC<SidebarNavProps> = ({
+  current,
+  onChange,
   onLogout,
-  userStats = {}
+  userStats = {},
 }) => (
   <nav className="md:min-w-[280px] bg-white border-r border-gray-200 p-6 flex flex-col h-full">
     {/* Profile Header */}
@@ -79,47 +88,68 @@ const SidebarNav: React.FC<SidebarNavProps> = ({
 
     {/* Navigation Sections */}
     <ul className="flex-1 space-y-2">
-      {sections.map(section => {
+      {sections.map((section) => {
         const Icon = section.icon;
         let badge = null;
-        
+
         // Add badges for sections with counts
-        if (section.key === 'wishlist' && userStats.wishlistCount) {
+        if (section.key === "wishlist" && userStats.wishlistCount) {
           badge = userStats.wishlistCount;
-        } else if (section.key === 'addresses' && userStats.addressCount) {
+        } else if (section.key === "addresses" && userStats.addressCount) {
           badge = userStats.addressCount;
-        } else if (section.key === 'payments' && userStats.paymentMethodCount) {
+        } else if (section.key === "payments" && userStats.paymentMethodCount) {
           badge = userStats.paymentMethodCount;
         }
 
         const isActive = current === section.key;
-        
+
         return (
           <li key={section.key}>
             <button
               onClick={() => onChange(section.key)}
               className={`w-full text-left rounded-lg px-4 py-3 transition-all duration-200 group
-                ${isActive 
-                  ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm' 
-                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent'
+                ${
+                  isActive
+                    ? "bg-blue-50 text-blue-700 border border-blue-200 shadow-sm"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border border-transparent"
                 }
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'}`} />
+                  <Icon
+                    className={`w-5 h-5 ${
+                      isActive
+                        ? "text-blue-600"
+                        : "text-gray-400 group-hover:text-gray-600"
+                    }`}
+                  />
                   <div>
-                    <div className={`font-medium text-sm ${isActive ? 'text-blue-900' : ''}`}>
+                    <div
+                      className={`font-medium text-sm ${
+                        isActive ? "text-blue-900" : ""
+                      }`}
+                    >
                       {section.label}
                     </div>
-                    <div className={`text-xs ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
+                    <div
+                      className={`text-xs ${
+                        isActive ? "text-blue-600" : "text-gray-400"
+                      }`}
+                    >
                       {section.description}
                     </div>
                   </div>
                 </div>
                 {badge && (
-                  <span className={`inline-flex items-center justify-center px-2 py-1 text-xs font-medium rounded-full
-                    ${isActive ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'}`}>
+                  <span
+                    className={`inline-flex items-center justify-center px-2 py-1 text-xs font-medium rounded-full
+                    ${
+                      isActive
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-gray-100 text-gray-600"
+                    }`}
+                  >
                     {badge}
                   </span>
                 )}

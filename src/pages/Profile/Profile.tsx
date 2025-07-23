@@ -10,30 +10,35 @@
 //   );
 // };
 
-
-import React, { useState } from 'react';
-import AccountLayout from './components/AccountLayout';
-import SidebarNav from './components/SidebarNav';
-import  ProfileInfo  from './components/ProfileInfo';
-import Wishlist from './components/Wishlist';
-import AddressBook from './components/AddressBook';
+import React, { useState } from "react";
+import AccountLayout from "./components/AccountLayout";
+import SidebarNav from "./components/SidebarNav";
+import ProfileInfo from "./components/ProfileInfo";
+import Wishlist from "./components/Wishlist";
+import AddressBook from "./components/AddressBook";
 // import AvatarUpload from './components/AvatarUpload';
 
 export const Profile: React.FC = () => {
-  const [section, setSection] = useState('profile');
+  const [section, setSection] = useState("profile");
 
   const handleLogout = () => {
-    alert('Logging out...');
+    alert("Logging out...");
     // Perform logout logic
   };
 
   return (
     <AccountLayout>
-      <SidebarNav current={section} onChange={setSection} onLogout={handleLogout} />
-      <section className="flex-1 min-w-0 p-6">
-        {section === 'profile' && <ProfileInfo />}
-        {section === 'wishlist' && <Wishlist />}
-        {section === 'addresses' && <AddressBook />}
+      <div className="fixed md:top-16 max-h-screen z-10 bg-white border-b">
+        <SidebarNav
+          current={section}
+          onChange={setSection}
+          onLogout={handleLogout}
+        />
+      </div>
+      <section className="flex-1 ml-60 min-w-0 p-6">
+        {section === "profile" && <ProfileInfo />}
+        {section === "wishlist" && <Wishlist />}
+        {section === "addresses" && <AddressBook />}
       </section>
     </AccountLayout>
   );
