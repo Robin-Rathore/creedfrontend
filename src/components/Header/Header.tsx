@@ -58,6 +58,8 @@ export const Header: React.FC = () => {
     { href: "/contact", label: "Contact" },
   ];
 
+  const toProfile = user?.role === "admin" ? "/admin" : "/profile";
+
   return (
     <>
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -70,7 +72,7 @@ export const Header: React.FC = () => {
                 <Package className="h-5 w-5" />
               </div>
               <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[var(--medium)] to-[var(--dark)]">
-                AquaStore
+                Creed
               </span>
             </Link>
 
@@ -146,7 +148,7 @@ export const Header: React.FC = () => {
                     </div>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem asChild>
-                      <Link to="/profile" className="cursor-pointer">
+                      <Link to={toProfile} className="cursor-pointer">
                         <User className="mr-2 h-4 w-4" />
                         Profile
                       </Link>

@@ -16,7 +16,7 @@ export const TeamSection: React.FC = () => {
       social: {
         linkedin: "#",
         twitter: "#",
-        email: "sarah@aquastore.com",
+        email: "sarah@Creed.com",
       },
     },
     {
@@ -27,7 +27,7 @@ export const TeamSection: React.FC = () => {
       social: {
         linkedin: "#",
         twitter: "#",
-        email: "michael@aquastore.com",
+        email: "michael@Creed.com",
       },
     },
     {
@@ -38,7 +38,7 @@ export const TeamSection: React.FC = () => {
       social: {
         linkedin: "#",
         twitter: "#",
-        email: "emily@aquastore.com",
+        email: "emily@Creed.com",
       },
     },
     {
@@ -49,7 +49,7 @@ export const TeamSection: React.FC = () => {
       social: {
         linkedin: "#",
         twitter: "#",
-        email: "david@aquastore.com",
+        email: "david@Creed.com",
       },
     },
   ];
@@ -69,8 +69,8 @@ export const TeamSection: React.FC = () => {
             Meet Our Team
           </h2>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            The passionate individuals behind AquaStore, dedicated to bringing
-            you the best aquatic experience.
+            The passionate individuals behind Creed, dedicated to bringing you
+            the best aquatic experience.
           </p>
         </motion.div>
 
