@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Package } from "lucide-react";
 import { SignupForm } from "./components/SignupForm";
 import { OTPVerification } from "./components/OTPVerification";
 import { signupStepAtom } from "./state/signupAtoms";

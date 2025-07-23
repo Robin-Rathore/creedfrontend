@@ -1,6 +1,6 @@
 export const config = {
 
-  companyName: 'MuchoHangouts',
+  companyName: 'Creed',
 
   api: 'http://localhost:3000/api',
 
