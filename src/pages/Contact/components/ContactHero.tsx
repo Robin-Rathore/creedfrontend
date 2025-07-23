@@ -19,7 +19,7 @@ export const ContactHero: React.FC = () => {
     {
       icon: Mail,
       title: "Email Us",
-      details: ["hello@aquastore.com", "support@aquastore.com"],
+      details: ["hello@Creed.com", "support@Creed.com"],
     },
     {
       icon: Clock,

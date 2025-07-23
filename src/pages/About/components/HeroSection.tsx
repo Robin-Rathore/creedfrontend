@@ -30,7 +30,7 @@ export const HeroSection: React.FC = () => {
             >
               About{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--medium)] to-[var(--dark)]">
-                AquaStore
+                Creed
               </span>
             </motion.h1>
 
@@ -102,7 +102,7 @@ export const HeroSection: React.FC = () => {
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img
                 src="/placeholder.svg?height=600&width=500"
-                alt="AquaStore Interior"
+                alt="Creed Interior"
                 className="w-full h-[500px] object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>

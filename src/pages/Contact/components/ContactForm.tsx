@@ -250,9 +250,7 @@ export const ContactForm: React.FC = () => {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 <div className="absolute bottom-4 left-4 bg-white rounded-lg p-3 shadow-lg">
-                  <div className="font-semibold text-gray-900">
-                    AquaStore HQ
-                  </div>
+                  <div className="font-semibold text-gray-900">Creed HQ</div>
                   <div className="text-sm text-gray-600">
                     123 Aquarium Street
                   </div>
