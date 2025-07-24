@@ -1,71 +1,74 @@
-// Query key factory for consistent key management
 export const queryKeys = {
   // Auth
   auth: {
-    user: ["auth", "user"] as const,
-  },
-
-  // Users
-  users: {
-    all: ["users"] as const,
-    profile: ["users", "profile"] as const,
-    addresses: ["users", "addresses"] as const,
-    cart: ["users", "cart"] as const,
-    wishlist: ["users", "wishlist"] as const,
-    orders: (params?: any) => ["users", "orders", params] as const,
-    order: (id: string) => ["users", "orders", id] as const,
+    user: () => ["auth", "user"] as const,
+    profile: () => ["auth", "profile"] as const,
   },
 
   // Products
   products: {
-    all: (params?: any) => ["products", params] as const,
+    all: () => ["products"] as const,
+    list: (params: any) => ["products", "list", params] as const,
+    detail: (slug: string) => ["products", "detail", slug] as const,
+    reviews: (productId: string) => ["products", "reviews", productId] as const,
+    related: (productId: string) => ["products", "related", productId] as const,
     featured: (limit?: number) => ["products", "featured", limit] as const,
     latest: (limit?: number) => ["products", "latest", limit] as const,
-    bestSelling: (limit?: number) => ["products", "best-selling", limit] as const,
+    bestSelling: (limit?: number) =>
+      ["products", "best-selling", limit] as const,
     topRated: (limit?: number) => ["products", "top-rated", limit] as const,
-    search: (query: string, params?: any) => ["products", "search", query, params] as const,
-    detail: (id: string) => ["products", id] as const,
-    bySlug: (slug: string) => ["products", "slug", slug] as const,
-    related: (id: string, limit?: number) => ["products", id, "related", limit] as const,
-    reviews: (id: string, params?: any) => ["products", id, "reviews", params] as const,
-    reviewStats: (id: string) => ["products", id, "reviews", "stats"] as const,
+    bySlug: (slug: string) => ["products", "by-slug", slug] as const,
+    search: (query: string, params?: any) =>
+      ["products", "search", query, params] as const,
   },
 
   // Categories
   categories: {
-    all: (params?: any) => ["categories", params] as const,
-    tree: ["categories", "tree"] as const,
-    detail: (id: string) => ["categories", id] as const,
-    bySlug: (slug: string) => ["categories", "slug", slug] as const,
-    products: (id: string, params?: any) => ["categories", id, "products", params] as const,
+    all: () => ["categories"] as const,
+    list: (params: any) => ["categories", "list", params] as const,
+    detail: (slug: string) => ["categories", "detail", slug] as const,
+    products: (categoryId: string, params: any) =>
+      ["categories", "products", categoryId, params] as const,
+  },
+
+  // User
+  user: {
+    profile: () => ["user", "profile"] as const,
+    wishlist: () => ["user", "wishlist"] as const,
+    addresses: () => ["user", "addresses"] as const,
+    orders: (params?: any) => ["user", "orders", params] as const,
+    order: (orderId: string) => ["user", "order", orderId] as const,
+    cart: () => ["user", "cart"] as const,
   },
 
   // Orders
   orders: {
-    all: (params?: any) => ["orders", params] as const,
-    detail: (id: string) => ["orders", id] as const,
-    stats: (period?: string) => ["orders", "stats", period] as const,
-  },
-
-  // Reviews
-  reviews: {
-    all: (params?: any) => ["reviews", params] as const,
-    detail: (id: string) => ["reviews", id] as const,
-  },
-
-  // Coupons
-  coupons: {
-    all: (params?: any) => ["coupons", params] as const,
-    active: ["coupons", "active"] as const,
-    detail: (id: string) => ["coupons", id] as const,
-    stats: (id: string) => ["coupons", id, "stats"] as const,
+    all: () => ["orders"] as const,
+    list: (params: any) => ["orders", "list", params] as const,
+    detail: (orderId: string) => ["orders", "detail", orderId] as const,
   },
 
   // Admin
   admin: {
-    dashboard: ["admin", "dashboard"] as const,
-    users: (params?: any) => ["admin", "users", params] as const,
-    salesAnalytics: (period?: string) => ["admin", "analytics", "sales", period] as const,
-    inventoryAnalytics: ["admin", "analytics", "inventory"] as const,
+    dashboard: () => ["admin", "dashboard"] as const,
+    analytics: (params: any) => ["admin", "analytics", params] as const,
+    users: (params: any) => ["admin", "users", params] as const,
+    products: (params: any) => ["admin", "products", params] as const,
+    orders: (params: any) => ["admin", "orders", params] as const,
+    categories: (params: any) => ["admin", "categories", params] as const,
   },
-} as const
+
+  // Reviews
+  reviews: {
+    all: () => ["reviews"] as const,
+    list: (params: any) => ["reviews", "list", params] as const,
+    product: (productId: string) => ["reviews", "product", productId] as const,
+  },
+
+  // Coupons
+  coupons: {
+    all: () => ["coupons"] as const,
+    list: (params: any) => ["coupons", "list", params] as const,
+    validate: (code: string) => ["coupons", "validate", code] as const,
+  },
+} as const;

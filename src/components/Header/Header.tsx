@@ -122,7 +122,7 @@ export const Header: React.FC = () => {
                   <div className="absolute -inset-1 bg-gradient-to-br from-[var(--medium)] to-[var(--dark)] rounded-xl blur opacity-20"></div>
                 </div>
                 <span className="text-xl font-bold bg-gradient-to-r from-[var(--medium)] to-[var(--dark)] bg-clip-text text-transparent">
-                  AquaStore
+                  Creed
                 </span>
               </Link>
             </motion.div>

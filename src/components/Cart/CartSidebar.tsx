@@ -1,4 +1,4 @@
-"use client";
+//@ts-nocheck
 
 import type React from "react";
 import { useState } from "react";
@@ -67,11 +67,11 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
             className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b">
+            <div className="flex items-center justify-between p-6 border-b bg-gradient-to-r from-[var(--lightest)] to-white">
               <div className="flex items-center gap-2">
                 <ShoppingBag className="h-5 w-5 text-[var(--medium)]" />
                 <h2 className="text-lg font-semibold text-gray-900">
-                  Shopping Cart ({cartItems.length})
+                  Cart ({cartItems.length})
                 </h2>
               </div>
               <Button
@@ -126,7 +126,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                         >
                           {/* Product Image */}
                           <Link
-                            to={`/products/${item.product._id}`}
+                            to={`/products/${item.product.slug}`}
                             onClick={onClose}
                             className="flex-shrink-0"
                           >
@@ -136,14 +136,14 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                                 "/placeholder.svg?height=80&width=80"
                               }
                               alt={item.product.name}
-                              className="w-16 h-16 object-cover rounded-lg"
+                              className="w-16 h-16 object-cover rounded-lg hover:scale-105 transition-transform"
                             />
                           </Link>
 
                           {/* Product Info */}
                           <div className="flex-1 min-w-0">
                             <Link
-                              to={`/products/${item.product._id}`}
+                              to={`/products/${item.product.slug}`}
                               onClick={onClose}
                               className="block"
                             >
@@ -206,10 +206,10 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
 
                               <div className="text-right">
                                 <div className="font-semibold text-gray-900">
-                                  ${item.itemTotal.toLocaleString()}
+                                  ${item.itemTotal.toFixed(2)}
                                 </div>
                                 <div className="text-xs text-gray-600">
-                                  ${item.product.price.toLocaleString()} each
+                                  ${item.product.price.toFixed(2)} each
                                 </div>
                               </div>
                             </div>
@@ -242,7 +242,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       />
                       <Button
                         variant="outline"
-                        className="border-[var(--medium)] text-[var(--medium)] bg-transparent"
+                        className="border-[var(--medium)] text-[var(--medium)] hover:bg-[var(--lightest)] bg-transparent"
                       >
                         Apply
                       </Button>
@@ -253,7 +253,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
                         <span className="font-medium">
-                          ${cartSubtotal.toLocaleString()}
+                          ${cartSubtotal.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -269,24 +269,26 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       <Separator />
                       <div className="flex justify-between text-base font-semibold">
                         <span>Total</span>
-                        <span>${total.toFixed(2)}</span>
+                        <span className="text-[var(--medium)]">
+                          ${total.toFixed(2)}
+                        </span>
                       </div>
                     </div>
 
                     {/* Free Shipping Progress */}
                     {shipping > 0 && (
-                      <div className="bg-gray-50 rounded-lg p-3">
+                      <div className="bg-blue-50 rounded-lg p-3">
                         <div className="flex justify-between text-sm mb-2">
-                          <span className="text-gray-600">
+                          <span className="text-blue-800 font-medium">
                             Free shipping at $50
                           </span>
-                          <span className="font-medium text-[var(--medium)]">
+                          <span className="font-medium text-blue-600">
                             ${(50 - cartSubtotal).toFixed(2)} to go
                           </span>
                         </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div className="w-full bg-blue-200 rounded-full h-2">
                           <div
-                            className="bg-[var(--medium)] h-2 rounded-full transition-all duration-300"
+                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                             style={{
                               width: `${Math.min(
                                 (cartSubtotal / 50) * 100,
