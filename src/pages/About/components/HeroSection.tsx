@@ -1,7 +1,8 @@
-import type React from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Award, Globe } from "lucide-react";
+import type React from 'react';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { ArrowRight, Award, Globe } from 'lucide-react';
+import AboutImage from '@/images/About01.jpg';
 
 export const HeroSection: React.FC = () => {
   return (
@@ -28,7 +29,7 @@ export const HeroSection: React.FC = () => {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight"
             >
-              About{" "}
+              About{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--medium)] to-[var(--dark)]">
                 Creed
               </span>
@@ -38,12 +39,16 @@ export const HeroSection: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.8 }}
-              className="text-xl text-gray-600 leading-relaxed"
+              className="text-lg text-gray-600 leading-relaxed"
             >
-              We're passionate about bringing you the finest aquatic products
-              and creating extraordinary underwater experiences. Since our
-              founding, we've been dedicated to quality, innovation, and
-              customer satisfaction.
+              Trust Homewares Pvt Ltd is an Indian brand delivering high-quality
+              homeware products under the name Creed. Our collection includes
+              stainless steel tiffins, casseroles, single wall and double wall
+              bottles, water jugs, kids bottles, and more — designed for
+              everyday use. We blend durability, utility, and modern design to
+              meet your lifestyle needs. With a strong focus on quality and
+              customer satisfaction, we aim to make daily life simpler, smarter,
+              and more stylish.
             </motion.p>
 
             <motion.div
@@ -101,7 +106,7 @@ export const HeroSection: React.FC = () => {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="/placeholder.svg?height=600&width=500"
+                src={AboutImage}
                 alt="Creed Interior"
                 className="w-full h-[500px] object-cover"
               />

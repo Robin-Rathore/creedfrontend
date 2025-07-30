@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { motion } from "framer-motion";
-import { CartItems, CartSummary } from "./components";
+import type React from 'react';
+import { motion } from 'framer-motion';
+import { CartItems, CartSummary } from './components';
 
 export const Cart: React.FC = () => {
   return (

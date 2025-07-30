@@ -1,109 +1,137 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "react-hot-toast"
-import { apiClient } from "../../utils/api"
-import { queryKeys } from "../../utils/queryKeys"
-import type { CreateOrderRequest, Order } from "../../types/order"
+//@ts-nocheck
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '../../utils/api';
+import { queryKeys } from '../../utils/queryKeys';
+import { toast } from 'sonner';
+import type { CreateOrderRequest } from '../../types/order';
 
 export const useCreateOrder = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateOrderRequest): Promise<{ success: boolean; message: string; data: Order }> =>
-      apiClient.post("/orders", data),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.orders() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.cart })
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() }) // Update stock
-      toast.success(response.message)
+    mutationFn: async (orderData: CreateOrderRequest) => {
+      const response = await apiClient.post('/orders', orderData);
+      return response.data;
     },
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.orders() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.cart() });
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to create order');
+    },
+  });
+};
+
+export const useCancelOrder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (orderId: string) => {
+      const response = await apiClient.put(`/orders/${orderId}/cancel`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.orders() });
+      toast.success('Order cancelled successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to cancel order');
+    },
+  });
+};
 
 export const useUpdateOrderStatus = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
       status,
       note,
-    }: { id: string; status: string; note?: string }): Promise<{ success: boolean; message: string; data: Order }> =>
-      apiClient.put(`/orders/${id}/status`, { status, note }),
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.orders() })
-      toast.success(response.message)
-    },
-  })
-}
-
-export const useUpdatePaymentStatus = () => {
-  const queryClient = useQueryClient()
-
-  return useMutation({
-    mutationFn: ({
-      id,
-      status,
-      transactionId,
-      paymentIntentId,
     }: {
-      id: string
-      status: string
-      transactionId?: string
-      paymentIntentId?: string
-    }): Promise<{ success: boolean; message: string; data: Order }> =>
-      apiClient.put(`/orders/${id}/payment`, { status, transactionId, paymentIntentId }),
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.orders() })
-      toast.success(response.message)
+      id: string;
+      status: string;
+      note?: string;
+    }) => {
+      const response = await apiClient.put(`/orders/${id}/status`, {
+        status,
+        note,
+      });
+      return response;
     },
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.dashboard() });
+      toast.success('Order status updated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message || 'Failed to update order status'
+      );
+    },
+  });
+};
 
-export const useAddTrackingInfo = () => {
-  const queryClient = useQueryClient()
+export const useUpdateOrderTracking = () => {
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
       trackingNumber,
       carrier,
       estimatedDelivery,
     }: {
-      id: string
-      trackingNumber: string
-      carrier: string
-      estimatedDelivery?: string
-    }): Promise<{ success: boolean; message: string; data: Order }> =>
-      apiClient.put(`/orders/${id}/tracking`, { trackingNumber, carrier, estimatedDelivery }),
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.orders() })
-      toast.success(response.message)
+      id: string;
+      trackingNumber: string;
+      carrier: string;
+      estimatedDelivery?: string;
+    }) => {
+      const response = await apiClient.put(`/orders/${id}/tracking`, {
+        trackingNumber,
+        carrier,
+        estimatedDelivery,
+      });
+      return response;
     },
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() });
+      toast.success('Tracking information updated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message || 'Failed to update tracking information'
+      );
+    },
+  });
+};
 
-export const useCancelOrder = () => {
-  const queryClient = useQueryClient()
+export const useRequestReturn = () => {
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
-      id,
+    mutationFn: async ({
+      orderId,
       reason,
-    }: { id: string; reason: string }): Promise<{ success: boolean; message: string; data: Order }> =>
-      apiClient.put(`/orders/${id}/cancel`, { reason }),
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.orders.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.orders() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() }) // Update stock
-      toast.success(response.message)
+    }: {
+      orderId: string;
+      reason: string;
+    }) => {
+      const response = await apiClient.post(`/orders/${orderId}/return`, {
+        reason,
+      });
+      return response.data;
     },
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.orders() });
+      toast.success('Return request submitted successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to request return');
+    },
+  });
+};

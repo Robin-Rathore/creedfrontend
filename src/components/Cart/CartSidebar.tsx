@@ -1,21 +1,21 @@
 //@ts-nocheck
 
-import type React from "react";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from "lucide-react";
-import { useAtom } from "jotai";
+import type React from 'react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { useAtom } from 'jotai';
 import {
   cartItemsAtom,
   cartSubtotalAtom,
   updateCartItemAtom,
   removeFromCartAtom,
-} from "@/queries/store/cart";
+} from '@/queries/store/cart';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -30,11 +30,53 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
   const [cartSubtotal] = useAtom(cartSubtotalAtom);
   const [, updateCartItem] = useAtom(updateCartItemAtom);
   const [, removeFromCart] = useAtom(removeFromCartAtom);
-  const [promoCode, setPromoCode] = useState("");
+  const [promoCode, setPromoCode] = useState('');
 
-  const shipping = cartSubtotal > 50 ? 0 : 9.99;
-  const tax = cartSubtotal * 0.08;
-  const total = cartSubtotal + shipping + tax;
+  const calculateGST = () => {
+    let totalGST = 0;
+
+    cartItems.forEach((item) => {
+      // Get the GST rate from the product (12% or 18%)
+      const gstRate = item.product.gst || 18; // Default to 18% if not specified
+
+      // Calculate GST for this item
+      const itemGST = (item.itemTotal * gstRate) / 100;
+      totalGST += itemGST;
+    });
+
+    return Math.round(totalGST); // Round to nearest rupee
+  };
+
+  console.log('Cart Items:', cartItems);
+
+  // Get detailed GST breakdown by rate
+  const getGSTBreakdown = () => {
+    const gstBreakdown = { 12: 0, 18: 0 };
+
+    cartItems.forEach((item) => {
+      const gstRate = item.product.gst || 18;
+      const itemGST = (item.itemTotal * gstRate) / 100;
+
+      if (gstRate === 12) {
+        gstBreakdown[12] += itemGST;
+      } else {
+        gstBreakdown[18] += itemGST;
+      }
+    });
+
+    return {
+      gst12: Math.round(gstBreakdown[12]),
+      gst18: Math.round(gstBreakdown[18]),
+      total: Math.round(gstBreakdown[12] + gstBreakdown[18]),
+    };
+  };
+
+  // Replace the existing tax calculation
+  const tax = calculateGST();
+  const gstBreakdown = getGSTBreakdown();
+
+  const shippingCost = 59;
+  const total = cartSubtotal + shippingCost + tax;
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -60,10 +102,10 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
 
           {/* Sidebar */}
           <motion.div
-            initial={{ x: "100%" }}
+            initial={{ x: '100%' }}
             animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className="fixed right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl z-50 flex flex-col"
           >
             {/* Header */}
@@ -119,7 +161,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                         <motion.div
                           key={item._id}
                           initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: "auto" }}
+                          animate={{ opacity: 1, height: 'auto' }}
                           exit={{ opacity: 0, height: 0 }}
                           transition={{ duration: 0.3 }}
                           className="flex gap-4 p-4 bg-gray-50 rounded-lg"
@@ -133,7 +175,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                             <img
                               src={
                                 item.product.images?.[0]?.url ||
-                                "/placeholder.svg?height=80&width=80"
+                                '/placeholder.svg?height=80&width=80'
                               }
                               alt={item.product.name}
                               className="w-16 h-16 object-cover rounded-lg hover:scale-105 transition-transform"
@@ -233,7 +275,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                   {/* Footer */}
                   <div className="border-t bg-white p-6 space-y-4">
                     {/* Promo Code */}
-                    <div className="flex gap-2">
+                    {/* <div className="flex gap-2">
                       <Input
                         placeholder="Promo code"
                         value={promoCode}
@@ -246,7 +288,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       >
                         Apply
                       </Button>
-                    </div>
+                    </div> */}
 
                     {/* Order Summary */}
                     <div className="space-y-2 text-sm">
@@ -258,9 +300,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Shipping</span>
-                        <span className="font-medium">
-                          {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
-                        </span>
+                        <span className="font-medium">59.00</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Tax</span>
@@ -276,17 +316,17 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                     </div>
 
                     {/* Free Shipping Progress */}
-                    {shipping > 0 && (
+                    {/* {shipping > 0 && (
                       <div className="bg-blue-50 rounded-lg p-3">
-                        <div className="flex justify-between text-sm mb-2">
+                        {/* <div className="flex justify-between text-sm mb-2">
                           <span className="text-blue-800 font-medium">
                             Free shipping at $50
                           </span>
                           <span className="font-medium text-blue-600">
                             ${(50 - cartSubtotal).toFixed(2)} to go
                           </span>
-                        </div>
-                        <div className="w-full bg-blue-200 rounded-full h-2">
+                        </div> */}
+                    {/* <div className="w-full bg-blue-200 rounded-full h-2">
                           <div
                             className="bg-blue-600 h-2 rounded-full transition-all duration-300"
                             style={{
@@ -296,9 +336,9 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                               )}%`,
                             }}
                           ></div>
-                        </div>
-                      </div>
-                    )}
+                        </div> */}
+                    {/* </div> */}
+                    {/* )} */}
 
                     {/* Action Buttons */}
                     <div className="space-y-2">

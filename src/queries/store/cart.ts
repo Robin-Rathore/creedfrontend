@@ -1,6 +1,6 @@
 //@ts-nocheck
-import { atom } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atom } from 'jotai';
+import { atomWithStorage } from 'jotai/utils';
 
 // Cart item interface
 export interface CartItem {
@@ -18,6 +18,7 @@ export interface CartItem {
     slug: string;
     shortDescription?: string;
     description: string;
+    gst: number; // GST percentage
   };
   quantity: number;
   size?: string;
@@ -27,7 +28,7 @@ export interface CartItem {
 }
 
 // Persistent cart storage
-export const cartItemsAtom = atomWithStorage<CartItem[]>("cart-items", []);
+export const cartItemsAtom = atomWithStorage<CartItem[]>('cart-items', []);
 
 // Derived atoms
 export const cartCountAtom = atom((get) => {
@@ -75,7 +76,7 @@ export const addToCartAtom = atom(
       // Add new item
       const cartItem: CartItem = {
         _id: `${newItem.productId}-${
-          newItem.variant?._id || "default"
+          newItem.variant?._id || 'default'
         }-${Date.now()}`,
         product: newItem.product,
         quantity: newItem.quantity,

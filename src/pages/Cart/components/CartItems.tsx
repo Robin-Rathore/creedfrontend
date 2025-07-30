@@ -1,20 +1,20 @@
 //@ts-nocheck
 
-import type React from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Plus, Minus, Trash2, Heart, ArrowRight } from "lucide-react";
-import { useAtom } from "jotai";
+import type React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Plus, Minus, Trash2, Heart, ArrowRight } from 'lucide-react';
+import { useAtom } from 'jotai';
 import {
   cartItemsAtom,
   updateCartItemAtom,
   removeFromCartAtom,
-} from "@/queries/store/cart";
-import { useAddToWishlist } from "@/queries/hooks/user";
+} from '@/queries/store/cart';
+import { useAddToWishlist } from '@/queries/hooks/user';
 
 export const CartItems: React.FC = () => {
   const [cartItems] = useAtom(cartItemsAtom);
@@ -36,7 +36,7 @@ export const CartItems: React.FC = () => {
       await addToWishlistMutation.mutateAsync(item.product._id);
       removeFromCart(item._id);
     } catch (error) {
-      console.error("Move to wishlist error:", error);
+      console.error('Move to wishlist error:', error);
     }
   };
 
@@ -80,7 +80,7 @@ export const CartItems: React.FC = () => {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 ">
       <AnimatePresence>
         {cartItems.map((item, index) => (
           <motion.div
@@ -101,7 +101,7 @@ export const CartItems: React.FC = () => {
                     <img
                       src={
                         item.product.images?.[0]?.url ||
-                        "/placeholder.svg?height=120&width=120"
+                        '/placeholder.svg?height=120&width=120'
                       }
                       alt={item.product.name}
                       className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg hover:scale-105 transition-transform"
@@ -154,17 +154,17 @@ export const CartItems: React.FC = () => {
                       <Badge
                         className={`text-xs ${
                           item.product.stock > 10
-                            ? "bg-green-100 text-green-800"
+                            ? 'bg-green-100 text-green-800'
                             : item.product.stock > 0
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
                         }`}
                       >
                         {item.product.stock > 10
-                          ? "In Stock"
+                          ? 'In Stock'
                           : item.product.stock > 0
                           ? `${item.product.stock} left`
-                          : "Out of Stock"}
+                          : 'Out of Stock'}
                       </Badge>
                     </div>
 
@@ -243,14 +243,14 @@ export const CartItems: React.FC = () => {
                   </div>
 
                   {/* Item Total */}
-                  <div className="flex-shrink-0 text-right">
+                  {/* <div className="flex-shrink-10 text-left">
                     <div className="text-xl font-bold text-gray-900">
                       ${item.itemTotal.toFixed(2)}
                     </div>
                     <div className="text-sm text-gray-600">
                       ${item.product.price.toFixed(2)} × {item.quantity}
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </CardContent>
             </Card>

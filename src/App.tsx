@@ -1,41 +1,42 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { useEffect } from "react";
+import type React from 'react';
+import { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
-} from "react-router-dom";
-import { useAtom } from "jotai";
-import { QueryProvider, AuthProvider } from "./providers";
-import { Header } from "./components/Header/Header";
-import { Footer } from "./components/Footer/Footer";
-import { initializeAuthAtom } from "./queries/store/auth";
-import { initializeCartAtom } from "./queries/store/cart";
-import { useAuth } from "./queries/hooks/auth/useAuth";
+} from 'react-router-dom';
+import { useAtom } from 'jotai';
+import { QueryProvider, AuthProvider } from './providers';
+import { Header } from './components/Header/Header';
+import { Footer } from './components/Footer/Footer';
+import { initializeAuthAtom } from './queries/store/auth';
+import { initializeCartAtom } from './queries/store/cart';
+import { useAuth } from './queries/hooks/auth/useAuth';
 
 // Pages
-import { Home } from "./pages/Home";
-import { Login } from "./pages/Login";
-import { Signup } from "./pages/Signup";
-import { ForgotPassword } from "./pages/ForgotPassword";
-import { ResetPassword } from "./pages/ResetPassword";
-import { Profile } from "./pages/Profile";
-import { Products } from "./pages/Products";
-import { ProductDetail } from "./pages/ProductDetail";
-import { Categories } from "./pages/Categories";
-import { CategoryProducts } from "./pages/CategoryProducts";
-import { About } from "./pages/About";
-import { Contact } from "./pages/Contact";
-import { Wishlist } from "./pages/Wishlist";
-import { Cart } from "./pages/Cart";
-import { Checkout } from "./pages/Checkout";
-import { Orders } from "./pages/Orders";
-import { OrderDetail } from "./pages/OrderDetail";
-import { Admin } from "./pages/Admin";
-import { NotFound } from "./pages/404";
+import { Home } from './pages/Home';
+import { Login } from './pages/Login';
+import { Signup } from './pages/Signup';
+import { ForgotPassword } from './pages/ForgotPassword';
+import { ResetPassword } from './pages/ResetPassword';
+import { Profile } from './pages/Profile';
+import { Products } from './pages/Products';
+import { ProductDetail } from './pages/ProductDetail';
+import { Categories } from './pages/Categories';
+import { CategoryProducts } from './pages/CategoryProducts';
+import { About } from './pages/About';
+import { Contact } from './pages/Contact';
+import { Wishlist } from './pages/Wishlist';
+import { Cart } from './pages/Cart';
+import { Checkout } from './pages/Checkout';
+import { Orders } from './pages/Orders';
+import { OrderDetail } from './pages/OrderDetail';
+import { Admin } from './pages/Admin';
+import { NotFound } from './pages/404';
+import ScrollToTop from './components/shared/ScrollToTop';
 
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({
@@ -70,7 +71,7 @@ const AdminRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (user?.role !== "admin") {
+  if (user?.role !== 'admin') {
     return <Navigate to="/" replace />;
   }
 
@@ -116,6 +117,7 @@ const AppContent: React.FC = () => {
 
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route

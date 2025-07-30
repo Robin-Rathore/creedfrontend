@@ -1,11 +1,11 @@
-"use client";
+//@ts-nocheck
 
-import type React from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import type React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import {
   Package,
   Truck,
@@ -14,11 +14,11 @@ import {
   Eye,
   RotateCcw,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   useCancelOrder,
   useRequestReturn,
-} from "@/queries/hooks/user/useUserOrders";
+} from '@/queries/hooks/user/useUserOrders';
 
 interface OrderCardProps {
   order: any;
@@ -27,13 +27,13 @@ interface OrderCardProps {
 
 const getStatusIcon = (status: string) => {
   switch (status) {
-    case "pending":
+    case 'pending':
       return <Clock className="w-5 h-5 text-yellow-500" />;
-    case "processing":
+    case 'processing':
       return <Package className="w-5 h-5 text-blue-500" />;
-    case "shipped":
+    case 'shipped':
       return <Truck className="w-5 h-5 text-purple-500" />;
-    case "delivered":
+    case 'delivered':
       return <CheckCircle className="w-5 h-5 text-green-500" />;
     default:
       return <Package className="w-5 h-5 text-gray-500" />;
@@ -42,18 +42,18 @@ const getStatusIcon = (status: string) => {
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "pending":
-      return "bg-yellow-100 text-yellow-800 border-yellow-200";
-    case "processing":
-      return "bg-blue-100 text-blue-800 border-blue-200";
-    case "shipped":
-      return "bg-purple-100 text-purple-800 border-purple-200";
-    case "delivered":
-      return "bg-green-100 text-green-800 border-green-200";
-    case "cancelled":
-      return "bg-red-100 text-red-800 border-red-200";
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    case 'processing':
+      return 'bg-blue-100 text-blue-800 border-blue-200';
+    case 'shipped':
+      return 'bg-purple-100 text-purple-800 border-purple-200';
+    case 'delivered':
+      return 'bg-green-100 text-green-800 border-green-200';
+    case 'cancelled':
+      return 'bg-red-100 text-red-800 border-red-200';
     default:
-      return "bg-gray-100 text-gray-800 border-gray-200";
+      return 'bg-gray-100 text-gray-800 border-gray-200';
   }
 };
 
@@ -62,20 +62,20 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
   const requestReturnMutation = useRequestReturn();
 
   const handleCancelOrder = () => {
-    if (window.confirm("Are you sure you want to cancel this order?")) {
+    if (window.confirm('Are you sure you want to cancel this order?')) {
       cancelOrderMutation.mutate(order._id);
     }
   };
 
   const handleRequestReturn = () => {
-    const reason = window.prompt("Please provide a reason for the return:");
+    const reason = window.prompt('Please provide a reason for the return:');
     if (reason) {
       requestReturnMutation.mutate({ orderId: order._id, reason });
     }
   };
 
-  const canCancel = ["pending", "processing"].includes(order.status);
-  const canReturn = order.status === "delivered" && !order.returnRequested;
+  const canCancel = ['pending', 'processing'].includes(order.status);
+  const canReturn = order.status === 'delivered' && !order.returnRequested;
 
   return (
     <motion.div
@@ -111,7 +111,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
                       key={idx}
                       src={
                         item.product.images?.[0]?.url ||
-                        "/placeholder.svg?height=40&width=40"
+                        '/placeholder.svg?height=40&width=40'
                       }
                       alt={item.product.name}
                       className="w-10 h-10 rounded-full border-2 border-white object-cover"
@@ -125,7 +125,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">
-                    {order.items.length} item{order.items.length > 1 ? "s" : ""}
+                    {order.items.length} item{order.items.length > 1 ? 's' : ''}
                   </p>
                   <p className="font-semibold text-gray-900">
                     ${order.pricing.total.toFixed(2)}
@@ -151,18 +151,18 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
               )}
 
               {/* Order Progress */}
-              {order.status !== "cancelled" && (
+              {order.status !== 'cancelled' && (
                 <div className="mb-4">
                   <div className="flex items-center justify-between text-xs text-gray-600 mb-2">
                     <span>Order Progress</span>
                     <span>
-                      {order.status === "delivered"
-                        ? "100%"
-                        : order.status === "shipped"
-                        ? "75%"
-                        : order.status === "processing"
-                        ? "50%"
-                        : "25%"}
+                      {order.status === 'delivered'
+                        ? '100%'
+                        : order.status === 'shipped'
+                        ? '75%'
+                        : order.status === 'processing'
+                        ? '50%'
+                        : '25%'}
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
@@ -170,13 +170,13 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
                       className="bg-gradient-to-r from-[var(--medium)] to-[var(--dark)] h-2 rounded-full transition-all duration-500"
                       style={{
                         width:
-                          order.status === "delivered"
-                            ? "100%"
-                            : order.status === "shipped"
-                            ? "75%"
-                            : order.status === "processing"
-                            ? "50%"
-                            : "25%",
+                          order.status === 'delivered'
+                            ? '100%'
+                            : order.status === 'shipped'
+                            ? '75%'
+                            : order.status === 'processing'
+                            ? '50%'
+                            : '25%',
                       }}
                     ></div>
                   </div>
@@ -227,7 +227,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
                 </Button>
               )}
 
-              {order.status === "delivered" && (
+              {order.status === 'delivered' && (
                 <Button
                   className="w-full bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
                   asChild

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
-import { DashboardStats } from "./DashboardStats";
-import { RevenueChart } from "./RevenueChart";
-import { RecentOrders } from "./RecentOrders";
-import { TopProducts } from "./TopProducts";
-import { ProductsManagement } from "./ProductsManagement";
-import { CategoriesManagement } from "./CategoriesManagement";
-import { OrdersManagement } from "./OrdersManagement";
-import { UsersManagement } from "./UsersManagement";
-import { AnalyticsManagement } from "./AnalyticsManagement";
+import type React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { Sidebar } from './Sidebar';
+import { DashboardStats } from './DashboardStats';
+import { RevenueChart } from './RevenueChart';
+import { RecentOrders } from './RecentOrders';
+import { TopProducts } from './TopProducts';
+import { ProductsManagement } from './ProductsManagement';
+import { CategoriesManagement } from './CategoriesManagement';
+import { OrdersManagement } from './OrdersManagement';
+import { UsersManagement } from './UsersManagement';
+import { AnalyticsManagement } from './AnalyticsManagement';
 
 const Dashboard: React.FC = () => {
   return (
@@ -30,7 +30,7 @@ const Dashboard: React.FC = () => {
       {/* Charts and Tables */}
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
         <RevenueChart />
-        <RecentOrders />
+        {/* <RecentOrders /> */}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">

@@ -1,4 +1,4 @@
-import { atom } from "jotai";
+import { atom } from 'jotai';
 
 // Dashboard state
 export const dashboardStatsAtom = atom(null);
@@ -14,24 +14,25 @@ export const productsListAtom = atom([]);
 export const productsLoadingAtom = atom(false);
 export const selectedProductAtom = atom(null);
 export const productFormAtom = atom({
-  name: "",
-  description: "",
-  shortDescription: "",
-  price: "",
-  comparePrice: "",
-  category: "",
-  subcategory: "",
-  brand: "",
-  stock: "",
-  lowStockThreshold: "",
-  tags: "",
-  features: "",
-  specifications: "",
-  seoTitle: "",
-  seoDescription: "",
+  name: '',
+  description: '',
+  shortDescription: '',
+  price: '',
+  comparePrice: '',
+  category: '',
+  subcategory: '',
+  brand: '',
+  stock: '',
+  lowStockThreshold: '',
+  tags: '',
+  features: '',
+  specifications: '',
+  seoTitle: '',
+  seoDescription: '',
   isDigital: false,
   shippingRequired: true,
   taxable: true,
+  gst: 0,
   isFeatured: false,
 });
 
@@ -40,15 +41,15 @@ export const categoriesListAtom = atom([]);
 export const categoriesLoadingAtom = atom(false);
 export const selectedCategoryAtom = atom(null);
 export const categoryFormAtom = atom({
-  name: "",
-  description: "",
-  parent: "",
-  icon: "",
+  name: '',
+  description: '',
+  parent: '',
+  icon: '',
   sortOrder: 0,
   isFeatured: false,
-  seoTitle: "",
-  seoDescription: "",
-  metaKeywords: "",
+  seoTitle: '',
+  seoDescription: '',
+  metaKeywords: '',
 });
 
 // Orders management state
@@ -63,6 +64,6 @@ export const analyticsLoadingAtom = atom(false);
 
 // UI state
 export const sidebarOpenAtom = atom(false);
-export const activeTabAtom = atom("dashboard");
+export const activeTabAtom = atom('dashboard');
 export const modalOpenAtom = atom(false);
-export const modalTypeAtom = atom<"create" | "edit" | "delete" | null>(null);
+export const modalTypeAtom = atom<'create' | 'edit' | 'delete' | null>(null);

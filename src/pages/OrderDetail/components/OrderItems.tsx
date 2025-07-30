@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Star } from "lucide-react";
+import type React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Star } from 'lucide-react';
 
 interface OrderItemsProps {
   items: Array<{
@@ -34,6 +34,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
   items,
   orderStatus,
 }) => {
+  console.log('OrderItems rendered with items:', items);
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-semibold text-gray-900">Order Items</h3>
@@ -54,7 +55,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                     <img
                       src={
                         item.product.images?.[0]?.url ||
-                        "/placeholder.svg?height=120&width=120"
+                        '/placeholder.svg?height=120&width=120'
                       }
                       alt={item.product.name}
                       className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg border border-gray-200"
@@ -120,7 +121,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                             </Link>
                           </Button>
 
-                          {orderStatus === "delivered" && (
+                          {orderStatus === 'delivered' && (
                             <Button
                               size="sm"
                               className="bg-[var(--medium)] hover:bg-[var(--dark)] text-white"

@@ -1,10 +1,10 @@
 //ts-nocheck
 
-import type React from "react";
-import { useAtom } from "jotai";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import type React from 'react';
+import { useAtom } from 'jotai';
+import { Link, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   LayoutDashboard,
   Package,
@@ -16,9 +16,9 @@ import {
   LogOut,
   X,
   Menu,
-} from "lucide-react";
-import { sidebarOpenAtom } from "../state/adminAtoms";
-import { useLogout } from "@/queries/hooks/auth/useAuth";
+} from 'lucide-react';
+import { sidebarOpenAtom } from '../state/adminAtoms';
+import { useLogout } from '@/queries/hooks/auth/useAuth';
 
 export const Sidebar: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useAtom(sidebarOpenAtom);
@@ -27,48 +27,48 @@ export const Sidebar: React.FC = () => {
 
   const navigation = [
     {
-      name: "Dashboard",
-      href: "/admin",
+      name: 'Dashboard',
+      href: '/admin',
       icon: LayoutDashboard,
-      current: location.pathname === "/admin",
+      current: location.pathname === '/admin',
     },
     {
-      name: "Products",
-      href: "/admin/products",
+      name: 'Products',
+      href: '/admin/products',
       icon: Package,
-      current: location.pathname.startsWith("/admin/products"),
-      badge: "124",
+      current: location.pathname.startsWith('/admin/products'),
+      // badge: "124",
     },
     {
-      name: "Categories",
-      href: "/admin/categories",
+      name: 'Categories',
+      href: '/admin/categories',
       icon: FolderTree,
-      current: location.pathname.startsWith("/admin/categories"),
+      current: location.pathname.startsWith('/admin/categories'),
     },
     {
-      name: "Orders",
-      href: "/admin/orders",
+      name: 'Orders',
+      href: '/admin/orders',
       icon: ShoppingCart,
-      current: location.pathname.startsWith("/admin/orders"),
-      badge: "12",
+      current: location.pathname.startsWith('/admin/orders'),
+      // badge: "12",
     },
     {
-      name: "Users",
-      href: "/admin/users",
+      name: 'Users',
+      href: '/admin/users',
       icon: Users,
-      current: location.pathname.startsWith("/admin/users"),
+      current: location.pathname.startsWith('/admin/users'),
     },
     {
-      name: "Analytics",
-      href: "/admin/analytics",
+      name: 'Analytics',
+      href: '/admin/analytics',
       icon: BarChart3,
-      current: location.pathname.startsWith("/admin/analytics"),
+      current: location.pathname.startsWith('/admin/analytics'),
     },
     {
-      name: "Settings",
-      href: "/admin/settings",
+      name: 'Settings',
+      href: '/admin/settings',
       icon: Settings,
-      current: location.pathname.startsWith("/admin/settings"),
+      current: location.pathname.startsWith('/admin/settings'),
     },
   ];
 
@@ -89,9 +89,9 @@ export const Sidebar: React.FC = () => {
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white border-r border-gray-200 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
-        style={{ backgroundColor: "#0e1e16" }}
+        style={{ backgroundColor: '#0e1e16' }}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
@@ -122,8 +122,8 @@ export const Sidebar: React.FC = () => {
                   to={item.href}
                   className={`group flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     item.current
-                      ? "bg-emerald-600 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                      ? 'bg-emerald-600 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -131,14 +131,14 @@ export const Sidebar: React.FC = () => {
                     <Icon className="h-5 w-5" />
                     <span>{item.name}</span>
                   </div>
-                  {item.badge && (
+                  {/* {item.badge && (
                     <Badge
                       variant="secondary"
                       className="bg-gray-600 text-white"
                     >
                       {item.badge}
                     </Badge>
-                  )}
+                  )} */}
                 </Link>
               );
             })}
@@ -153,7 +153,7 @@ export const Sidebar: React.FC = () => {
               disabled={logoutMutation.isPending}
             >
               <LogOut className="mr-3 h-5 w-5" />
-              {logoutMutation.isPending ? "Signing out..." : "Sign out"}
+              {logoutMutation.isPending ? 'Signing out...' : 'Sign out'}
             </Button>
           </div>
         </div>

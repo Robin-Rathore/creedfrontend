@@ -1,12 +1,12 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/queries/utils/api";
-import { queryKeys } from "@/queries/utils/queryKeys";
-import { toast } from "react-hot-toast";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/queries/utils/api';
+import { queryKeys } from '@/queries/utils/queryKeys';
+import { toast } from 'react-hot-toast';
 
 // Get product reviews
 export const useProductReviews = (productId: string) => {
   return useQuery({
-    queryKey: queryKeys.products.reviews(productId),
+    queryKey: queryKeys.products.detail(productId),
     queryFn: async () => {
       const response = await api.get(`/products/${productId}/reviews`);
       return response.data;
@@ -30,15 +30,15 @@ export const useCreateReview = () => {
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.products.reviews(variables.productId),
+        queryKey: queryKeys.products.detail(variables.productId),
       });
       queryClient.invalidateQueries({
         queryKey: queryKeys.products.detail(variables.productId),
       });
-      toast.success("Review submitted successfully");
+      toast.success('Review submitted successfully');
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to submit review");
+      toast.error(error.response?.data?.message || 'Failed to submit review');
     },
   });
 };
@@ -54,12 +54,12 @@ export const useUpdateReview = () => {
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.products.reviews(variables.productId),
+        queryKey: queryKeys.products.detail(variables.productId),
       });
-      toast.success("Review updated successfully");
+      toast.success('Review updated successfully');
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update review");
+      toast.error(error.response?.data?.message || 'Failed to update review');
     },
   });
 };
@@ -81,12 +81,12 @@ export const useDeleteReview = () => {
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.products.reviews(variables.productId),
+        queryKey: queryKeys.products.detail(variables.productId),
       });
-      toast.success("Review deleted successfully");
+      toast.success('Review deleted successfully');
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to delete review");
+      toast.error(error.response?.data?.message || 'Failed to delete review');
     },
   });
 };

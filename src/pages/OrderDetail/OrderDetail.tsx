@@ -1,12 +1,12 @@
-"use client";
+//@ts-nocheck
 
-import type React from "react";
-import { useParams, Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import type React from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
 import {
   ArrowLeft,
   Package,
@@ -18,13 +18,13 @@ import {
   Download,
   RotateCcw,
   X,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   useUserOrder,
   useCancelOrder,
   useRequestReturn,
-} from "@/queries/hooks/user/useUserOrders";
-import { OrderTimeline, OrderItems } from "./components";
+} from '@/queries/hooks/user/useUserOrders';
+import { OrderTimeline, OrderItems } from './components';
 
 export const OrderDetail: React.FC = () => {
   const { orderId } = useParams<{ orderId: string }>();
@@ -33,13 +33,13 @@ export const OrderDetail: React.FC = () => {
   const requestReturnMutation = useRequestReturn();
 
   const handleCancelOrder = () => {
-    if (window.confirm("Are you sure you want to cancel this order?")) {
+    if (window.confirm('Are you sure you want to cancel this order?')) {
       cancelOrderMutation.mutate(orderId!);
     }
   };
 
   const handleRequestReturn = () => {
-    const reason = window.prompt("Please provide a reason for the return:");
+    const reason = window.prompt('Please provide a reason for the return:');
     if (reason) {
       requestReturnMutation.mutate({ orderId: orderId!, reason });
     }
@@ -47,7 +47,7 @@ export const OrderDetail: React.FC = () => {
 
   const handleDownloadInvoice = () => {
     // Implement invoice download
-    window.open(`/api/orders/${orderId}/invoice`, "_blank");
+    window.open(`/api/orders/${orderId}/invoice`, '_blank');
   };
 
   if (isLoading) {
@@ -92,27 +92,25 @@ export const OrderDetail: React.FC = () => {
     );
   }
 
-  const canCancel = ["pending", "confirmed", "processing"].includes(
-    order.status
-  );
-  const canReturn = order.status === "delivered" && !order.returnRequested;
+  const canCancel = ['pending', 'confirmed'].includes(order.status);
+  const canReturn = order.status === 'delivered' && !order.returnRequested;
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "confirmed":
-        return "bg-blue-100 text-blue-800 border-blue-200";
-      case "processing":
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      case "shipped":
-        return "bg-indigo-100 text-indigo-800 border-indigo-200";
-      case "delivered":
-        return "bg-green-100 text-green-800 border-green-200";
-      case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200";
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'processing':
+        return 'bg-purple-100 text-purple-800 border-purple-200';
+      case 'shipped':
+        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+      case 'delivered':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800 border-red-200';
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -150,14 +148,14 @@ export const OrderDetail: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <Button
+              {/* <Button
                 variant="outline"
                 onClick={handleDownloadInvoice}
                 className="bg-white"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Download Invoice
-              </Button>
+              </Button> */}
 
               {canCancel && (
                 <Button
@@ -282,7 +280,7 @@ export const OrderDetail: React.FC = () => {
                 <CardContent>
                   <div className="text-sm space-y-1">
                     <p className="font-medium">
-                      {order.shippingAddress.firstName}{" "}
+                      {order.shippingAddress.firstName}{' '}
                       {order.shippingAddress.lastName}
                     </p>
                     {order.shippingAddress.company && (
@@ -299,8 +297,8 @@ export const OrderDetail: React.FC = () => {
                       </p>
                     )}
                     <p className="text-gray-600">
-                      {order.shippingAddress.city},{" "}
-                      {order.shippingAddress.state}{" "}
+                      {order.shippingAddress.city},{' '}
+                      {order.shippingAddress.state}{' '}
                       {order.shippingAddress.postalCode}
                     </p>
                     <p className="text-gray-600">
@@ -335,18 +333,18 @@ export const OrderDetail: React.FC = () => {
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Payment Method</span>
                       <span className="font-medium capitalize">
-                        {order.payment.method.replace("_", " ")}
+                        {order.payment.method.replace('_', ' ')}
                       </span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Payment Status</span>
                       <Badge
                         className={
-                          order.payment.status === "completed"
-                            ? "bg-green-100 text-green-800"
-                            : order.payment.status === "pending"
-                            ? "bg-yellow-100 text-yellow-800"
-                            : "bg-red-100 text-red-800"
+                          order.payment.status === 'completed'
+                            ? 'bg-green-100 text-green-800'
+                            : order.payment.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-red-100 text-red-800'
                         }
                       >
                         {order.payment.status.charAt(0).toUpperCase() +
@@ -464,7 +462,7 @@ export const OrderDetail: React.FC = () => {
                         className="justify-start bg-white"
                         asChild
                       >
-                        <a href="mailto:support@Creed.com">
+                        <a href="mailto:helpdesk@thpl.co.in">
                           <Mail className="w-4 h-4 mr-2" />
                           Email Support
                         </a>
@@ -474,7 +472,7 @@ export const OrderDetail: React.FC = () => {
                         className="justify-start bg-white"
                         asChild
                       >
-                        <a href="tel:+1234567890">
+                        <a href="tel:+91 9897967727">
                           <Phone className="w-4 h-4 mr-2" />
                           Call Support
                         </a>

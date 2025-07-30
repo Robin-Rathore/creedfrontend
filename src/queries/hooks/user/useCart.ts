@@ -1,21 +1,21 @@
 //@ts-nocheck
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAtom } from "jotai";
-import { toast } from "react-hot-toast";
-import { apiClient } from "../../utils/api";
-import { queryKeys } from "../../utils/queryKeys";
-import { addToCartAtom, clearCartAtom } from "../../store/cart";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAtom } from 'jotai';
+import { toast } from 'react-hot-toast';
+import { apiClient } from '../../utils/api';
+import { queryKeys } from '../../utils/queryKeys';
+import { addToCartAtom, clearCartAtom } from '../../store/cart';
 import type {
   Cart,
   AddToCartRequest,
   UpdateCartItemRequest,
-} from "../../types/user";
+} from '../../types/user';
 
 export const useCart = () => {
   return useQuery({
     queryKey: queryKeys.user.cart,
     queryFn: (): Promise<{ success: boolean; data: Cart }> =>
-      apiClient.get("/user/cart"),
+      apiClient.get('/user/cart'),
     select: (data) => data.data,
   });
 };
@@ -28,7 +28,7 @@ export const useAddToCart = () => {
     mutationFn: (
       data: AddToCartRequest
     ): Promise<{ success: boolean; message: string; data: any }> =>
-      apiClient.post("/user/cart", data),
+      apiClient.post('/user/cart', data),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.user.cart });
       toast.success(response.message);
@@ -90,7 +90,7 @@ export const useClearCart = () => {
 
   return useMutation({
     mutationFn: (): Promise<{ success: boolean; message: string }> =>
-      apiClient.delete("/user/cart"),
+      apiClient.delete('/user/cart'),
     onSuccess: (response) => {
       clearCartLocal();
       queryClient.invalidateQueries({ queryKey: queryKeys.user.cart });

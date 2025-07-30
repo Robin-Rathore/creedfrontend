@@ -1,15 +1,15 @@
 //@ts-nocheck
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-hot-toast";
-import { api } from "@/queries/utils/api";
-import { queryKeys } from "@/queries/utils/queryKeys";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
+import { api } from '@/queries/utils/api';
+import { queryKeys } from '@/queries/utils/queryKeys';
 
 // Get user wishlist
 export const useWishlist = () => {
   return useQuery({
     queryKey: queryKeys.user.wishlist(),
     queryFn: async () => {
-      const response = await api.get("/user/wishlist");
+      const response = await api.get('/user/wishlist');
       // Return the actual wishlist array, not the entire response object
       return response.data.data; // This gets the wishlist array
     },
@@ -28,10 +28,10 @@ export const useAddToWishlist = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.user.wishlist() });
-      toast.success("Added to wishlist");
+      toast.success('Added to wishlist');
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to add to wishlist");
+      toast.error(error.response?.data?.message || 'Failed to add to wishlist');
     },
   });
 };
@@ -47,11 +47,11 @@ export const useRemoveFromWishlist = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.user.wishlist() });
-      toast.success("Removed from wishlist");
+      toast.success('Removed from wishlist');
     },
     onError: (error: any) => {
       toast.error(
-        error.response?.data?.message || "Failed to remove from wishlist"
+        error.response?.data?.message || 'Failed to remove from wishlist'
       );
     },
   });
@@ -71,20 +71,20 @@ export const useToggleWishlist = () => {
     }) => {
       if (isInWishlist) {
         const response = await api.delete(`/user/wishlist/${productId}`);
-        return { ...response.data, action: "removed" };
+        return { ...response.data, action: 'removed' };
       } else {
-        const response = await api.post("/user/wishlist", { productId });
-        return { ...response.data, action: "added" };
+        const response = await api.post('/user/wishlist', { productId });
+        return { ...response.data, action: 'added' };
       }
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.user.wishlist() });
       toast.success(
-        data.action === "added" ? "Added to wishlist" : "Removed from wishlist"
+        data.action === 'added' ? 'Added to wishlist' : 'Removed from wishlist'
       );
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.message || "Failed to update wishlist");
+      toast.error(error.response?.data?.message || 'Failed to update wishlist');
     },
   });
 };

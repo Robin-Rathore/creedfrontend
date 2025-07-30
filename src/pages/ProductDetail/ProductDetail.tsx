@@ -1,16 +1,16 @@
 //@ts-nocheck
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Star,
   Heart,
@@ -27,21 +27,21 @@ import {
   ThumbsUp,
   MessageCircle,
   Send,
-} from "lucide-react";
+} from 'lucide-react';
 import {
   useProductBySlug, // Changed from useProducts to useProductBySlug
   useProductReviews,
   useCreateReview,
-} from "@/queries/hooks/product";
+} from '@/queries/hooks/product';
 import {
   useAddToWishlist,
   useRemoveFromWishlist,
   useWishlist,
-} from "@/queries/hooks/user";
-import { useAuth } from "@/queries/hooks/auth/useAuth";
-import { useAtom } from "jotai";
-import { addToCartAtom } from "@/queries/store/cart";
-import { toast } from "react-hot-toast";
+} from '@/queries/hooks/user';
+import { useAuth } from '@/queries/hooks/auth/useAuth';
+import { useAtom } from 'jotai';
+import { addToCartAtom } from '@/queries/store/cart';
+import { toast } from 'react-hot-toast';
 
 export const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -61,12 +61,12 @@ export const ProductDetail: React.FC = () => {
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState<any>(null);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState('');
+  const [selectedColor, setSelectedColor] = useState('');
   const [reviewForm, setReviewForm] = useState({
     rating: 5,
-    title: "",
-    comment: "",
+    title: '',
+    comment: '',
   });
 
   // Removed the [0] access since product is now a single object, not an array
@@ -101,16 +101,17 @@ export const ProductDetail: React.FC = () => {
         slug: product.slug,
         shortDescription: product.shortDescription,
         description: product.description,
+        gst: product.gst || 0, // Ensure GST is included
       },
     };
 
     addToCart(cartItem);
-    toast.success("Added to cart!");
+    toast.success('Added to cart!');
   };
 
   const handleWishlistToggle = async () => {
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
@@ -119,20 +120,20 @@ export const ProductDetail: React.FC = () => {
     try {
       if (isInWishlist) {
         await removeFromWishlistMutation.mutateAsync(product._id);
-        toast.success("Removed from wishlist");
+        toast.success('Removed from wishlist');
       } else {
         await addToWishlistMutation.mutateAsync(product._id);
-        toast.success("Added to wishlist");
+        toast.success('Added to wishlist');
       }
     } catch (error) {
-      console.error("Wishlist error:", error);
+      console.error('Wishlist error:', error);
     }
   };
 
   const handleReviewSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isAuthenticated) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
@@ -143,10 +144,10 @@ export const ProductDetail: React.FC = () => {
         productId: product._id,
         ...reviewForm,
       });
-      setReviewForm({ rating: 5, title: "", comment: "" });
-      toast.success("Review submitted!");
+      setReviewForm({ rating: 5, title: '', comment: '' });
+      toast.success('Review submitted!');
     } catch (error) {
-      console.error("Review error:", error);
+      console.error('Review error:', error);
     }
   };
 
@@ -246,7 +247,7 @@ export const ProductDetail: React.FC = () => {
               <img
                 src={
                   product.images?.[selectedImageIndex]?.url ||
-                  "/placeholder.svg?height=600&width=600"
+                  '/placeholder.svg?height=600&width=600'
                 }
                 alt={product.name}
                 className="w-full h-full object-cover"
@@ -304,12 +305,12 @@ export const ProductDetail: React.FC = () => {
                     onClick={() => setSelectedImageIndex(index)}
                     className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
                       selectedImageIndex === index
-                        ? "border-[var(--medium)] shadow-lg"
-                        : "border-gray-200 hover:border-gray-300"
+                        ? 'border-[var(--medium)] shadow-lg'
+                        : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <img
-                      src={image.url || "/placeholder.svg?height=80&width=80"}
+                      src={image.url || '/placeholder.svg?height=80&width=80'}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
@@ -337,8 +338,8 @@ export const ProductDetail: React.FC = () => {
                       key={i}
                       className={`w-5 h-5 ${
                         i < Math.floor(averageRating)
-                          ? "text-yellow-400 fill-current"
-                          : "text-gray-300"
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-300'
                       }`}
                     />
                   ))}
@@ -349,17 +350,17 @@ export const ProductDetail: React.FC = () => {
                 <Badge
                   className={`${
                     product.stock > 10
-                      ? "bg-green-100 text-green-800"
+                      ? 'bg-green-100 text-green-800'
                       : product.stock > 0
-                      ? "bg-yellow-100 text-yellow-800"
-                      : "bg-red-100 text-red-800"
+                      ? 'bg-yellow-100 text-yellow-800'
+                      : 'bg-red-100 text-red-800'
                   }`}
                 >
                   {product.stock > 10
-                    ? "In Stock"
+                    ? 'In Stock'
                     : product.stock > 0
                     ? `${product.stock} left`
-                    : "Out of Stock"}
+                    : 'Out of Stock'}
                 </Badge>
               </div>
             </div>
@@ -401,7 +402,7 @@ export const ProductDetail: React.FC = () => {
                         <Button
                           key={size}
                           variant={
-                            selectedSize === size ? "default" : "outline"
+                            selectedSize === size ? 'default' : 'outline'
                           }
                           onClick={() => {
                             setSelectedSize(size);
@@ -414,8 +415,8 @@ export const ProductDetail: React.FC = () => {
                           }}
                           className={
                             selectedSize === size
-                              ? "bg-[var(--medium)] hover:bg-[var(--dark)]"
-                              : ""
+                              ? 'bg-[var(--medium)] hover:bg-[var(--dark)]'
+                              : ''
                           }
                         >
                           {size}
@@ -440,7 +441,7 @@ export const ProductDetail: React.FC = () => {
                         <Button
                           key={color}
                           variant={
-                            selectedColor === color ? "default" : "outline"
+                            selectedColor === color ? 'default' : 'outline'
                           }
                           onClick={() => {
                             setSelectedColor(color);
@@ -453,8 +454,8 @@ export const ProductDetail: React.FC = () => {
                           }}
                           className={
                             selectedColor === color
-                              ? "bg-[var(--medium)] hover:bg-[var(--dark)]"
-                              : ""
+                              ? 'bg-[var(--medium)] hover:bg-[var(--dark)]'
+                              : ''
                           }
                         >
                           {color}
@@ -544,12 +545,12 @@ export const ProductDetail: React.FC = () => {
                   }
                   className={`h-12 w-12 p-0 ${
                     isInWishlist
-                      ? "text-red-500 border-red-200 hover:bg-red-50"
-                      : "hover:text-red-500"
+                      ? 'text-red-500 border-red-200 hover:bg-red-50'
+                      : 'hover:text-red-500'
                   }`}
                 >
                   <Heart
-                    className={`w-5 h-5 ${isInWishlist ? "fill-current" : ""}`}
+                    className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`}
                   />
                 </Button>
                 <Button
@@ -619,7 +620,7 @@ export const ProductDetail: React.FC = () => {
                         __html:
                           product.description ||
                           product.shortDescription ||
-                          "No description available.",
+                          'No description available.',
                       }}
                     />
                   </div>
@@ -639,7 +640,7 @@ export const ProductDetail: React.FC = () => {
                             className="flex justify-between py-2 border-b border-gray-100"
                           >
                             <span className="font-medium text-gray-900 capitalize">
-                              {key.replace(/([A-Z])/g, " $1")}
+                              {key.replace(/([A-Z])/g, ' $1')}
                             </span>
                             <span className="text-gray-600">{value}</span>
                           </div>
@@ -691,8 +692,8 @@ export const ProductDetail: React.FC = () => {
                             key={i}
                             className={`w-5 h-5 ${
                               i < Math.floor(averageRating)
-                                ? "text-yellow-400 fill-current"
-                                : "text-gray-300"
+                                ? 'text-yellow-400 fill-current'
+                                : 'text-gray-300'
                             }`}
                           />
                         ))}
@@ -756,8 +757,8 @@ export const ProductDetail: React.FC = () => {
                                   <Star
                                     className={`w-6 h-6 ${
                                       i < reviewForm.rating
-                                        ? "text-yellow-400 fill-current"
-                                        : "text-gray-300 hover:text-yellow-400"
+                                        ? 'text-yellow-400 fill-current'
+                                        : 'text-gray-300 hover:text-yellow-400'
                                     } transition-colors`}
                                   />
                                 </button>
@@ -815,8 +816,8 @@ export const ProductDetail: React.FC = () => {
                           >
                             <Send className="w-4 h-4 mr-2" />
                             {createReviewMutation.isPending
-                              ? "Submitting..."
-                              : "Submit Review"}
+                              ? 'Submitting...'
+                              : 'Submit Review'}
                           </Button>
                         </form>
                       </CardContent>
@@ -854,7 +855,7 @@ export const ProductDetail: React.FC = () => {
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2 mb-2">
                                     <span className="font-medium text-gray-900">
-                                      {review.user?.firstName}{" "}
+                                      {review.user?.firstName}{' '}
                                       {review.user?.lastName}
                                     </span>
                                     <div className="flex items-center gap-1">
@@ -863,8 +864,8 @@ export const ProductDetail: React.FC = () => {
                                           key={i}
                                           className={`w-4 h-4 ${
                                             i < review.rating
-                                              ? "text-yellow-400 fill-current"
-                                              : "text-gray-300"
+                                              ? 'text-yellow-400 fill-current'
+                                              : 'text-gray-300'
                                           }`}
                                         />
                                       ))}

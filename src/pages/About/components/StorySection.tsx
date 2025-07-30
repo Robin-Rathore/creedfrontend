@@ -1,74 +1,62 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Lightbulb, Target, Users } from "lucide-react";
+import type React from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Earth, Eye, Heart, Lightbulb, Target, Users } from 'lucide-react';
 
 export const StorySection: React.FC = () => {
   const milestones = [
     {
-      year: "2019",
-      title: "The Beginning",
+      year: 'June 2023',
+      title: 'The Beginning',
       description:
-        "Started as a small aquarium enthusiast community with a vision to make aquatic life accessible to everyone.",
+        'Trust Homewares Pvt Ltd started its journey in June 2023 with a clear goal — to offer reliable, stylish, and high-quality homeware products for Indian homes.',
     },
     {
-      year: "2020",
-      title: "First Store",
+      year: '2023',
+      title: '⁠First Market Launch',
       description:
-        "Opened our first physical store, offering premium aquatic products and expert consultation services.",
+        'Our first sales began in Uttar Pradesh, starting with trusted retailers and distributors in Lucknow.',
     },
     {
-      year: "2021",
-      title: "Online Expansion",
+      year: '2024',
+      title: '⁠Online Expansion',
       description:
-        "Launched our e-commerce platform, reaching customers nationwide with our curated product selection.",
+        'To meet rising demand, we expanded online through our own eCommerce platform and social media channels, reaching customers across India.',
     },
     {
-      year: "2022",
-      title: "Community Growth",
+      year: '2025',
+      title: '⁠Innovation-Driven Growth',
       description:
-        "Built a thriving community of 10,000+ aquarium enthusiasts sharing knowledge and experiences.",
-    },
-    {
-      year: "2023",
-      title: "Innovation Focus",
-      description:
-        "Introduced cutting-edge aquatic technology and sustainable practices to our product lineup.",
-    },
-    {
-      year: "2024",
-      title: "Global Reach",
-      description:
-        "Expanded internationally, bringing our passion for aquatic life to customers worldwide.",
+        'We focus on continuous innovation — from modern product design to user-friendly packaging — to deliver convenience, quality, and value.',
     },
   ];
 
   const values = [
     {
       icon: Heart,
-      title: "Passion",
+      title: 'Passion',
       description:
-        "We're driven by genuine love for aquatic life and creating beautiful underwater ecosystems.",
+        'We’re passionate about creating meaningful, well-crafted products that improve daily living. Every design reflects care, usability, and commitment to excellence.',
     },
     {
       icon: Lightbulb,
-      title: "Innovation",
+      title: 'Innovation',
       description:
-        "Constantly seeking new technologies and methods to improve the aquarium experience.",
+        'Our team continuously rethinks, refines, and reinvents — to deliver smarter, better homeware solutions that fit today’s fast-paced lifestyle.',
     },
     {
       icon: Target,
-      title: "Quality",
+      title: 'Mission',
       description:
-        "Every product is carefully selected and tested to meet our high standards of excellence.",
+        'To provide durable, affordable, and aesthetically pleasing homeware products that bring ease, utility, and elegance to homes across India and beyond.',
     },
     {
-      icon: Users,
-      title: "Community",
+      icon: Earth,
+      title: 'Vision',
       description:
-        "Building lasting relationships with customers and fostering a supportive aquarium community.",
+        'To become a globally trusted homeware brand, expanding our reach from Indian households to international markets, through innovation, quality, and customer-first values.',
     },
   ];
 

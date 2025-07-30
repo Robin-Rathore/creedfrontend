@@ -1,14 +1,14 @@
 //@ts-nocheck
 
-import type React from "react";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import type React from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
 import {
   ShoppingCart,
   ArrowRight,
@@ -16,23 +16,65 @@ import {
   Shield,
   RotateCcw,
   Tag,
-} from "lucide-react";
-import { useAtom } from "jotai";
-import { cartItemsAtom, cartSubtotalAtom } from "@/queries/store/cart";
+} from 'lucide-react';
+import { useAtom } from 'jotai';
+import { cartItemsAtom, cartSubtotalAtom } from '@/queries/store/cart';
 
 export const CartSummary: React.FC = () => {
   const [cartItems] = useAtom(cartItemsAtom);
   const [cartSubtotal] = useAtom(cartSubtotalAtom);
-  const [promoCode, setPromoCode] = useState("");
+  const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<{
     code: string;
     discount: number;
   } | null>(null);
 
-  const shipping = cartSubtotal >= 50 ? 0 : 9.99;
-  const promoDiscount = appliedPromo ? appliedPromo.discount : 0;
-  const tax = (cartSubtotal - promoDiscount) * 0.08;
-  const total = cartSubtotal + shipping - promoDiscount + tax;
+  const calculateGST = () => {
+    let totalGST = 0;
+
+    cartItems.forEach((item) => {
+      // Get the GST rate from the product (12% or 18%)
+      const gstRate = item.product.gst || 18; // Default to 18% if not specified
+
+      // Calculate GST for this item
+      const itemGST = (item.itemTotal * gstRate) / 100;
+      totalGST += itemGST;
+    });
+
+    return Math.round(totalGST); // Round to nearest rupee
+  };
+
+  console.log('Cart Items:', cartItems);
+
+  // Get detailed GST breakdown by rate
+  const getGSTBreakdown = () => {
+    const gstBreakdown = { 12: 0, 18: 0 };
+
+    cartItems.forEach((item) => {
+      const gstRate = item.product.gst || 18;
+      const itemGST = (item.itemTotal * gstRate) / 100;
+
+      if (gstRate === 12) {
+        gstBreakdown[12] += itemGST;
+      } else {
+        gstBreakdown[18] += itemGST;
+      }
+    });
+
+    return {
+      gst12: Math.round(gstBreakdown[12]),
+      gst18: Math.round(gstBreakdown[18]),
+      total: Math.round(gstBreakdown[12] + gstBreakdown[18]),
+    };
+  };
+
+  // Replace the existing tax calculation
+  const tax = calculateGST();
+  const gstBreakdown = getGSTBreakdown();
+
+  const shipping = 59.0; // Fixed shipping cost for simplicity
+  // const promoDiscount = appliedPromo ? appliedPromo.discount : 0;
+  const total = cartSubtotal + shipping + tax;
 
   const handleApplyPromo = () => {
     // Mock promo code validation
@@ -47,10 +89,10 @@ export const CartSummary: React.FC = () => {
         code: promoCode.toUpperCase(),
         discount: validCodes[promoCode.toUpperCase()],
       });
-      setPromoCode("");
+      setPromoCode('');
     } else {
       // Handle invalid promo code
-      alert("Invalid promo code");
+      alert('Invalid promo code');
     }
   };
 
@@ -166,26 +208,26 @@ export const CartSummary: React.FC = () => {
             </div>
 
             {/* Free Shipping Progress */}
-            {shipping > 0 && (
-              <div className="p-4 bg-blue-50 rounded-lg">
-                <div className="flex justify-between text-sm mb-2">
+            {/* {shipping > 0 && ( */}
+            {/* <div className="p-4 bg-blue-50 rounded-lg"> */}
+            {/* <div className="flex justify-between text-sm mb-2">
                   <span className="text-blue-800 font-medium">
                     Free shipping at $50
                   </span>
                   <span className="text-blue-600 font-semibold">
                     ${(50 - cartSubtotal).toFixed(2)} to go
                   </span>
-                </div>
-                <div className="w-full bg-blue-200 rounded-full h-2">
+                </div> */}
+            {/* <div className="w-full bg-blue-200 rounded-full h-2">
                   <div
                     className="bg-blue-600 h-2 rounded-full transition-all duration-500"
                     style={{
                       width: `${Math.min((cartSubtotal / 50) * 100, 100)}%`,
                     }}
                   ></div>
-                </div>
-              </div>
-            )}
+                </div> */}
+            {/* </div> */}
+            {/* )} */}
 
             {/* Checkout Button */}
             <Button
