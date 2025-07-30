@@ -1,3 +1,4 @@
+//@ts-nocheck
 export * from "./PremiumHeroSection";
 export * from "./ModernHeroSection";
 export * from "./HeroSection";

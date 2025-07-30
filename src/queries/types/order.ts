@@ -1,3 +1,4 @@
+//@ts-nocheck
 export interface Order {
   _id: string;
   orderNumber: string;

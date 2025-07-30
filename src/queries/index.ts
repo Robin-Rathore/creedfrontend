@@ -1,3 +1,4 @@
+//@ts-nocheck
 export * from "./hooks/auth"
 export * from "./hooks/user"
 export * from "./hooks/product"

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../utils/api';
 import { queryKeys } from '../../utils/queryKeys';

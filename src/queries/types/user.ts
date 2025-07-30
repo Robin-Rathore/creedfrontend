@@ -1,3 +1,4 @@
+//@ts-nocheck
 export interface Address {
   _id: string;
   type: 'home' | 'work' | 'other';

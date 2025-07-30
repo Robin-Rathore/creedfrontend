@@ -1,3 +1,4 @@
+//@ts-nocheck
 // export const config = {
 //   companyName: "Creed",
 

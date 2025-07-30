@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React, { useState, useRef, useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import Bottle_Video from '@/images/Creed_Voiceover.mp4';

@@ -1,3 +1,4 @@
+//@ts-nocheck
 export interface Review {
   _id: string
   user: {

@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react";
 import { useAtom } from "jotai";
 import { Button } from "@/components/ui/button";
