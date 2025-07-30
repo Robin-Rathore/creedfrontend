@@ -1,20 +1,20 @@
 //@ts-nocheck
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link, useParams, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   Search,
   Grid3X3,
@@ -25,49 +25,56 @@ import {
   SlidersHorizontal,
   X,
   ArrowLeft,
-} from "lucide-react";
-import { useProducts } from "@/queries/hooks/product";
-import { useCategories } from "@/queries/hooks/category";
-import { useCart } from "@/queries/hooks/user";
+} from 'lucide-react';
+import {
+  useCategoryBySlug,
+  useCategoryProducts,
+} from '@/queries/hooks/category';
+import { useCart } from '@/queries/hooks/user';
+import { userAtom } from '@/queries';
+import { useAtom } from 'jotai';
 
 export const CategoryProducts: React.FC = () => {
   const { slug } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [viewMode, setViewMode] = useState("grid");
+  const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
-    search: searchParams.get("search") || "",
-    minPrice: searchParams.get("minPrice") || "",
-    maxPrice: searchParams.get("maxPrice") || "",
-    sortBy: searchParams.get("sortBy") || "createdAt",
-    sortOrder: searchParams.get("sortOrder") || "desc",
-    page: Number.parseInt(searchParams.get("page") || "1"),
+    search: searchParams.get('search') || '',
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    sortBy: searchParams.get('sortBy') || 'createdAt',
+    sortOrder: searchParams.get('sortOrder') || 'desc',
+    page: Number.parseInt(searchParams.get('page') || '1'),
   });
 
-  const { data: categories } = useCategories();
-  const category = categories?.find((cat) => cat.slug === slug);
+  // Get category by slug first
+  const { data: category, isLoading: categoryLoading } = useCategoryBySlug(
+    slug!
+  );
 
-  const { data: productsData, isLoading } = useProducts({
-    page: filters.page,
-    limit: 12,
-    search: filters.search || undefined,
-    category: category?._id,
-    minPrice: filters.minPrice
-      ? Number.parseFloat(filters.minPrice)
-      : undefined,
-    maxPrice: filters.maxPrice
-      ? Number.parseFloat(filters.maxPrice)
-      : undefined,
-    sort: `${filters.sortOrder === "desc" ? "-" : ""}${filters.sortBy}`,
-  });
+  // Then fetch products for this specific category
+  const { data: productsData, isLoading: productsLoading } =
+    useCategoryProducts(category?._id, {
+      page: filters.page,
+      limit: 12,
+      search: filters.search || undefined,
+      minPrice: filters.minPrice
+        ? Number.parseFloat(filters.minPrice)
+        : undefined,
+      maxPrice: filters.maxPrice
+        ? Number.parseFloat(filters.maxPrice)
+        : undefined,
+      sort: `${filters.sortOrder === 'desc' ? '-' : ''}${filters.sortBy}`,
+    });
 
-  const { addToCart } = useCart();
+  const isLoading = categoryLoading || productsLoading;
 
   // Update URL params when filters change
   useEffect(() => {
     const params = new URLSearchParams();
     Object.entries(filters).forEach(([key, value]) => {
-      if (value && value !== "") {
+      if (value && value !== '') {
         params.set(key, value.toString());
       }
     });
@@ -78,30 +85,55 @@ export const CategoryProducts: React.FC = () => {
     setFilters((prev) => ({
       ...prev,
       [key]: value,
-      page: key !== "page" ? 1 : value,
+      page: key !== 'page' ? 1 : value,
     }));
   };
 
   const clearFilters = () => {
     setFilters({
-      search: "",
-      minPrice: "",
-      maxPrice: "",
-      sortBy: "createdAt",
-      sortOrder: "desc",
+      search: '',
+      minPrice: '',
+      maxPrice: '',
+      sortBy: 'createdAt',
+      sortOrder: 'desc',
       page: 1,
     });
   };
 
-  const handleAddToCart = async (product: any) => {
-    try {
-      await addToCart.mutateAsync({
-        productId: product._id,
-        quantity: 1,
-      });
-    } catch (error) {
-      console.error("Add to cart error:", error);
+  const [, addToCart] = useAtom(addToCartAtom);
+
+  const handleAddToCart = (product: any) => {
+    if (!product) return;
+
+    if (product.stock === 0) {
+      toast.error('Product is out of stock');
+      return;
     }
+
+    // Create cart item similar to ProductDetail component
+    const cartItem = {
+      productId: product._id,
+      quantity: 1,
+      variant:
+        product.variants && product.variants.length > 0
+          ? product.variants[0]
+          : null,
+      product: {
+        _id: product._id,
+        name: product.name,
+        price: product.price,
+        comparePrice: product.comparePrice,
+        images: product.images,
+        stock: product.stock,
+        slug: product.slug,
+        shortDescription: product.shortDescription,
+        description: product.description,
+        gst: product.gst || 0,
+      },
+    };
+
+    addToCart(cartItem);
+    toast.success('Added to cart!');
   };
 
   if (isLoading) {
@@ -197,7 +229,10 @@ export const CategoryProducts: React.FC = () => {
               </p>
               <div className="flex items-center gap-4">
                 <Badge className="bg-[var(--lightest)] text-[var(--medium)] border-[var(--light)]">
-                  {productsData?.pagination?.totalItems || 0} Products
+                  {productsData?.pagination?.totalItems ||
+                    productsData?.count ||
+                    0}{' '}
+                  Products
                 </Badge>
                 {category.isPopular && (
                   <Badge className="bg-[var(--medium)] text-white">
@@ -209,7 +244,7 @@ export const CategoryProducts: React.FC = () => {
             {category.image?.url && (
               <div className="relative">
                 <img
-                  src={category.image.url || "/placeholder.svg"}
+                  src={category.image.url || '/placeholder.svg'}
                   alt={category.name}
                   className="w-full h-64 object-cover rounded-lg shadow-sm"
                 />
@@ -262,7 +297,7 @@ export const CategoryProducts: React.FC = () => {
               <Input
                 placeholder={`Search in ${category.name}...`}
                 value={filters.search}
-                onChange={(e) => updateFilter("search", e.target.value)}
+                onChange={(e) => updateFilter('search', e.target.value)}
                 className="pl-10"
               />
             </div>
@@ -271,9 +306,9 @@ export const CategoryProducts: React.FC = () => {
             <Select
               value={`${filters.sortBy}-${filters.sortOrder}`}
               onValueChange={(value) => {
-                const [sortBy, sortOrder] = value.split("-");
-                updateFilter("sortBy", sortBy);
-                updateFilter("sortOrder", sortOrder);
+                const [sortBy, sortOrder] = value.split('-');
+                updateFilter('sortBy', sortBy);
+                updateFilter('sortOrder', sortOrder);
               }}
             >
               <SelectTrigger className="w-full lg:w-[200px]">
@@ -295,25 +330,25 @@ export const CategoryProducts: React.FC = () => {
             {/* View Mode Toggle */}
             <div className="flex items-center gap-2">
               <Button
-                variant={viewMode === "grid" ? "default" : "outline"}
+                variant={viewMode === 'grid' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setViewMode("grid")}
+                onClick={() => setViewMode('grid')}
                 className={
-                  viewMode === "grid"
-                    ? "bg-[var(--medium)] hover:bg-[var(--dark)]"
-                    : ""
+                  viewMode === 'grid'
+                    ? 'bg-[var(--medium)] hover:bg-[var(--dark)]'
+                    : ''
                 }
               >
                 <Grid3X3 className="h-4 w-4" />
               </Button>
               <Button
-                variant={viewMode === "list" ? "default" : "outline"}
+                variant={viewMode === 'list' ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setViewMode("list")}
+                onClick={() => setViewMode('list')}
                 className={
-                  viewMode === "list"
-                    ? "bg-[var(--medium)] hover:bg-[var(--dark)]"
-                    : ""
+                  viewMode === 'list'
+                    ? 'bg-[var(--medium)] hover:bg-[var(--dark)]'
+                    : ''
                 }
               >
                 <List className="h-4 w-4" />
@@ -337,7 +372,7 @@ export const CategoryProducts: React.FC = () => {
             {showFilters && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
+                animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 className="mt-4 pt-4 border-t"
               >
@@ -350,7 +385,7 @@ export const CategoryProducts: React.FC = () => {
                       type="number"
                       placeholder="0"
                       value={filters.minPrice}
-                      onChange={(e) => updateFilter("minPrice", e.target.value)}
+                      onChange={(e) => updateFilter('minPrice', e.target.value)}
                     />
                   </div>
                   <div>
@@ -361,7 +396,7 @@ export const CategoryProducts: React.FC = () => {
                       type="number"
                       placeholder="1000"
                       value={filters.maxPrice}
-                      onChange={(e) => updateFilter("maxPrice", e.target.value)}
+                      onChange={(e) => updateFilter('maxPrice', e.target.value)}
                     />
                   </div>
                   <div className="md:col-span-2 flex items-end">
@@ -388,9 +423,9 @@ export const CategoryProducts: React.FC = () => {
           className="flex items-center justify-between mb-6"
         >
           <p className="text-gray-600">
-            Showing {productsData?.data?.length || 0} of{" "}
-            {productsData?.pagination?.totalItems || 0} products in{" "}
-            {category.name}
+            Showing {productsData?.data?.length || 0} of{' '}
+            {productsData?.pagination?.totalItems || productsData?.count || 0}{' '}
+            products in {category.name}
           </p>
         </motion.div>
 
@@ -400,7 +435,7 @@ export const CategoryProducts: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          {viewMode === "grid" ? (
+          {viewMode === 'grid' ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               <AnimatePresence>
                 {productsData?.data?.map((product, index) => (
@@ -418,7 +453,7 @@ export const CategoryProducts: React.FC = () => {
                           <img
                             src={
                               product.images?.[0]?.url ||
-                              "/placeholder.svg?height=300&width=300"
+                              '/placeholder.svg?height=300&width=300'
                             }
                             alt={product.name}
                             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
@@ -490,8 +525,8 @@ export const CategoryProducts: React.FC = () => {
                                   className={`h-4 w-4 ${
                                     i <
                                     Math.floor(product.ratings?.average || 0)
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
+                                      ? 'text-yellow-400 fill-current'
+                                      : 'text-gray-300'
                                   }`}
                                 />
                               ))}
@@ -552,7 +587,7 @@ export const CategoryProducts: React.FC = () => {
                             <img
                               src={
                                 product.images?.[0]?.url ||
-                                "/placeholder.svg?height=120&width=120"
+                                '/placeholder.svg?height=120&width=120'
                               }
                               alt={product.name}
                               className="w-24 h-24 object-cover rounded-lg"
@@ -600,8 +635,8 @@ export const CategoryProducts: React.FC = () => {
                                           Math.floor(
                                             product.ratings?.average || 0
                                           )
-                                            ? "text-yellow-400 fill-current"
-                                            : "text-gray-300"
+                                            ? 'text-yellow-400 fill-current'
+                                            : 'text-gray-300'
                                         }`}
                                       />
                                     ))}
@@ -662,7 +697,7 @@ export const CategoryProducts: React.FC = () => {
           >
             <Button
               variant="outline"
-              onClick={() => updateFilter("page", filters.page - 1)}
+              onClick={() => updateFilter('page', filters.page - 1)}
               disabled={filters.page === 1}
             >
               Previous
@@ -675,12 +710,12 @@ export const CategoryProducts: React.FC = () => {
                 return (
                   <Button
                     key={page}
-                    variant={filters.page === page ? "default" : "outline"}
-                    onClick={() => updateFilter("page", page)}
+                    variant={filters.page === page ? 'default' : 'outline'}
+                    onClick={() => updateFilter('page', page)}
                     className={
                       filters.page === page
-                        ? "bg-[var(--medium)] hover:bg-[var(--dark)]"
-                        : ""
+                        ? 'bg-[var(--medium)] hover:bg-[var(--dark)]'
+                        : ''
                     }
                   >
                     {page}
@@ -691,7 +726,7 @@ export const CategoryProducts: React.FC = () => {
 
             <Button
               variant="outline"
-              onClick={() => updateFilter("page", filters.page + 1)}
+              onClick={() => updateFilter('page', filters.page + 1)}
               disabled={filters.page >= productsData.pagination.totalPages}
             >
               Next

@@ -1,58 +1,123 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "react-hot-toast"
-import { apiClient, createFormData } from "../../utils/api"
-import { queryKeys } from "../../utils/queryKeys"
-import type { CreateProductRequest, Product } from "../../types/product"
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '../../utils/api';
+import { queryKeys } from '../../utils/queryKeys';
+import { toast } from 'sonner';
 
 export const useCreateProduct = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateProductRequest): Promise<{ success: boolean; message: string; data: Product }> => {
-      const formData = createFormData(data)
-      return apiClient.post("/products", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+    mutationFn: async ({
+      productData,
+      images,
+    }: {
+      productData: any;
+      images?: File[];
+    }) => {
+      const formData = new FormData();
+      Object.keys(productData).forEach((key) => {
+        if (productData[key] !== undefined && productData[key] !== null) {
+          if (
+            typeof productData[key] === 'object' &&
+            !Array.isArray(productData[key])
+          ) {
+            formData.append(key, JSON.stringify(productData[key]));
+          } else if (Array.isArray(productData[key])) {
+            formData.append(key, productData[key].join(','));
+          } else {
+            formData.append(key, productData[key]);
+          }
+        }
+      });
+      if (images) {
+        images.forEach((image) => {
+          formData.append('images', image);
+        });
+      }
+      const response = await apiClient.post('/products', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
     },
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
-      toast.success(response.message)
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() });
+      toast.success('Product created successfully');
     },
-  })
-}
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to create product');
+    },
+  });
+};
 
 export const useUpdateProduct = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
-      ...data
-    }: CreateProductRequest & { id: string }): Promise<{ success: boolean; message: string; data: Product }> => {
-      const formData = createFormData(data)
-      return apiClient.put(`/products/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+      productData,
+      images,
+    }: {
+      id: string;
+      productData: any;
+      images?: File[];
+    }) => {
+      const formData = new FormData();
+      Object.keys(productData).forEach((key) => {
+        if (productData[key] !== undefined && productData[key] !== null) {
+          if (
+            typeof productData[key] === 'object' &&
+            !Array.isArray(productData[key])
+          ) {
+            formData.append(key, JSON.stringify(productData[key]));
+          } else if (Array.isArray(productData[key])) {
+            formData.append(key, productData[key].join(','));
+          } else {
+            formData.append(key, productData[key]);
+          }
+        }
+      });
+      if (images) {
+        images.forEach((image) => {
+          formData.append('images', image);
+        });
+      }
+      const response = await apiClient.put(`/products/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
     },
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.detail(variables.id) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
-      toast.success(response.message)
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.products.detail(id),
+      });
+      toast.success('Product updated successfully');
     },
-  })
-}
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to update product');
+    },
+  });
+};
 
 export const useDeleteProduct = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string): Promise<{ success: boolean; message: string }> => apiClient.delete(`/products/${id}`),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
-      toast.success(response.message)
+    mutationFn: async (id: string) => {
+      const response = await apiClient.delete(`/products/${id}`);
+      return response.data;
     },
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.products.all() });
+      toast.success('Product deleted successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to delete product');
+    },
+  });
+};

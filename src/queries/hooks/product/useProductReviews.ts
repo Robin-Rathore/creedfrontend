@@ -1,51 +1,92 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "react-hot-toast"
-import { apiClient, createFormData } from "../../utils/api"
-import { queryKeys } from "../../utils/queryKeys"
-import type { Review, ReviewStats, CreateReviewRequest, ReviewsQuery } from "../../types/review"
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { api } from '@/queries/utils/api';
+import { queryKeys } from '@/queries/utils/queryKeys';
+import { toast } from 'react-hot-toast';
 
-export const useProductReviews = (productId: string, params?: ReviewsQuery) => {
+// Get product reviews
+export const useProductReviews = (productId: string) => {
   return useQuery({
-    queryKey: queryKeys.products.reviews(productId, params),
-    queryFn: (): Promise<{
-      success: boolean
-      count: number
-      pagination: any
-      data: Review[]
-    }> => apiClient.get(`/products/${productId}/reviews`, params),
+    queryKey: queryKeys.products.detail(productId),
+    queryFn: async () => {
+      const response = await api.get(`/products/${productId}/reviews`);
+      return response.data;
+    },
     enabled: !!productId,
-  })
-}
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+};
 
-export const useProductReviewStats = (productId: string) => {
-  return useQuery({
-    queryKey: queryKeys.products.reviewStats(productId),
-    queryFn: (): Promise<{ success: boolean; data: ReviewStats }> =>
-      apiClient.get(`/products/${productId}/reviews/stats`),
-    select: (data) => data.data,
-    enabled: !!productId,
-    staleTime: 10 * 60 * 1000, // 10 minutes
-  })
-}
-
-export const useCreateProductReview = () => {
-  const queryClient = useQueryClient()
+// Create review
+export const useCreateReview = () => {
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({ productId, ...reviewData }: any) => {
+      const response = await api.post(
+        `/products/${productId}/reviews`,
+        reviewData
+      );
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.products.detail(variables.productId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.products.detail(variables.productId),
+      });
+      toast.success('Review submitted successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to submit review');
+    },
+  });
+};
+
+// Update review
+export const useUpdateReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ reviewId, productId, ...reviewData }: any) => {
+      const response = await api.put(`/reviews/${reviewId}`, reviewData);
+      return response.data;
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.products.detail(variables.productId),
+      });
+      toast.success('Review updated successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to update review');
+    },
+  });
+};
+
+// Delete review
+export const useDeleteReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      reviewId,
       productId,
-      ...data
-    }: CreateReviewRequest & { productId: string }): Promise<{ success: boolean; message: string; data: Review }> => {
-      const formData = createFormData(data)
-      return apiClient.post(`/products/${productId}/reviews`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+    }: {
+      reviewId: string;
+      productId: string;
+    }) => {
+      const response = await api.delete(`/reviews/${reviewId}`);
+      return response.data;
     },
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.reviews(variables.productId) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.reviewStats(variables.productId) })
-      queryClient.invalidateQueries({ queryKey: queryKeys.products.detail(variables.productId) })
-      toast.success(response.message)
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.products.detail(variables.productId),
+      });
+      toast.success('Review deleted successfully');
     },
-  })
-}
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to delete review');
+    },
+  });
+};

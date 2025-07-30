@@ -1,28 +1,28 @@
 //@ts-nocheck
 
-import type React from "react";
-import { useState, useEffect } from "react";
-import { useAtom } from "jotai";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import { useAtom } from 'jotai';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { X, Upload, Loader2 } from "lucide-react";
-import { productFormAtom, selectedProductAtom } from "../state/adminAtoms";
+} from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { X, Upload, Loader2 } from 'lucide-react';
+import { productFormAtom, selectedProductAtom } from '../state/adminAtoms';
 import {
   useCreateProduct,
   useUpdateProduct,
-} from "@/queries/hooks/product/useProductMutations";
-import { useCategories } from "@/queries/hooks/category/useCategories";
+} from '@/queries/hooks/product/useProductMutations';
+import { useCategories } from '@/queries/hooks/category/useCategories';
 
 interface ProductFormProps {
   onClose: () => void;
@@ -39,33 +39,41 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [features, setFeatures] = useState<string[]>([]);
-  const [currentTag, setCurrentTag] = useState("");
-  const [currentFeature, setCurrentFeature] = useState("");
+  const [currentTag, setCurrentTag] = useState('');
+  const [currentFeature, setCurrentFeature] = useState('');
 
   const createProductMutation = useCreateProduct();
   const updateProductMutation = useUpdateProduct();
   const { data: categories } = useCategories();
+
+  // Debug: Log mutation states
+  console.log('Create mutation state:', {
+    isPending: createProductMutation.isPending,
+    isError: createProductMutation.isError,
+    error: createProductMutation.error,
+    isSuccess: createProductMutation.isSuccess,
+  });
 
   useEffect(() => {
     if (isEdit && selectedProduct) {
       setFormData({
         name: selectedProduct.name,
         description: selectedProduct.description,
-        shortDescription: selectedProduct.shortDescription || "",
+        shortDescription: selectedProduct.shortDescription || '',
         price: selectedProduct.price.toString(),
-        comparePrice: selectedProduct.comparePrice?.toString() || "",
-        costPrice: selectedProduct.costPrice?.toString() || "",
+        comparePrice: selectedProduct.comparePrice?.toString() || '',
+        costPrice: selectedProduct.costPrice?.toString() || '',
         category: selectedProduct.category._id,
-        subcategory: selectedProduct.subcategory?._id || "",
-        brand: selectedProduct.brand || "",
+        subcategory: selectedProduct.subcategory?._id || '',
+        brand: selectedProduct.brand || '',
         sku: selectedProduct.sku,
         stock: selectedProduct.stock.toString(),
         lowStockThreshold: selectedProduct.lowStockThreshold.toString(),
-        tags: selectedProduct.tags.join(", "),
-        features: selectedProduct.features.join(", "),
+        tags: selectedProduct.tags.join(', '),
+        features: selectedProduct.features.join(', '),
         specifications: JSON.stringify(selectedProduct.specifications),
-        seoTitle: selectedProduct.seoTitle || "",
-        seoDescription: selectedProduct.seoDescription || "",
+        seoTitle: selectedProduct.seoTitle || '',
+        seoDescription: selectedProduct.seoDescription || '',
         isDigital: selectedProduct.isDigital,
         shippingRequired: selectedProduct.shippingRequired,
         taxable: selectedProduct.taxable,
@@ -101,7 +109,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     if (currentTag.trim() && !tags.includes(currentTag.trim())) {
       const newTags = [...tags, currentTag.trim()];
       setTags(newTags);
-      setCurrentTag("");
+      setCurrentTag('');
     }
   };
 
@@ -113,7 +121,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     if (currentFeature.trim() && !features.includes(currentFeature.trim())) {
       const newFeatures = [...features, currentFeature.trim()];
       setFeatures(newFeatures);
-      setCurrentFeature("");
+      setCurrentFeature('');
     }
   };
 
@@ -124,36 +132,136 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const submitData = new FormData();
+    console.log('Form submitted!'); // Debug log
+    console.log('Form data:', formData); // Debug log
+    console.log('Is edit mode:', isEdit); // Debug log
+    console.log('Images:', images); // Debug log
+    console.log('Tags:', tags); // Debug log
+    console.log('Features:', features); // Debug log
 
-    // Add form fields
-    Object.entries(formData).forEach(([key, value]) => {
-      if (value !== null && value !== undefined) {
-        submitData.append(key, value.toString());
-      }
-    });
+    // Validation checks
+    if (!formData.name?.trim()) {
+      console.error('Product name is required');
+      alert('Product name is required');
+      return;
+    }
 
-    // Add tags and features
-    submitData.append("tags", tags.join(","));
-    submitData.append("features", features.join(","));
+    if (!formData.description?.trim()) {
+      console.error('Product description is required');
+      alert('Product description is required');
+      return;
+    }
 
-    // Add images
-    images.forEach((image) => {
-      submitData.append("images", image);
-    });
+    if (!formData.price || parseFloat(formData.price) <= 0) {
+      console.error('Valid price is required');
+      alert('Valid price is required');
+      return;
+    }
+
+    if (!formData.category) {
+      console.error('Category is required');
+      alert('Category is required');
+      return;
+    }
+
+    if (!formData.sku?.trim()) {
+      console.error('SKU is required');
+      alert('SKU is required');
+      return;
+    }
+
+    if (!formData.stock || parseInt(formData.stock) < 0) {
+      console.error('Valid stock quantity is required');
+      alert('Valid stock quantity is required');
+      return;
+    }
+
+    // For new products, require at least one image
+    if (!isEdit && images.length === 0 && imagePreviews.length === 0) {
+      console.error('At least one product image is required');
+      alert('At least one product image is required');
+      return;
+    }
 
     try {
+      console.log('Preparing submission data...'); // Debug log
+
       if (isEdit && selectedProduct) {
-        await updateProductMutation.mutateAsync({
-          id: selectedProduct._id,
-          ...Object.fromEntries(submitData),
+        console.log('Updating existing product:', selectedProduct._id); // Debug log
+
+        // Prepare product data object
+        const productData = {
+          ...formData,
+          tags: tags.join(','),
+          features: features.join(','),
+        };
+
+        // Remove any undefined, null, or empty string values
+        Object.keys(productData).forEach((key) => {
+          const value = productData[key];
+          if (value === null || value === undefined || value === '') {
+            delete productData[key];
+          }
         });
+
+        // Prepare the data structure for update mutation
+        const updateData = {
+          id: selectedProduct._id,
+          productData: productData,
+          // Only include images if new ones were selected
+          ...(images.length > 0 && { images }),
+        };
+
+        console.log('Update data:', updateData); // Debug log
+
+        const result = await updateProductMutation.mutateAsync(updateData);
+        console.log('Update result:', result); // Debug log
       } else {
-        await createProductMutation.mutateAsync(Object.fromEntries(submitData));
+        console.log('Creating new product...'); // Debug log
+
+        // Prepare product data object
+        const productData = {
+          ...formData,
+          tags: tags.join(','),
+          features: features.join(','),
+        };
+
+        // Remove any undefined, null, or empty string values
+        Object.keys(productData).forEach((key) => {
+          const value = productData[key];
+          if (value === null || value === undefined || value === '') {
+            delete productData[key];
+          }
+        });
+
+        // Prepare the data structure that your mutation expects
+        const mutationData = {
+          productData: productData,
+          images: images.length > 0 ? images : undefined,
+        };
+
+        console.log('Product data:', productData); // Debug log
+        console.log('Images:', images); // Debug log
+        console.log('Mutation data:', mutationData); // Debug log
+
+        console.log('Calling createProductMutation.mutateAsync...'); // Debug log
+        const result = await createProductMutation.mutateAsync(mutationData);
+        console.log('Create result:', result); // Debug log
       }
+
+      console.log('Operation successful, closing form...'); // Debug log
       onClose();
     } catch (error) {
-      // Error handled by mutation
+      console.error('Error in handleSubmit:', error); // Debug log
+
+      // Show user-friendly error message
+      if (error?.response?.data?.message) {
+        alert(`Error: ${error.response.data.message}`);
+      } else if (error?.message) {
+        alert(`Error: ${error.message}`);
+      } else {
+        alert('An unexpected error occurred. Please try again.');
+      }
     }
   };
 
@@ -165,7 +273,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       <Card>
         <CardHeader>
           <CardTitle>
-            {isEdit ? "Edit Product" : "Create New Product"}
+            {isEdit ? 'Edit Product' : 'Create New Product'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -176,8 +284,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <Label htmlFor="name">Product Name *</Label>
                 <Input
                   id="name"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  value={formData.name || ''}
+                  onChange={(e) => handleInputChange('name', e.target.value)}
                   required
                   maxLength={200}
                 />
@@ -186,8 +294,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <Label htmlFor="sku">SKU *</Label>
                 <Input
                   id="sku"
-                  value={formData.sku || ""}
-                  onChange={(e) => handleInputChange("sku", e.target.value)}
+                  value={formData.sku || ''}
+                  onChange={(e) => handleInputChange('sku', e.target.value)}
                   required
                   placeholder="Unique product identifier"
                 />
@@ -196,11 +304,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="brand">Brand</Label>
+                <Label htmlFor="gst">GST</Label>
                 <Input
-                  id="brand"
-                  value={formData.brand}
-                  onChange={(e) => handleInputChange("brand", e.target.value)}
+                  id="gst"
+                  value={formData.gst || ''}
+                  onChange={(e) => handleInputChange('gst', e.target.value)}
                 />
               </div>
               <div className="space-y-2">
@@ -209,9 +317,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   id="lowStockThreshold"
                   type="number"
                   min="0"
-                  value={formData.lowStockThreshold || "10"}
+                  value={formData.lowStockThreshold || '10'}
                   onChange={(e) =>
-                    handleInputChange("lowStockThreshold", e.target.value)
+                    handleInputChange('lowStockThreshold', e.target.value)
                   }
                 />
               </div>
@@ -222,9 +330,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <Label htmlFor="description">Description *</Label>
               <Textarea
                 id="description"
-                value={formData.description}
+                value={formData.description || ''}
                 onChange={(e) =>
-                  handleInputChange("description", e.target.value)
+                  handleInputChange('description', e.target.value)
                 }
                 rows={4}
                 required
@@ -236,9 +344,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <Label htmlFor="shortDescription">Short Description</Label>
               <Textarea
                 id="shortDescription"
-                value={formData.shortDescription}
+                value={formData.shortDescription || ''}
                 onChange={(e) =>
-                  handleInputChange("shortDescription", e.target.value)
+                  handleInputChange('shortDescription', e.target.value)
                 }
                 rows={2}
                 maxLength={500}
@@ -254,8 +362,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   type="number"
                   step="0.01"
                   min="0"
-                  value={formData.price}
-                  onChange={(e) => handleInputChange("price", e.target.value)}
+                  value={formData.price || ''}
+                  onChange={(e) => handleInputChange('price', e.target.value)}
                   required
                 />
               </div>
@@ -266,9 +374,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   type="number"
                   step="0.01"
                   min="0"
-                  value={formData.comparePrice}
+                  value={formData.comparePrice || ''}
                   onChange={(e) =>
-                    handleInputChange("comparePrice", e.target.value)
+                    handleInputChange('comparePrice', e.target.value)
                   }
                 />
               </div>
@@ -279,9 +387,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   type="number"
                   step="0.01"
                   min="0"
-                  value={formData.costPrice || ""}
+                  value={formData.costPrice || ''}
                   onChange={(e) =>
-                    handleInputChange("costPrice", e.target.value)
+                    handleInputChange('costPrice', e.target.value)
                   }
                 />
               </div>
@@ -292,9 +400,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <div className="space-y-2">
                 <Label htmlFor="category">Category *</Label>
                 <Select
-                  value={formData.category}
+                  value={formData.category || ''}
                   onValueChange={(value) =>
-                    handleInputChange("category", value)
+                    handleInputChange('category', value)
                   }
                   required
                 >
@@ -313,9 +421,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               <div className="space-y-2">
                 <Label htmlFor="subcategory">Subcategory</Label>
                 <Select
-                  value={formData.subcategory}
+                  value={formData.subcategory || ''}
                   onValueChange={(value) =>
-                    handleInputChange("subcategory", value)
+                    handleInputChange('subcategory', value)
                   }
                 >
                   <SelectTrigger>
@@ -339,15 +447,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 id="stock"
                 type="number"
                 min="0"
-                value={formData.stock}
-                onChange={(e) => handleInputChange("stock", e.target.value)}
+                value={formData.stock || ''}
+                onChange={(e) => handleInputChange('stock', e.target.value)}
                 required
               />
             </div>
 
             {/* Images - Required for new products */}
             <div className="space-y-2">
-              <Label htmlFor="images">Product Images {!isEdit && "*"}</Label>
+              <Label htmlFor="images">Product Images {!isEdit && '*'}</Label>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                 <input
                   id="images"
@@ -356,7 +464,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   accept="image/*"
                   onChange={handleImageChange}
                   className="hidden"
-                  required={!isEdit && imagePreviews.length === 0}
                 />
                 <label
                   htmlFor="images"
@@ -373,7 +480,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   {imagePreviews.map((preview, index) => (
                     <div key={index} className="relative">
                       <img
-                        src={preview || "/placeholder.svg"}
+                        src={preview || '/placeholder.svg'}
                         alt={`Preview ${index}`}
                         className="w-full h-24 object-cover rounded"
                       />
@@ -401,7 +508,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   onChange={(e) => setCurrentTag(e.target.value)}
                   placeholder="Add a tag"
                   onKeyPress={(e) =>
-                    e.key === "Enter" && (e.preventDefault(), addTag())
+                    e.key === 'Enter' && (e.preventDefault(), addTag())
                   }
                 />
                 <Button type="button" onClick={addTag}>
@@ -434,7 +541,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   onChange={(e) => setCurrentFeature(e.target.value)}
                   placeholder="Add a feature"
                   onKeyPress={(e) =>
-                    e.key === "Enter" && (e.preventDefault(), addFeature())
+                    e.key === 'Enter' && (e.preventDefault(), addFeature())
                   }
                 />
                 <Button type="button" onClick={addFeature}>
@@ -465,9 +572,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <Label htmlFor="seoTitle">SEO Title</Label>
                 <Input
                   id="seoTitle"
-                  value={formData.seoTitle}
+                  value={formData.seoTitle || ''}
                   onChange={(e) =>
-                    handleInputChange("seoTitle", e.target.value)
+                    handleInputChange('seoTitle', e.target.value)
                   }
                 />
               </div>
@@ -475,9 +582,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <Label htmlFor="seoDescription">SEO Description</Label>
                 <Textarea
                   id="seoDescription"
-                  value={formData.seoDescription}
+                  value={formData.seoDescription || ''}
                   onChange={(e) =>
-                    handleInputChange("seoDescription", e.target.value)
+                    handleInputChange('seoDescription', e.target.value)
                   }
                   rows={3}
                 />
@@ -491,9 +598,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={formData.isFeatured}
+                    checked={formData.isFeatured || false}
                     onChange={(e) =>
-                      handleInputChange("isFeatured", e.target.checked)
+                      handleInputChange('isFeatured', e.target.checked)
                     }
                   />
                   <span>Featured</span>
@@ -501,9 +608,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={formData.isDigital}
+                    checked={formData.isDigital || false}
                     onChange={(e) =>
-                      handleInputChange("isDigital", e.target.checked)
+                      handleInputChange('isDigital', e.target.checked)
                     }
                   />
                   <span>Digital Product</span>
@@ -511,9 +618,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={formData.shippingRequired}
+                    checked={formData.shippingRequired || false}
                     onChange={(e) =>
-                      handleInputChange("shippingRequired", e.target.checked)
+                      handleInputChange('shippingRequired', e.target.checked)
                     }
                   />
                   <span>Requires Shipping</span>
@@ -521,9 +628,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={formData.taxable}
+                    checked={formData.taxable || false}
                     onChange={(e) =>
-                      handleInputChange("taxable", e.target.checked)
+                      handleInputChange('taxable', e.target.checked)
                     }
                   />
                   <span>Taxable</span>
@@ -540,10 +647,10 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {isEdit ? "Updating..." : "Creating..."}
+                    {isEdit ? 'Updating...' : 'Creating...'}
                   </>
                 ) : (
-                  <>{isEdit ? "Update Product" : "Create Product"}</>
+                  <>{isEdit ? 'Update Product' : 'Create Product'}</>
                 )}
               </Button>
             </div>

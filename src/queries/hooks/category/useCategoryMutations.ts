@@ -1,72 +1,134 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { toast } from "react-hot-toast"
-import { apiClient, createFormData } from "../../utils/api"
-import { queryKeys } from "../../utils/queryKeys"
-import type { CreateCategoryRequest, Category } from "../../types/category"
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '../../utils/api';
+import { queryKeys } from '../../utils/queryKeys';
+import { toast } from 'sonner';
 
 export const useCreateCategory = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: CreateCategoryRequest): Promise<{ success: boolean; message: string; data: Category }> => {
-      const formData = createFormData(data)
-      return apiClient.post("/categories", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+    mutationFn: async ({
+      categoryData,
+      image,
+    }: {
+      categoryData: any;
+      image?: File;
+    }) => {
+      const formData = new FormData();
+      Object.keys(categoryData).forEach((key) => {
+        if (categoryData[key] !== undefined && categoryData[key] !== null) {
+          if (Array.isArray(categoryData[key])) {
+            formData.append(key, categoryData[key].join(','));
+          } else if (typeof categoryData[key] === 'object') {
+            formData.append(key, JSON.stringify(categoryData[key]));
+          } else {
+            formData.append(key, categoryData[key]);
+          }
+        }
+      });
+      if (image) {
+        formData.append('image', image);
+      }
+      const response = await apiClient.post('/categories', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
     },
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.tree })
-      toast.success(response.message)
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() });
+      toast.success('Category created successfully');
     },
-  })
-}
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to create category');
+    },
+  });
+};
 
 export const useUpdateCategory = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
-      ...data
-    }: CreateCategoryRequest & { id: string }): Promise<{ success: boolean; message: string; data: Category }> => {
-      const formData = createFormData(data)
-      return apiClient.put(`/categories/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+      categoryData,
+      image,
+    }: {
+      id: string;
+      categoryData: any;
+      image?: File;
+    }) => {
+      const formData = new FormData();
+      Object.keys(categoryData).forEach((key) => {
+        if (categoryData[key] !== undefined && categoryData[key] !== null) {
+          if (Array.isArray(categoryData[key])) {
+            formData.append(key, categoryData[key].join(','));
+          } else if (typeof categoryData[key] === 'object') {
+            formData.append(key, JSON.stringify(categoryData[key]));
+          } else {
+            formData.append(key, categoryData[key]);
+          }
+        }
+      });
+      if (image) {
+        formData.append('image', image);
+      }
+      const response = await apiClient.put(`/categories/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
     },
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.tree })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.detail(variables.id) })
-      toast.success(response.message)
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.categories.detail(id),
+      });
+      toast.success('Category updated successfully');
     },
-  })
-}
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to update category');
+    },
+  });
+};
 
 export const useDeleteCategory = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string): Promise<{ success: boolean; message: string }> => apiClient.delete(`/categories/${id}`),
-    onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.tree })
-      toast.success(response.message)
+    mutationFn: async (id: string) => {
+      const response = await apiClient.delete(`/categories/${id}`);
+      return response.data;
     },
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() });
+      toast.success('Category deleted successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to delete category');
+    },
+  });
+};
 
 export const useUpdateCategoryProductCount = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string): Promise<{ success: boolean; message: string; data: any }> =>
-      apiClient.put(`/categories/${id}/update-count`),
-    onSuccess: (response, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() })
-      queryClient.invalidateQueries({ queryKey: queryKeys.categories.detail(variables) })
-      toast.success(response.message)
+    mutationFn: async (id: string) => {
+      const response = await apiClient.put(`/categories/${id}/update-count`);
+      return response.data;
     },
-  })
-}
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.categories.all() });
+      toast.success('Category product count updated');
+    },
+    onError: (error: any) => {
+      toast.error(
+        error.response?.data?.message ||
+          'Failed to update category product count'
+      );
+    },
+  });
+};

@@ -1,55 +1,58 @@
-"use client";
+//@ts-nocheck
 
-import type React from "react";
-import { motion } from "framer-motion";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Linkedin, Twitter, Mail } from "lucide-react";
+import type React from 'react';
+import { motion } from 'framer-motion';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Linkedin, Twitter, Mail } from 'lucide-react';
+import Sparsh from '@/images/sparsh2.jpg';
+import Pranav from '@/images/Pranav.jpeg';
+import ArvindSir from '@/images/ArvindSir.jpeg';
 
 export const TeamSection: React.FC = () => {
   const team = [
     {
-      name: "Sarah Johnson",
-      role: "Founder & CEO",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Marine biologist turned entrepreneur with 15+ years in aquatic industry.",
+      name: 'Pranav Chauhan',
+      role: 'Founder & Director',
+      image: Pranav,
+      bio: 'A young entrepreneur with a big dream to transform the houseware industry.',
       social: {
-        linkedin: "#",
-        twitter: "#",
-        email: "sarah@Creed.com",
+        // linkedin: '#',
+        // twitter: '#',
+        email: 'pranav.c@thpl.co.in',
       },
     },
     {
-      name: "Michael Chen",
-      role: "Head of Product",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Expert in aquarium technology and sustainable aquatic solutions.",
+      name: 'Rajnish Singh',
+      role: 'Managing Director',
+      image: '/placeholder.svg?height=300&width=300',
+      bio: 'Expert in finance and operations, ensuring smooth business processes.',
       social: {
-        linkedin: "#",
-        twitter: "#",
-        email: "michael@Creed.com",
+        linkedin: '#',
+        twitter: '#',
+        email: 'michael@Creed.com',
       },
     },
     {
-      name: "Emily Rodriguez",
-      role: "Customer Experience Director",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Passionate about creating exceptional customer journeys and building community.",
+      name: 'Arvind Kumar',
+      role: 'VP & Founder',
+      image: ArvindSir,
+      bio: 'have 15+ years of experience in the houseware industry, leading product innovation.',
       social: {
-        linkedin: "#",
-        twitter: "#",
-        email: "emily@Creed.com",
+        linkedin: 'https://www.linkedin.com/in/arvind-kumar-95800572',
+        // twitter: '#',
+        email: 'arvind.k@thpl.co.in',
       },
     },
     {
-      name: "David Kim",
-      role: "Technical Lead",
-      image: "/placeholder.svg?height=300&width=300",
-      bio: "Full-stack developer specializing in e-commerce and aquarium automation.",
+      name: 'Sparsh Rajput',
+      role: 'Tech & Export Head',
+      image: Sparsh,
+      bio: 'A tech enthusiast with a passion for sustainable solutions, leading our tech and export initiatives.',
       social: {
-        linkedin: "#",
-        twitter: "#",
-        email: "david@Creed.com",
+        linkedin: 'https://www.linkedin.com/in/sparsh-rajput-b6b9a8321/',
+        twitter: 'https://x.com/sparshrajput007?s=21',
+        email: 'sparsh.r@thpl.co.in',
       },
     },
   ];
@@ -88,7 +91,7 @@ export const TeamSection: React.FC = () => {
               <Card className="border-0 shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden">
                 <div className="relative overflow-hidden">
                   <img
-                    src={member.image || "/placeholder.svg"}
+                    src={member.image}
                     alt={member.name}
                     className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -96,20 +99,24 @@ export const TeamSection: React.FC = () => {
 
                   {/* Social Links */}
                   <div className="absolute bottom-4 left-4 right-4 flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                    >
-                      <Linkedin className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="secondary"
-                      className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
-                    >
-                      <Twitter className="h-4 w-4" />
-                    </Button>
+                    {member.social.linkedin && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {member.social.twitter && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+                      >
+                        <Twitter className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       size="sm"
                       variant="secondary"
@@ -127,7 +134,7 @@ export const TeamSection: React.FC = () => {
                   <p className="text-[var(--medium)] font-semibold mb-3">
                     {member.role}
                   </p>
-                  <p className="text-gray-600 text-sm leading-relaxed">
+                  <p className="text-gray-600 text-center text-sm leading-relaxed">
                     {member.bio}
                   </p>
                 </CardContent>

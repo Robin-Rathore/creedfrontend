@@ -1,11 +1,48 @@
-import React, { useState, useRef } from "react";
-import { Volume2, VolumeX } from "lucide-react";
-import Bottle_Video from "@/images/Creed_Voiceover.mp4";
+import React, { useState, useRef, useEffect } from 'react';
+import { Volume2, VolumeX } from 'lucide-react';
+import Bottle_Video from '@/images/Creed_Voiceover.mp4';
 
 export const VideoSection: React.FC = () => {
   const [showText, setShowText] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
+  const [isInView, setIsInView] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer to detect when section is in view
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const inView = entry.isIntersecting;
+        setIsInView(inView);
+
+        // Auto-unmute when section comes into view, mute when it goes out
+        if (videoRef.current) {
+          if (inView) {
+            videoRef.current.muted = false;
+            setIsMuted(false);
+          } else {
+            videoRef.current.muted = true;
+            setIsMuted(true);
+          }
+        }
+      },
+      {
+        threshold: 0.5, // Trigger when 50% of the section is visible
+        rootMargin: '0px',
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -19,7 +56,10 @@ export const VideoSection: React.FC = () => {
   };
 
   return (
-    <section className="relative bg-black min-h-screen overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative bg-black min-h-screen overflow-hidden"
+    >
       {/* Video Background */}
       <div className="absolute inset-0">
         <video
@@ -43,8 +83,8 @@ export const VideoSection: React.FC = () => {
           <div
             className={`transform transition-all duration-700 ease-out ${
               showText
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8 pointer-events-none"
+                ? 'opacity-100 translate-y-0'
+                : 'opacity-0 translate-y-8 pointer-events-none'
             }`}
           >
             <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 leading-tight">
@@ -88,12 +128,19 @@ export const VideoSection: React.FC = () => {
             onClick={toggleText}
             className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-xs font-light hover:bg-white/20 transition-all duration-300 border border-white/20"
           >
-            {showText ? "Hide" : "Show"}
+            {showText ? 'Hide' : 'Show'}
           </button>
         </div>
       </div>
 
-      {/* Remove Decorative Elements */}
+      {/* Visual indicator when section is in view (optional) */}
+      {isInView && (
+        <div className="absolute bottom-8 left-8 z-20">
+          <div className="px-3 py-1 bg-green-500/20 backdrop-blur-sm rounded-full text-green-400 text-xs font-light border border-green-400/20">
+            Audio Active
+          </div>
+        </div>
+      )}
     </section>
   );
 };

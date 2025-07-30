@@ -1,30 +1,33 @@
-"use client";
+'use client';
 
-import type React from "react";
-import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import type React from 'react';
+import { motion } from 'framer-motion';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
+import plant from '@/images/manufactoringplant.jpg';
 
 export const ContactHero: React.FC = () => {
   const contactInfo = [
     {
       icon: MapPin,
-      title: "Visit Our Store",
-      details: ["123 Aquarium Street", "Ocean City, OC 12345"],
+      title: 'Visit Our Plant',
+      details: [
+        '1/139, Shivalik Ganga Vihar, Navodya Nagar, Haridwar, Uttarakhand 249408',
+      ],
     },
     {
       icon: Phone,
-      title: "Call Us",
-      details: ["+1 (555) 123-4567", "Mon-Fri: 9AM-6PM"],
+      title: 'Call Us',
+      details: ['+91 9897967727', 'Mon-Fri: 10AM-8PM'],
     },
     {
       icon: Mail,
-      title: "Email Us",
-      details: ["hello@Creed.com", "support@Creed.com"],
+      title: 'Email Us',
+      details: ['pranav.c@thpl.co.in', 'helpdesk@thpl.co.in'],
     },
     {
       icon: Clock,
-      title: "Business Hours",
-      details: ["Mon-Fri: 9AM-6PM", "Sat-Sun: 10AM-4PM"],
+      title: 'Business Hours',
+      details: ['Mon-Sat: 10AM-6PM'],
     },
   ];
 
@@ -51,7 +54,7 @@ export const ContactHero: React.FC = () => {
               transition={{ delay: 0.2, duration: 0.8 }}
               className="text-4xl lg:text-6xl font-bold text-gray-900 leading-tight"
             >
-              Get In{" "}
+              Get In{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--medium)] to-[var(--dark)]">
                 Touch
               </span>
@@ -113,7 +116,7 @@ export const ContactHero: React.FC = () => {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
               <img
-                src="/placeholder.svg?height=600&width=500"
+                src={plant}
                 alt="Customer Service"
                 className="w-full h-[500px] object-cover"
               />
