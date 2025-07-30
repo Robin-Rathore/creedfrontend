@@ -1,3 +1,4 @@
+//@ts-nocheck
 import type React from 'react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';

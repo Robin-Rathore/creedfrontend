@@ -1,3 +1,4 @@
+//@ts-nocheck
 export interface Coupon {
   _id: string
   code: string

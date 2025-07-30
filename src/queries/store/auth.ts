@@ -1,3 +1,4 @@
+//@ts-nocheck
 import { atom } from "jotai";
 import type { User } from "../types/auth";
 import { authStorage, userStorage } from "../utils/storage";

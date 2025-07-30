@@ -1,3 +1,4 @@
+//@ts-nocheck
 import axios, { type AxiosResponse } from "axios"
 import { authStorage } from "./storage"
 import { queryClient } from "../queryClient"

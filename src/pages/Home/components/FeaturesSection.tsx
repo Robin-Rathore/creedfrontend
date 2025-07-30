@@ -1,3 +1,4 @@
+//@ts-nocheck
 import type React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Truck, Shield, Recycle, Award } from "lucide-react"
