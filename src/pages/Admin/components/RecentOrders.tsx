@@ -1,16 +1,16 @@
 //@ts-nocheck
 
-import type React from "react";
+import type React from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useAdminDashboard } from "@/queries/hooks/admin/useAdminDashboard";
+} from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useAdminDashboard } from '@/queries/hooks/admin/useAdminDashboard';
 
 export const RecentOrders: React.FC = () => {
   const { data: stats, isLoading } = useAdminDashboard();
@@ -46,20 +46,20 @@ export const RecentOrders: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "confirmed":
-        return "bg-blue-100 text-blue-800";
-      case "processing":
-        return "bg-purple-100 text-purple-800";
-      case "shipped":
-        return "bg-indigo-100 text-indigo-800";
-      case "delivered":
-        return "bg-green-100 text-green-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'confirmed':
+        return 'bg-blue-100 text-blue-800';
+      case 'processing':
+        return 'bg-purple-100 text-purple-800';
+      case 'shipped':
+        return 'bg-indigo-100 text-indigo-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -89,7 +89,7 @@ export const RecentOrders: React.FC = () => {
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900">
-                  ${order.pricing.total}
+                  ₹{order.pricing.total}
                 </p>
                 <Badge className={getStatusColor(order.status)}>
                   {order.status}

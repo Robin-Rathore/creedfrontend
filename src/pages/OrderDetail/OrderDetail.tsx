@@ -232,33 +232,33 @@ export const OrderDetail: React.FC = () => {
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Subtotal</span>
                     <span className="font-medium">
-                      ${order.pricing.subtotal.toFixed(2)}
+                      ₹{order.pricing.subtotal.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Shipping</span>
                     <span className="font-medium">
-                      ${order.pricing.shipping.toFixed(2)}
+                      ₹{order.pricing.shipping.toFixed(2)}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Tax</span>
                     <span className="font-medium">
-                      ${order.pricing.tax.toFixed(2)}
+                      ₹{order.pricing.tax.toFixed(2)}
                     </span>
                   </div>
                   {order.pricing.discount > 0 && (
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600">Discount</span>
                       <span className="font-medium text-green-600">
-                        -${order.pricing.discount.toFixed(2)}
+                        -₹{order.pricing.discount.toFixed(2)}
                       </span>
                     </div>
                   )}
                   <Separator />
                   <div className="flex justify-between text-lg font-semibold">
                     <span>Total</span>
-                    <span>${order.pricing.total.toFixed(2)}</span>
+                    <span>₹{order.pricing.total.toFixed(2)}</span>
                   </div>
                 </CardContent>
               </Card>

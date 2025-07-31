@@ -280,12 +280,12 @@ export const Products: React.FC<ProductsProps> = () => {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1 lg:gap-2">
                   <span className="font-bold text-primary text-sm lg:text-base">
-                    ${product.price.toFixed(2)}
+                    ₹{product.price.toFixed(2)}
                   </span>
                   {product.comparePrice &&
                     product.comparePrice > product.price && (
                       <span className="text-xs lg:text-sm text-muted-foreground line-through">
-                        ${product.comparePrice.toFixed(2)}
+                        ₹{product.comparePrice.toFixed(2)}
                       </span>
                     )}
                 </div>
@@ -358,12 +358,12 @@ export const Products: React.FC<ProductsProps> = () => {
                 <div className="text-right">
                   <div className="flex items-center gap-2">
                     <span className="text-lg font-bold text-gray-900">
-                      ${product.price.toLocaleString()}
+                      ₹{product.price.toLocaleString()}
                     </span>
                     {product.comparePrice &&
                       product.comparePrice > product.price && (
                         <span className="text-sm text-gray-500 line-through">
-                          ${product.comparePrice.toLocaleString()}
+                          ₹{product.comparePrice.toLocaleString()}
                         </span>
                       )}
                   </div>

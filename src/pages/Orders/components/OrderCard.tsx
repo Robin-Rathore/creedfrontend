@@ -128,7 +128,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
                     {order.items.length} item{order.items.length > 1 ? 's' : ''}
                   </p>
                   <p className="font-semibold text-gray-900">
-                    ${order.pricing.total.toFixed(2)}
+                    ₹{order.pricing.total.toFixed(2)}
                   </p>
                 </div>
               </div>

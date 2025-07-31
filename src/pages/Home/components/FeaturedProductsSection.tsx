@@ -250,12 +250,12 @@ export const FeaturedProductsSection: React.FC = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-1 lg:gap-2">
                           <span className="font-bold text-primary text-sm lg:text-base">
-                            ${product.price.toFixed(2)}
+                            ₹{product.price.toFixed(2)}
                           </span>
                           {product.comparePrice &&
                             product.comparePrice > product.price && (
                               <span className="text-xs lg:text-sm text-muted-foreground line-through">
-                                ${product.comparePrice.toFixed(2)}
+                                ₹{product.comparePrice.toFixed(2)}
                               </span>
                             )}
                         </div>

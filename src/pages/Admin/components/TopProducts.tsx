@@ -1,14 +1,14 @@
 //@ts-nocheck
 
-import type React from "react";
+import type React from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useAdminDashboard } from "@/queries/hooks/admin/useAdminDashboard";
+} from '@/components/ui/card';
+import { useAdminDashboard } from '@/queries/hooks/admin/useAdminDashboard';
 
 export const TopProducts: React.FC = () => {
   const { data: stats, isLoading } = useAdminDashboard();
@@ -56,7 +56,7 @@ export const TopProducts: React.FC = () => {
                 <img
                   src={
                     product.images[0]?.url ||
-                    "/placeholder.svg?height=48&width=48"
+                    '/placeholder.svg?height=48&width=48'
                   }
                   alt={product.name}
                   className="w-12 h-12 rounded-lg object-cover"
@@ -69,7 +69,7 @@ export const TopProducts: React.FC = () => {
                 <p className="text-sm font-medium text-gray-900 truncate">
                   {product.name}
                 </p>
-                <p className="text-sm text-gray-500">${product.price}</p>
+                <p className="text-sm text-gray-500">₹{product.price}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900">

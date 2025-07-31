@@ -142,12 +142,12 @@ export const CartItems: React.FC = () => {
                     <div className="flex items-center gap-4">
                       <div>
                         <span className="text-xl font-bold text-gray-900">
-                          ${item.product.price.toFixed(2)}
+                          ₹{item.product.price.toFixed(2)}
                         </span>
                         {item.product.comparePrice &&
                           item.product.comparePrice > item.product.price && (
                             <span className="text-sm text-gray-500 line-through ml-2">
-                              ${item.product.comparePrice.toFixed(2)}
+                              ₹{item.product.comparePrice.toFixed(2)}
                             </span>
                           )}
                       </div>

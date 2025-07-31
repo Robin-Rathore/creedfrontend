@@ -93,7 +93,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                             Quantity: {item.quantity}
                           </span>
                           <span className="text-sm text-gray-600">
-                            Price: ${item.price.toFixed(2)}
+                            Price: ₹{item.price.toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -102,10 +102,10 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                       <div className="flex flex-col items-end gap-3">
                         <div className="text-right">
                           <p className="text-lg font-semibold text-gray-900">
-                            ${item.subtotal.toFixed(2)}
+                            ₹{item.subtotal.toFixed(2)}
                           </p>
                           <p className="text-sm text-gray-500">
-                            ${item.price.toFixed(2)} × {item.quantity}
+                            ₹{item.price.toFixed(2)} × {item.quantity}
                           </p>
                         </div>
 

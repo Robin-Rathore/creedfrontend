@@ -539,12 +539,12 @@ export const CategoryProducts: React.FC = () => {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <span className="text-lg font-bold text-gray-900">
-                                ${product.price.toLocaleString()}
+                                ₹{product.price.toLocaleString()}
                               </span>
                               {product.comparePrice &&
                                 product.comparePrice > product.price && (
                                   <span className="text-sm text-gray-500 line-through">
-                                    ${product.comparePrice.toLocaleString()}
+                                    ₹{product.comparePrice.toLocaleString()}
                                   </span>
                                 )}
                             </div>
@@ -607,12 +607,12 @@ export const CategoryProducts: React.FC = () => {
                               <div className="text-right">
                                 <div className="flex items-center gap-2">
                                   <span className="text-lg font-bold text-gray-900">
-                                    ${product.price.toLocaleString()}
+                                    ₹{product.price.toLocaleString()}
                                   </span>
                                   {product.comparePrice &&
                                     product.comparePrice > product.price && (
                                       <span className="text-sm text-gray-500 line-through">
-                                        ${product.comparePrice.toLocaleString()}
+                                        ₹{product.comparePrice.toLocaleString()}
                                       </span>
                                     )}
                                 </div>

@@ -167,14 +167,14 @@ export const CartSummary: React.FC = () => {
                 <span className="text-gray-600">
                   Subtotal ({cartItems.length} items)
                 </span>
-                <span className="font-medium">${cartSubtotal.toFixed(2)}</span>
+                <span className="font-medium">₹{cartSubtotal.toFixed(2)}</span>
               </div>
 
               {appliedPromo && (
                 <div className="flex justify-between text-sm">
                   <span className="text-green-600">Promo Discount</span>
                   <span className="font-medium text-green-600">
-                    -${promoDiscount.toFixed(2)}
+                    -₹{promoDiscount.toFixed(2)}
                   </span>
                 </div>
               )}
@@ -187,14 +187,14 @@ export const CartSummary: React.FC = () => {
                       Free
                     </Badge>
                   ) : (
-                    `$${shipping.toFixed(2)}`
+                    `₹${shipping.toFixed(2)}`
                   )}
                 </span>
               </div>
 
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Tax</span>
-                <span className="font-medium">${tax.toFixed(2)}</span>
+                <span className="font-medium">₹{tax.toFixed(2)}</span>
               </div>
 
               <Separator />
@@ -202,7 +202,7 @@ export const CartSummary: React.FC = () => {
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
                 <span className="text-[var(--medium)]">
-                  ${total.toFixed(2)}
+                  ₹{total.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -267,7 +267,7 @@ export const CartSummary: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Free Shipping</p>
-                  <p className="text-sm text-gray-600">On orders over $50</p>
+                  <p className="text-sm text-gray-600">On orders over ₹50</p>
                 </div>
               </div>
 
