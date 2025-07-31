@@ -31,7 +31,7 @@ import {
   useCategoryProducts,
 } from '@/queries/hooks/category';
 import { useCart } from '@/queries/hooks/user';
-import { userAtom } from '@/queries';
+import { addToCartAtom, userAtom } from '@/queries';
 import { useAtom } from 'jotai';
 
 export const CategoryProducts: React.FC = () => {
