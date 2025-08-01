@@ -155,7 +155,7 @@ export const OrderTracking: React.FC = () => {
                             >
                               <img
                                 src={
-                                  item.product.images?.[0]?.url ||
+                                  item.product?.images?.[0]?.url ||
                                   '/placeholder.svg?height=24&width=24'
                                 }
                                 alt={item.name}

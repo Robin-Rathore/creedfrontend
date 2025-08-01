@@ -64,18 +64,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  const isOutOfStock = product.status === 'out_of_stock' || product.stock === 0;
+  const isOutOfStock =
+    product?.status === 'out_of_stock' || product?.stock === 0;
   const hasDiscount =
-    product.originalPrice && product.originalPrice > product.price;
+    product?.originalPrice && product?.originalPrice > product?.price;
   const discountPercentage = hasDiscount
     ? Math.round(
-        ((product.originalPrice! - product.price) / product.originalPrice!) *
+        ((product?.originalPrice! - product?.price) / product?.originalPrice!) *
           100
       )
     : 0;
 
   const handleImageHover = () => {
-    if (product.images.length > 1) {
+    if (product?.images.length > 1) {
       setCurrentImageIndex(1);
     }
   };
@@ -96,30 +97,30 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToCart = (product: any) => {
     if (!product) return;
 
-    if (product.stock === 0) {
+    if (product?.stock === 0) {
       toast.error('Product is out of stock');
       return;
     }
 
     // Create cart item similar to ProductDetail component
     const cartItem = {
-      productId: product._id,
+      productId: product?._id,
       quantity: 1,
       variant:
-        product.variants && product.variants.length > 0
-          ? product.variants[0]
+        product?.variants && product?.variants.length > 0
+          ? product?.variants[0]
           : null,
       product: {
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        comparePrice: product.comparePrice,
-        images: product.images,
-        stock: product.stock,
-        slug: product.slug,
-        shortDescription: product.shortDescription,
-        description: product.description,
-        gst: product.gst || 0,
+        _id: product?._id,
+        name: product?.name,
+        price: product?.price,
+        comparePrice: product?.comparePrice,
+        images: product?.images,
+        stock: product?.stock,
+        slug: product?.slug,
+        shortDescription: product?.shortDescription,
+        description: product?.description,
+        gst: product?.gst || 0,
       },
     };
 
@@ -135,7 +136,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="flex">
               {/* Image Section */}
               <div className="relative w-80 h-80 flex-shrink-0">
-                <Link to={`/products/${product.slug}`}>
+                <Link to={`/products/${product?.slug}`}>
                   <div
                     className="relative w-full h-full overflow-hidden bg-gray-100"
                     onMouseEnter={handleImageHover}
@@ -143,11 +144,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   >
                     <img
                       src={
-                        product.images[currentImageIndex]?.url ||
+                        product?.images[currentImageIndex]?.url ||
                         '/placeholder.svg'
                       }
                       alt={
-                        product.images[currentImageIndex]?.alt || product.name
+                        product?.images[currentImageIndex]?.alt || product?.name
                       }
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
@@ -157,7 +158,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
                     {/* Badges */}
                     <div className="absolute top-4 left-4 flex flex-col gap-2">
-                      {product.isNew && (
+                      {product?.isNew && (
                         <Badge className="bg-green-500 text-white">
                           <Zap className="w-3 h-3 mr-1" />
                           New
@@ -199,7 +200,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         className="w-10 h-10 p-0 rounded-full bg-white/90 hover:bg-white"
                         asChild
                       >
-                        <Link to={`/products/${product.slug}`}>
+                        <Link to={`/products/${product?.slug}`}>
                           <Eye className="w-4 h-4 text-gray-600" />
                         </Link>
                       </Button>
@@ -213,26 +214,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <div className="h-full flex flex-col justify-between">
                   <div>
                     <Link
-                      to={`/categories/${product.category.slug}`}
+                      to={`/categories/${product?.category.slug}`}
                       className="text-xs font-medium text-blue-600 hover:text-blue-700 uppercase tracking-wide"
                     >
-                      {product.category.name}
+                      {product?.category.name}
                     </Link>
 
-                    <Link to={`/products/${product.slug}`}>
+                    <Link to={`/products/${product?.slug}`}>
                       <h3 className="text-xl font-semibold text-gray-900 mt-2 mb-3 hover:text-blue-600 transition-colors line-clamp-2">
-                        {product.name}
+                        {product?.name}
                       </h3>
                     </Link>
 
-                    {product.description && (
+                    {product?.description && (
                       <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {product.description}
+                        {product?.description}
                       </p>
                     )}
 
                     {/* Rating */}
-                    {product.rating && (
+                    {product?.rating && (
                       <div className="flex items-center gap-2 mb-4">
                         <div className="flex items-center">
                           {[...Array(5)].map((_, i) => (
@@ -240,7 +241,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                               key={i}
                               className={cn(
                                 'w-4 h-4',
-                                i < Math.floor(product.rating!.average)
+                                i < Math.floor(product?.rating!.average)
                                   ? 'fill-yellow-400 text-yellow-400'
                                   : 'text-gray-300'
                               )}
@@ -248,18 +249,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                           ))}
                         </div>
                         <span className="text-sm text-gray-600">
-                          ({product.rating.count})
+                          ({product?.rating.count})
                         </span>
                       </div>
                     )}
 
                     {/* Color variants */}
-                    {product.variants &&
-                      product.variants.some((v) => v.color) && (
+                    {product?.variants &&
+                      product?.variants.some((v) => v.color) && (
                         <div className="flex items-center gap-2 mb-4">
                           <span className="text-sm text-gray-600">Colors:</span>
                           <div className="flex gap-1">
-                            {product.variants
+                            {product?.variants
                               .filter((v) => v.color)
                               .slice(0, 4)
                               .map((variant, i) => (
@@ -280,11 +281,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <span className="text-2xl font-bold text-gray-900">
-                        ₹{product.price.toLocaleString()}
+                        ₹{product?.price?.toLocaleString()}
                       </span>
                       {hasDiscount && (
                         <span className="text-lg text-gray-500 line-through">
-                          ₹{product.originalPrice!.toLocaleString()}
+                          ₹{product?.originalPrice!?.toLocaleString()}
                         </span>
                       )}
                     </div>
@@ -318,7 +319,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         <CardContent className="p-0">
           {/* Image Section */}
           <div className="relative aspect-square overflow-hidden bg-gray-100">
-            <Link to={`/products/${product.slug}`}>
+            <Link to={`/products/${product?.slug}`}>
               <div
                 onMouseEnter={handleImageHover}
                 onMouseLeave={handleImageLeave}
@@ -326,9 +327,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               >
                 <img
                   src={
-                    product.images[currentImageIndex]?.url || '/placeholder.svg'
+                    product?.images[currentImageIndex]?.url ||
+                    '/placeholder.svg'
                   }
-                  alt={product.images[currentImageIndex]?.alt || product.name}
+                  alt={product?.images[currentImageIndex]?.alt || product?.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
 
@@ -339,13 +341,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
             {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-1">
-              {product.isNew && (
+              {product?.isNew && (
                 <Badge className="bg-emerald-500 text-white text-xs px-2 py-1">
                   <Zap className="w-3 h-3 mr-1" />
                   New
                 </Badge>
               )}
-              {product.isFeatured && (
+              {product?.isFeatured && (
                 <Badge className="bg-purple-500 text-white text-xs px-2 py-1">
                   <BadgeIcon className="w-3 h-3 mr-1" />
                   Featured
@@ -409,7 +411,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   className="w-9 h-9 p-0 rounded-full bg-white/95 hover:bg-white shadow-lg"
                   asChild
                 >
-                  <Link to={`/products/${product.slug}`}>
+                  <Link to={`/products/${product?.slug}`}>
                     <Eye className="w-4 h-4 text-gray-600 hover:text-blue-600" />
                   </Link>
                 </Button>
@@ -417,9 +419,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
 
             {/* Image dots indicator */}
-            {product.images.length > 1 && (
+            {product?.images.length > 1 && (
               <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex gap-1">
-                {product.images.slice(0, 3).map((_, i) => (
+                {product?.images.slice(0, 3).map((_, i) => (
                   <div
                     key={i}
                     className={cn(
@@ -435,20 +437,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {/* Content Section */}
           <div className="p-4">
             <Link
-              to={`/categories/${product.category.slug}`}
+              to={`/categories/${product?.category.slug}`}
               className="text-xs font-medium text-blue-600 hover:text-blue-700 uppercase tracking-wide"
             >
-              {product.category.name}
+              {product?.category.name}
             </Link>
 
-            <Link to={`/products/${product.slug}`}>
+            <Link to={`/products/${product?.slug}`}>
               <h3 className="text-lg font-semibold text-gray-900 mt-1 mb-2 hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
-                {product.name}
+                {product?.name}
               </h3>
             </Link>
 
             {/* Rating */}
-            {product.rating && (
+            {product?.rating && (
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex items-center">
                   {[...Array(5)].map((_, i) => (
@@ -456,7 +458,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                       key={i}
                       className={cn(
                         'w-4 h-4',
-                        i < Math.floor(product.rating!.average)
+                        i < Math.floor(product?.rating!.average)
                           ? 'fill-yellow-400 text-yellow-400'
                           : 'text-gray-200'
                       )}
@@ -464,16 +466,16 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                   ))}
                 </div>
                 <span className="text-sm text-gray-500">
-                  ({product.rating.count})
+                  ({product?.rating.count})
                 </span>
               </div>
             )}
 
             {/* Color variants */}
-            {product.variants && product.variants.some((v) => v.color) && (
+            {product?.variants && product?.variants.some((v) => v.color) && (
               <div className="flex items-center gap-2 mb-3">
                 <div className="flex gap-1">
-                  {product.variants
+                  {product?.variants
                     .filter((v) => v.color)
                     .slice(0, 4)
                     .map((variant, i) => (
@@ -485,7 +487,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         }}
                       />
                     ))}
-                  {product.variants.filter((v) => v.color).length > 4 && (
+                  {product?.variants.filter((v) => v.color).length > 4 && (
                     <div className="w-5 h-5 rounded-full border-2 border-gray-200 bg-gray-100 flex items-center justify-center">
                       <span className="text-xs text-gray-600">+</span>
                     </div>
@@ -498,11 +500,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             <div className="flex items-center justify-between mt-4">
               <div className="flex items-center gap-2">
                 <span className="text-xl font-bold text-gray-900">
-                  ₹{product.price.toLocaleString()}
+                  ₹{product?.price?.toLocaleString()}
                 </span>
                 {hasDiscount && (
                   <span className="text-sm text-gray-500 line-through">
-                    ₹{product.originalPrice!.toLocaleString()}
+                    ₹{product?.originalPrice!.toLocaleString()}
                   </span>
                 )}
               </div>

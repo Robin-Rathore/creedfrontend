@@ -42,7 +42,7 @@ const COLORS = [
   '#06b6d4',
 ];
 
-const formatCurrency = (value: number) => `₹${value.toLocaleString()}`;
+const formatCurrency = (value: number) => `₹${value?.toLocaleString()}`;
 const formatDate = (dateString: string) =>
   new Date(dateString).toLocaleDateString();
 const getMonthName = (month: number) => {
@@ -84,7 +84,7 @@ const StatCard = ({
       <div className="mb-2">
         <span className="text-2xl font-bold text-gray-900">
           {prefix}
-          {typeof value === 'number' ? value.toLocaleString() : value}
+          {typeof value === 'number' ? value?.toLocaleString() : value}
         </span>
       </div>
       <div className="flex items-center gap-2">
@@ -261,7 +261,7 @@ const TopProducts = ({ products }: { products: any[] }) => {
       <div className="space-y-4">
         {products.map((product, index) => (
           <div
-            key={product._id}
+            key={product?._id}
             className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
           >
             <div className="flex items-center gap-4">
@@ -269,14 +269,16 @@ const TopProducts = ({ products }: { products: any[] }) => {
                 <Package className="w-5 h-5 text-blue-600" />
               </div>
               <div>
-                <h4 className="font-medium text-gray-900">{product.name}</h4>
+                <h4 className="font-medium text-gray-900">{product?.name}</h4>
                 <p className="text-sm text-gray-500">
-                  {formatCurrency(product.price)}
+                  {formatCurrency(product?.price)}
                 </p>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-semibold text-gray-900">{product.soldCount}</p>
+              <p className="font-semibold text-gray-900">
+                {product?.soldCount}
+              </p>
               <p className="text-sm text-gray-500">sold</p>
             </div>
           </div>
@@ -298,17 +300,17 @@ const LowStockAlert = ({ products }: { products: any[] }) => {
       <div className="space-y-3">
         {products.map((product) => (
           <div
-            key={product._id}
+            key={product?._id}
             className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200"
           >
-            <span className="font-medium text-gray-900">{product.name}</span>
+            <span className="font-medium text-gray-900">{product?.name}</span>
             <div className="text-right">
               <span className="text-orange-600 font-semibold">
-                {product.stock}
+                {product?.stock}
               </span>
               <span className="text-gray-500 text-sm">
                 {' '}
-                / {product.lowStockThreshold}
+                / {product?.lowStockThreshold}
               </span>
             </div>
           </div>

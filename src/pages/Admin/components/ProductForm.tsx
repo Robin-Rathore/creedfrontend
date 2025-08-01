@@ -57,31 +57,31 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   useEffect(() => {
     if (isEdit && selectedProduct) {
       setFormData({
-        name: selectedProduct.name,
-        description: selectedProduct.description,
-        shortDescription: selectedProduct.shortDescription || '',
-        price: selectedProduct.price.toString(),
-        comparePrice: selectedProduct.comparePrice?.toString() || '',
-        costPrice: selectedProduct.costPrice?.toString() || '',
-        category: selectedProduct.category._id,
-        subcategory: selectedProduct.subcategory?._id || '',
-        brand: selectedProduct.brand || '',
-        sku: selectedProduct.sku,
-        stock: selectedProduct.stock.toString(),
-        lowStockThreshold: selectedProduct.lowStockThreshold.toString(),
-        tags: selectedProduct.tags.join(', '),
-        features: selectedProduct.features.join(', '),
-        specifications: JSON.stringify(selectedProduct.specifications),
-        seoTitle: selectedProduct.seoTitle || '',
-        seoDescription: selectedProduct.seoDescription || '',
-        isDigital: selectedProduct.isDigital,
-        shippingRequired: selectedProduct.shippingRequired,
-        taxable: selectedProduct.taxable,
-        isFeatured: selectedProduct.isFeatured,
+        name: selectedproduct?.name,
+        description: selectedproduct?.description,
+        shortDescription: selectedproduct?.shortDescription || '',
+        price: selectedproduct?.price.toString(),
+        comparePrice: selectedproduct?.comparePrice?.toString() || '',
+        costPrice: selectedproduct?.costPrice?.toString() || '',
+        category: selectedproduct?.category._id,
+        subcategory: selectedproduct?.subcategory?._id || '',
+        brand: selectedproduct?.brand || '',
+        sku: selectedproduct?.sku,
+        stock: selectedproduct?.stock.toString(),
+        lowStockThreshold: selectedproduct?.lowStockThreshold.toString(),
+        tags: selectedproduct?.tags.join(', '),
+        features: selectedproduct?.features.join(', '),
+        specifications: JSON.stringify(selectedproduct?.specifications),
+        seoTitle: selectedproduct?.seoTitle || '',
+        seoDescription: selectedproduct?.seoDescription || '',
+        isDigital: selectedproduct?.isDigital,
+        shippingRequired: selectedproduct?.shippingRequired,
+        taxable: selectedproduct?.taxable,
+        isFeatured: selectedproduct?.isFeatured,
       });
-      setTags(selectedProduct.tags);
-      setFeatures(selectedProduct.features);
-      setImagePreviews(selectedProduct.images.map((img) => img.url));
+      setTags(selectedproduct?.tags);
+      setFeatures(selectedproduct?.features);
+      setImagePreviews(selectedproduct?.images.map((img) => img.url));
     }
   }, [isEdit, selectedProduct, setFormData]);
 
@@ -187,7 +187,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       console.log('Preparing submission data...'); // Debug log
 
       if (isEdit && selectedProduct) {
-        console.log('Updating existing product:', selectedProduct._id); // Debug log
+        console.log('Updating existing product:', selectedproduct?._id); // Debug log
 
         // Prepare product data object
         const productData = {
@@ -206,7 +206,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
         // Prepare the data structure for update mutation
         const updateData = {
-          id: selectedProduct._id,
+          id: selectedproduct?._id,
           productData: productData,
           // Only include images if new ones were selected
           ...(images.length > 0 && { images }),
@@ -217,7 +217,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         const result = await updateProductMutation.mutateAsync(updateData);
         console.log('Update result:', result); // Debug log
       } else {
-        console.log('Creating new product...'); // Debug log
+        console.log('Creating new product?...'); // Debug log
 
         // Prepare product data object
         const productData = {

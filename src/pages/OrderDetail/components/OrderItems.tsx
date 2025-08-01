@@ -43,7 +43,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
       <div className="space-y-4">
         {items.map((item, index) => (
           <motion.div
-            key={`${item.product._id}-${item.size}-${item.color}`}
+            key={`${item.product?._id}-${item.size}-${item.color}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
@@ -55,10 +55,10 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                   <div className="flex-shrink-0">
                     <img
                       src={
-                        item.product.images?.[0]?.url ||
+                        item.product?.images?.[0]?.url ||
                         '/placeholder.svg?height=120&width=120'
                       }
-                      alt={item.product.name}
+                      alt={item.product?.name}
                       className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg border border-gray-200"
                     />
                   </div>
@@ -68,10 +68,10 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                     <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                       <div className="flex-1">
                         <Link
-                          to={`/products/${item.product.slug}`}
+                          to={`/products/${item.product?.slug}`}
                           className="text-lg font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors"
                         >
-                          {item.product.name}
+                          {item.product?.name}
                         </Link>
 
                         <div className="flex items-center gap-4 mt-2 text-sm text-gray-600">
@@ -93,7 +93,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                             Quantity: {item.quantity}
                           </span>
                           <span className="text-sm text-gray-600">
-                            Price: ${item.price.toFixed(2)}
+                            Price: ₹{item.price.toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -102,10 +102,10 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                       <div className="flex flex-col items-end gap-3">
                         <div className="text-right">
                           <p className="text-lg font-semibold text-gray-900">
-                            ${item.subtotal.toFixed(2)}
+                            ₹{item.subtotal.toFixed(2)}
                           </p>
                           <p className="text-sm text-gray-500">
-                            ${item.price.toFixed(2)} × {item.quantity}
+                            ₹{item.price.toFixed(2)} × {item.quantity}
                           </p>
                         </div>
 
@@ -117,7 +117,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                             className="bg-transparent"
                             asChild
                           >
-                            <Link to={`/products/${item.product.slug}`}>
+                            <Link to={`/products/${item.product?.slug}`}>
                               View Product
                             </Link>
                           </Button>
@@ -129,7 +129,7 @@ export const OrderItems: React.FC<OrderItemsProps> = ({
                               asChild
                             >
                               <Link
-                                to={`/products/${item.product.slug}?review=true`}
+                                to={`/products/${item.product?.slug}?review=true`}
                               >
                                 <Star className="w-4 h-4 mr-2" />
                                 Write Review

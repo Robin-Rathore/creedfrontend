@@ -22,17 +22,17 @@ export const TeamSection: React.FC = () => {
         email: 'pranav.c@thpl.co.in',
       },
     },
-    {
-      name: 'Rajnish Singh',
-      role: 'Managing Director',
-      image: '/placeholder.svg?height=300&width=300',
-      bio: 'Expert in finance and operations, ensuring smooth business processes.',
-      social: {
-        linkedin: '#',
-        twitter: '#',
-        email: 'michael@Creed.com',
-      },
-    },
+    // {
+    //   name: 'Rajnish Singh',
+    //   role: 'Managing Director',
+    //   image: '/placeholder.svg?height=300&width=300',
+    //   bio: 'Expert in finance and operations, ensuring smooth business processes.',
+    //   social: {
+    //     linkedin: '#',
+    //     twitter: '#',
+    //     email: 'michael@Creed.com',
+    //   },
+    // },
     {
       name: 'Arvind Kumar',
       role: 'VP & Founder',
@@ -78,7 +78,7 @@ export const TeamSection: React.FC = () => {
         </motion.div>
 
         {/* Team Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {team.map((member, index) => (
             <motion.div
               key={member.name}
@@ -93,7 +93,7 @@ export const TeamSection: React.FC = () => {
                   <img
                     src={member.image}
                     alt={member.name}
-                    className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full md:h-84 h-[400px] object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 

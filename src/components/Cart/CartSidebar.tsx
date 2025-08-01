@@ -37,10 +37,10 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
 
     cartItems.forEach((item) => {
       // Get the GST rate from the product (12% or 18%)
-      const gstRate = item.product.gst || 18; // Default to 18% if not specified
+      const gstRate = item?.product?.gst || 18; // Default to 18% if not specified
 
       // Calculate GST for this item
-      const itemGST = (item.itemTotal * gstRate) / 100;
+      const itemGST = (item?.itemTotal * gstRate) / 100;
       totalGST += itemGST;
     });
 
@@ -54,7 +54,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
     const gstBreakdown = { 12: 0, 18: 0 };
 
     cartItems.forEach((item) => {
-      const gstRate = item.product.gst || 18;
+      const gstRate = item?.product?.gst || 18;
       const itemGST = (item.itemTotal * gstRate) / 100;
 
       if (gstRate === 12) {
@@ -168,16 +168,16 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                         >
                           {/* Product Image */}
                           <Link
-                            to={`/products/${item.product.slug}`}
+                            to={`/products/${item?.product?.slug}`}
                             onClick={onClose}
                             className="flex-shrink-0"
                           >
                             <img
                               src={
-                                item.product.images?.[0]?.url ||
+                                item?.product?.images?.[0]?.url ||
                                 '/placeholder.svg?height=80&width=80'
                               }
-                              alt={item.product.name}
+                              alt={item?.product?.name}
                               className="w-16 h-16 object-cover rounded-lg hover:scale-105 transition-transform"
                             />
                           </Link>
@@ -185,26 +185,26 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                           {/* Product Info */}
                           <div className="flex-1 min-w-0">
                             <Link
-                              to={`/products/${item.product.slug}`}
+                              to={`/products/${item?.product?.slug}`}
                               onClick={onClose}
                               className="block"
                             >
                               <h3 className="font-medium text-gray-900 hover:text-[var(--medium)] transition-colors line-clamp-2">
-                                {item.product.name}
+                                {item?.product?.name}
                               </h3>
                             </Link>
 
                             {/* Variants */}
-                            {(item.size || item.color) && (
+                            {(item?.size || item?.color) && (
                               <div className="flex gap-2 mt-1">
-                                {item.size && (
+                                {item?.size && (
                                   <Badge variant="outline" className="text-xs">
-                                    Size: {item.size}
+                                    Size: {item?.size}
                                   </Badge>
                                 )}
-                                {item.color && (
+                                {item?.color && (
                                   <Badge variant="outline" className="text-xs">
-                                    Color: {item.color}
+                                    Color: {item?.color}
                                   </Badge>
                                 )}
                               </div>
@@ -222,24 +222,26 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                                       item.quantity - 1
                                     )
                                   }
-                                  disabled={item.quantity <= 1}
+                                  disabled={item?.quantity <= 1}
                                   className="h-7 w-7 p-0"
                                 >
                                   <Minus className="h-3 w-3" />
                                 </Button>
                                 <span className="w-8 text-center text-sm font-medium">
-                                  {item.quantity}
+                                  {item?.quantity}
                                 </span>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   onClick={() =>
                                     handleQuantityChange(
-                                      item._id,
-                                      item.quantity + 1
+                                      item?._id,
+                                      item?.quantity + 1
                                     )
                                   }
-                                  disabled={item.quantity >= item.product.stock}
+                                  disabled={
+                                    item?.quantity >= item?.product?.stock
+                                  }
                                   className="h-7 w-7 p-0"
                                 >
                                   <Plus className="h-3 w-3" />
@@ -248,10 +250,10 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
 
                               <div className="text-right">
                                 <div className="font-semibold text-gray-900">
-                                  ${item.itemTotal.toFixed(2)}
+                                  ${item?.itemTotal?.toFixed(2)}
                                 </div>
                                 <div className="text-xs text-gray-600">
-                                  ${item.product.price.toFixed(2)} each
+                                  ${item?.product?.price?.toFixed(2)} each
                                 </div>
                               </div>
                             </div>
@@ -260,7 +262,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleRemoveItem(item._id)}
+                              onClick={() => handleRemoveItem(item?._id)}
                               className="mt-2 h-7 text-red-600 hover:text-red-700 hover:bg-red-50 p-0 justify-start"
                             >
                               <Trash2 className="h-3 w-3 mr-1" />
@@ -295,7 +297,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
                         <span className="font-medium">
-                          ${cartSubtotal.toFixed(2)}
+                          ${cartSubtotal?.toFixed(2)}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -304,13 +306,13 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Tax</span>
-                        <span className="font-medium">${tax.toFixed(2)}</span>
+                        <span className="font-medium">${tax?.toFixed(2)}</span>
                       </div>
                       <Separator />
                       <div className="flex justify-between text-base font-semibold">
                         <span>Total</span>
                         <span className="text-[var(--medium)]">
-                          ${total.toFixed(2)}
+                          ${total?.toFixed(2)}
                         </span>
                       </div>
                     </div>

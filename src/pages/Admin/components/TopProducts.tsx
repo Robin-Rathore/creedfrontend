@@ -1,14 +1,14 @@
 //@ts-nocheck
 
-import type React from "react";
+import type React from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { useAdminDashboard } from "@/queries/hooks/admin/useAdminDashboard";
+} from '@/components/ui/card';
+import { useAdminDashboard } from '@/queries/hooks/admin/useAdminDashboard';
 
 export const TopProducts: React.FC = () => {
   const { data: stats, isLoading } = useAdminDashboard();
@@ -50,15 +50,16 @@ export const TopProducts: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {stats.topProducts.map((product, index) => (
-            <div key={product._id} className="flex items-center space-x-4">
+          {stats?.topProducts?.map((product, index) => (
+            <div key={product?._id} className="flex items-center space-x-4">
               <div className="relative">
                 <img
                   src={
-                    product.images[0]?.url ||
-                    "/placeholder.svg?height=48&width=48"
+                    (product?.images?.length > 0
+                      ? product.images[0]?.url
+                      : null) || '/placeholder.svg?height=48&width=48'
                   }
-                  alt={product.name}
+                  alt={product?.name}
                   className="w-12 h-12 rounded-lg object-cover"
                 />
                 <div className="absolute -top-2 -left-2 w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">
@@ -67,13 +68,13 @@ export const TopProducts: React.FC = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-gray-900 truncate">
-                  {product.name}
+                  {product?.name}
                 </p>
-                <p className="text-sm text-gray-500">${product.price}</p>
+                <p className="text-sm text-gray-500">₹{product?.price}</p>
               </div>
               <div className="text-right">
                 <p className="text-sm font-medium text-gray-900">
-                  {product.soldCount} sold
+                  {product?.soldCount} sold
                 </p>
               </div>
             </div>

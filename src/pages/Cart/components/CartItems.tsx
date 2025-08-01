@@ -33,7 +33,7 @@ export const CartItems: React.FC = () => {
 
   const handleMoveToWishlist = async (item: any) => {
     try {
-      await addToWishlistMutation.mutateAsync(item.product._id);
+      await addToWishlistMutation.mutateAsync(item.product?._id);
       removeFromCart(item._id);
     } catch (error) {
       console.error('Move to wishlist error:', error);
@@ -95,15 +95,15 @@ export const CartItems: React.FC = () => {
                 <div className="flex flex-col md:flex-row gap-6">
                   {/* Product Image */}
                   <Link
-                    to={`/products/${item.product.slug}`}
+                    to={`/products/${item.product?.slug}`}
                     className="flex-shrink-0"
                   >
                     <img
                       src={
-                        item.product.images?.[0]?.url ||
+                        item.product?.images?.[0]?.url ||
                         '/placeholder.svg?height=120&width=120'
                       }
-                      alt={item.product.name}
+                      alt={item.product?.name}
                       className="w-24 h-24 md:w-32 md:h-32 object-cover rounded-lg hover:scale-105 transition-transform"
                     />
                   </Link>
@@ -111,14 +111,14 @@ export const CartItems: React.FC = () => {
                   {/* Product Details */}
                   <div className="flex-1 space-y-3">
                     <div>
-                      <Link to={`/products/${item.product.slug}`}>
+                      <Link to={`/products/${item.product?.slug}`}>
                         <h3 className="font-semibold text-lg text-gray-900 hover:text-[var(--medium)] transition-colors line-clamp-2">
-                          {item.product.name}
+                          {item.product?.name}
                         </h3>
                       </Link>
                       <p className="text-gray-600 text-sm line-clamp-2 mt-1">
-                        {item.product.shortDescription ||
-                          item.product.description}
+                        {item.product?.shortDescription ||
+                          item.product?.description}
                       </p>
                     </div>
 
@@ -142,28 +142,28 @@ export const CartItems: React.FC = () => {
                     <div className="flex items-center gap-4">
                       <div>
                         <span className="text-xl font-bold text-gray-900">
-                          ${item.product.price.toFixed(2)}
+                          ₹{item.product?.price.toFixed(2)}
                         </span>
-                        {item.product.comparePrice &&
-                          item.product.comparePrice > item.product.price && (
+                        {item.product?.comparePrice &&
+                          item.product?.comparePrice > item.product?.price && (
                             <span className="text-sm text-gray-500 line-through ml-2">
-                              ${item.product.comparePrice.toFixed(2)}
+                              ₹{item.product?.comparePrice.toFixed(2)}
                             </span>
                           )}
                       </div>
                       <Badge
                         className={`text-xs ${
-                          item.product.stock > 10
+                          item.product?.stock > 10
                             ? 'bg-green-100 text-green-800'
-                            : item.product.stock > 0
+                            : item.product?.stock > 0
                             ? 'bg-yellow-100 text-yellow-800'
                             : 'bg-red-100 text-red-800'
                         }`}
                       >
-                        {item.product.stock > 10
+                        {item.product?.stock > 10
                           ? 'In Stock'
-                          : item.product.stock > 0
-                          ? `${item.product.stock} left`
+                          : item.product?.stock > 0
+                          ? `${item.product?.stock} left`
                           : 'Out of Stock'}
                       </Badge>
                     </div>
@@ -190,7 +190,7 @@ export const CartItems: React.FC = () => {
                           <Input
                             type="number"
                             min="1"
-                            max={item.product.stock}
+                            max={item.product?.stock}
                             value={item.quantity}
                             onChange={(e) =>
                               handleQuantityChange(
@@ -209,7 +209,7 @@ export const CartItems: React.FC = () => {
                             onClick={() =>
                               handleQuantityChange(item._id, item.quantity + 1)
                             }
-                            disabled={item.quantity >= item.product.stock}
+                            disabled={item.quantity >= item.product?.stock}
                             className="h-8 w-8 p-0"
                           >
                             <Plus className="h-4 w-4" />
@@ -248,7 +248,7 @@ export const CartItems: React.FC = () => {
                       ${item.itemTotal.toFixed(2)}
                     </div>
                     <div className="text-sm text-gray-600">
-                      ${item.product.price.toFixed(2)} × {item.quantity}
+                      ${item.product?.price.toFixed(2)} × {item.quantity}
                     </div>
                   </div> */}
                 </div>

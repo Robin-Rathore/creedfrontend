@@ -24,7 +24,7 @@ export const PremiumHeroSection: React.FC = () => {
 
   return (
     <section
-      className="relative min-h-screen w-full overflow-hidden flex items-center justify-center px-4"
+      className="relative h-[400px] md:min-h-screen w-full overflow-hidden flex items-center justify-center px-4"
       style={{ backgroundColor: '#0e1e16' }}
     >
       {/* Main Content Container */}
@@ -41,7 +41,7 @@ export const PremiumHeroSection: React.FC = () => {
 
         {/* Bottle Layer - Higher z-index to cover specific letters */}
         <div className="absolute inset-0 flex items-center justify-center z-30">
-          <div className="relative top-28 md:top-10 transform transition-transform duration-1000 ease-out">
+          <div className="relative top-8 md:top-10 transform transition-transform duration-1000 ease-out">
             <img
               src={BottleImage}
               alt="Premium Reusable Water Bottle"

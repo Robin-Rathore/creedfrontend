@@ -578,7 +578,7 @@ export const AnalyticsManagement: React.FC = () => {
                 <div className="space-y-4">
                   {topProducts.map((product, index) => (
                     <div
-                      key={product._id}
+                      key={product?._id}
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex items-center gap-4">
@@ -587,27 +587,27 @@ export const AnalyticsManagement: React.FC = () => {
                         </div>
                         <img
                           src={
-                            product.images?.[0]?.url ||
+                            product?.images?.[0]?.url ||
                             '/placeholder.svg?height=48&width=48'
                           }
-                          alt={product.name}
+                          alt={product?.name}
                           className="w-12 h-12 rounded-lg object-cover border"
                         />
                         <div>
                           <h4 className="font-medium text-gray-900">
-                            {product.name}
+                            {product?.name}
                           </h4>
                           <p className="text-sm text-gray-500">
-                            SKU: {product.sku}
+                            SKU: {product?.sku}
                           </p>
                         </div>
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-gray-900">
-                          ₹{product.totalRevenue.toLocaleString()}
+                          ₹{product?.totalRevenue.toLocaleString()}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {product.totalSold} sold
+                          {product?.totalSold} sold
                         </div>
                       </div>
                     </div>

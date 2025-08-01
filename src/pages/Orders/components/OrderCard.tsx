@@ -110,10 +110,10 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
                     <img
                       key={idx}
                       src={
-                        item.product.images?.[0]?.url ||
+                        item.product?.images?.[0]?.url ||
                         '/placeholder.svg?height=40&width=40'
                       }
-                      alt={item.product.name}
+                      alt={item.product?.name}
                       className="w-10 h-10 rounded-full border-2 border-white object-cover"
                     />
                   ))}
@@ -128,7 +128,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
                     {order.items.length} item{order.items.length > 1 ? 's' : ''}
                   </p>
                   <p className="font-semibold text-gray-900">
-                    ${order.pricing.total.toFixed(2)}
+                    ₹{order.pricing.total.toFixed(2)}
                   </p>
                 </div>
               </div>

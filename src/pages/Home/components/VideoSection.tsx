@@ -10,26 +10,14 @@ export const VideoSection: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLDivElement>(null);
 
-  // Intersection Observer to detect when section is in view
+  // Intersection Observer
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        const inView = entry.isIntersecting;
-        setIsInView(inView);
-
-        // Auto-unmute when section comes into view, mute when it goes out
-        if (videoRef.current) {
-          if (inView) {
-            videoRef.current.muted = false;
-            setIsMuted(false);
-          } else {
-            videoRef.current.muted = true;
-            setIsMuted(true);
-          }
-        }
+        setIsInView(entry.isIntersecting);
       },
       {
-        threshold: 0.5, // Trigger when 50% of the section is visible
+        threshold: 0.5,
         rootMargin: '0px',
       }
     );
@@ -45,10 +33,34 @@ export const VideoSection: React.FC = () => {
     };
   }, []);
 
-  const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+  // Handle audio when in view - using user interaction approach
+  useEffect(() => {
+    if (!videoRef.current) return;
+
+    if (isInView && !isMuted) {
+      // Only unmute if user has already clicked to unmute
+      videoRef.current.muted = false;
+    } else {
+      videoRef.current.muted = true;
+    }
+  }, [isInView, isMuted]);
+
+  const toggleMute = async () => {
+    if (!videoRef.current) return;
+
+    try {
+      if (isMuted) {
+        // First ensure video is playing
+        await videoRef.current.play();
+        // Then unmute
+        videoRef.current.muted = false;
+        setIsMuted(false);
+      } else {
+        videoRef.current.muted = true;
+        setIsMuted(true);
+      }
+    } catch (error) {
+      console.log('Audio toggle failed:', error);
     }
   };
 
@@ -65,13 +77,15 @@ export const VideoSection: React.FC = () => {
       <div className="absolute inset-0">
         <video
           ref={videoRef}
-          src={Bottle_Video}
           autoPlay
           loop
           playsInline
-          muted={isMuted}
+          muted
           className="w-full h-full object-cover"
-        />
+        >
+          <source src={Bottle_Video} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
 
         {/* Minimal Overlay */}
         <div className="absolute inset-0 bg-black/20" />
@@ -109,7 +123,7 @@ export const VideoSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Minimal Control Panel */}
+      {/* Control Panel */}
       <div className="absolute top-8 right-8 z-20">
         <div className="flex items-center gap-4">
           {/* Audio Toggle */}
@@ -134,11 +148,11 @@ export const VideoSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Visual indicator when section is in view (optional) */}
+      {/* Status indicator */}
       {isInView && (
         <div className="absolute bottom-8 left-8 z-20">
           <div className="px-3 py-1 bg-green-500/20 backdrop-blur-sm rounded-full text-green-400 text-xs font-light border border-green-400/20">
-            Audio Active
+            {isMuted ? 'Section Active (Click 🔊 for audio)' : 'Audio Playing'}
           </div>
         </div>
       )}

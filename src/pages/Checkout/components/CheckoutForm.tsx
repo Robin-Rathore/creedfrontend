@@ -141,7 +141,7 @@ export const CheckoutForm: React.FC = () => {
 
     cartItems.forEach((item) => {
       // Get the GST rate from the product (12% or 18%)
-      const gstRate = item.product.gst || 18; // Default to 18% if not specified
+      const gstRate = item.product?.gst || 18; // Default to 18% if not specified
 
       // Calculate GST for this item
       const itemGST = (item.itemTotal * gstRate) / 100;
@@ -158,7 +158,7 @@ export const CheckoutForm: React.FC = () => {
     const gstBreakdown = { 12: 0, 18: 0 };
 
     cartItems.forEach((item) => {
-      const gstRate = item.product.gst || 18;
+      const gstRate = item.product?.gst || 18;
       const itemGST = (item.itemTotal * gstRate) / 100;
 
       if (gstRate === 12) {
@@ -211,7 +211,7 @@ export const CheckoutForm: React.FC = () => {
   const createOrder = async () => {
     const orderData = {
       items: cartItems.map((item) => ({
-        product: item.product._id,
+        product: item.product?._id,
         quantity: item.quantity,
         size: item.size,
         color: item.color,
@@ -678,16 +678,16 @@ export const CheckoutForm: React.FC = () => {
                 <div key={item._id} className="flex gap-3">
                   <img
                     src={
-                      item.product.images?.[0]?.url ||
+                      item.product?.images?.[0]?.url ||
                       '/placeholder.svg?height=60&width=60' ||
                       '/placeholder.svg'
                     }
-                    alt={item.product.name}
+                    alt={item.product?.name}
                     className="w-15 h-15 object-cover rounded-lg"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm line-clamp-2">
-                      {item.product.name}
+                      {item.product?.name}
                     </p>
                     <p className="text-sm text-gray-600">
                       Qty: {item.quantity}

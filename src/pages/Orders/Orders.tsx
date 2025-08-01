@@ -254,7 +254,7 @@ const OrderCard = ({ order, index }: any) => {
                 >
                   <img
                     src={
-                      item.product.images?.[0]?.url ||
+                      item.product?.images?.[0]?.url ||
                       '/placeholder.svg?height=40&width=40'
                     }
                     alt={item.name}
@@ -320,7 +320,7 @@ const OrderCard = ({ order, index }: any) => {
                       >
                         <img
                           src={
-                            item.product.images?.[0]?.url ||
+                            item.product?.images?.[0]?.url ||
                             '/placeholder.svg?height=48&width=48'
                           }
                           alt={item.name}

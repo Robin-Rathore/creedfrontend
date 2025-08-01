@@ -112,7 +112,7 @@ export const CategoriesSection: React.FC = () => {
 
                           {/* Description - Hidden on mobile, shown on larger screens */}
                           <p className="hidden lg:block text-muted-foreground text-xs lg:text-sm mb-3 line-clamp-2">
-                            {category.description ||
+                            {category.description.slice(0, 50) ||
                               `Discover our premium ${category.name.toLowerCase()} collection`}
                           </p>
                         </div>

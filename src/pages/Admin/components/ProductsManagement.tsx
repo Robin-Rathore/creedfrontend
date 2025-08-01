@@ -1,18 +1,18 @@
 //@ts-nocheck
 
-import type React from "react";
-import { useState } from "react";
-import { useAtom } from "jotai";
+import type React from 'react';
+import { useState } from 'react';
+import { useAtom } from 'jotai';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -20,26 +20,26 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu';
 import {
   Plus,
   Search,
@@ -57,17 +57,17 @@ import {
   Sparkles,
   BarChart3,
   TrendingDown,
-} from "lucide-react";
-import { useProducts } from "@/queries/hooks/product/useProducts";
-import { useDeleteProduct } from "@/queries/hooks/product/useProductMutations";
-import { useCategories } from "@/queries/hooks/category/useCategories";
-import { ProductForm } from "./ProductForm";
+} from 'lucide-react';
+import { useProducts } from '@/queries/hooks/product/useProducts';
+import { useDeleteProduct } from '@/queries/hooks/product/useProductMutations';
+import { useCategories } from '@/queries/hooks/category/useCategories';
+import { ProductForm } from './ProductForm';
 import {
   selectedProductAtom,
   modalOpenAtom,
   modalTypeAtom,
-} from "../state/adminAtoms";
-import { getImageUrl } from "@/utils/getImageUrl";
+} from '../state/adminAtoms';
+import { getImageUrl } from '@/utils/getImageUrl';
 
 const StatCard = ({
   title,
@@ -97,7 +97,7 @@ const StatCard = ({
             )}
             <span
               className={`text-sm font-semibold ${
-                isPositive ? "text-green-500" : "text-red-500"
+                isPositive ? 'text-green-500' : 'text-red-500'
               }`}
             >
               {Math.abs(change).toFixed(1)}%
@@ -120,43 +120,46 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
   const getStockStatus = (stock: number, lowStockThreshold: number) => {
     if (stock === 0)
       return {
-        label: "Out of Stock",
-        color: "bg-red-100 text-red-700 border-red-200",
+        label: 'Out of Stock',
+        color: 'bg-red-100 text-red-700 border-red-200',
       };
     if (stock <= lowStockThreshold)
       return {
-        label: "Low Stock",
-        color: "bg-orange-100 text-orange-700 border-orange-200",
+        label: 'Low Stock',
+        color: 'bg-orange-100 text-orange-700 border-orange-200',
       };
     return {
-      label: "In Stock",
-      color: "bg-green-100 text-green-700 border-green-200",
+      label: 'In Stock',
+      color: 'bg-green-100 text-green-700 border-green-200',
     };
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
-        return "bg-green-100 text-green-700 border-green-200";
-      case "inactive":
-        return "bg-gray-100 text-gray-700 border-gray-200";
-      case "draft":
-        return "bg-blue-100 text-blue-700 border-blue-200";
+      case 'active':
+        return 'bg-green-100 text-green-700 border-green-200';
+      case 'inactive':
+        return 'bg-gray-100 text-gray-700 border-gray-200';
+      case 'draft':
+        return 'bg-blue-100 text-blue-700 border-blue-200';
       default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
+        return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
-  const stockStatus = getStockStatus(product.stock, product.lowStockThreshold);
+  const stockStatus = getStockStatus(
+    product?.stock,
+    product?.lowStockThreshold
+  );
 
-  console.log("Product data:", product.images[0]?.url);
+  console.log('Product data:', product?.images[0]?.url);
   return (
     <TableRow className="hover:bg-gray-50/50 transition-colors duration-150 group">
       <TableCell className="py-4">
         <div className="flex items-center space-x-4">
           <div className="relative">
             <img
-              src={product.images[0]?.url}
-              alt={product.name}
+              src={product?.images[0]?.url}
+              alt={product?.name}
               className="w-12 h-12 rounded-xl object-cover border-2 border-gray-100 group-hover:border-gray-200 transition-colors duration-150"
             />
             <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
@@ -165,11 +168,11 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
           </div>
           <div>
             <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-150">
-              {product.name}
+              {product?.name}
             </div>
             <div className="text-sm text-gray-500 flex items-center gap-2">
               <span className="font-mono bg-gray-100 px-2 py-1 rounded text-xs">
-                {product.sku}
+                {product?.sku}
               </span>
             </div>
           </div>
@@ -180,17 +183,17 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
           variant="outline"
           className="font-medium border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors duration-150"
         >
-          {product.category.name}
+          {product?.category.name}
         </Badge>
       </TableCell>
       <TableCell>
         <div className="space-y-1">
           <div className="font-bold text-gray-900 text-lg">
-            ${product.price}
+            ₹{product?.price}
           </div>
-          {product.comparePrice && (
+          {product?.comparePrice && (
             <div className="text-sm text-gray-500 line-through">
-              ${product.comparePrice}
+              ₹{product?.comparePrice}
             </div>
           )}
         </div>
@@ -198,7 +201,7 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
       <TableCell>
         <div className="flex items-center space-x-3">
           <span className="font-bold text-lg text-gray-900">
-            {product.stock}
+            {product?.stock}
           </span>
           <Badge className={`${stockStatus.color} font-semibold shadow-sm`}>
             {stockStatus.label}
@@ -208,18 +211,18 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
       <TableCell>
         <Badge
           className={`${getStatusColor(
-            product.status
+            product?.status
           )} font-semibold shadow-sm capitalize`}
         >
-          {product.status}
+          {product?.status}
         </Badge>
       </TableCell>
       <TableCell>
         <div className="text-sm text-gray-600 font-medium">
-          {new Date(product.createdAt).toLocaleDateString("en-US", {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
+          {new Date(product?.createdAt).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
           })}
         </div>
       </TableCell>
@@ -246,7 +249,7 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
               <span className="font-medium">View Details</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(product._id)}
+              onClick={() => onDelete(product?._id)}
               className="cursor-pointer hover:bg-red-50 text-red-600"
             >
               <Trash2 className="mr-3 h-4 w-4" />
@@ -263,17 +266,17 @@ export const ProductsManagement: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useAtom(selectedProductAtom);
   const [modalOpen, setModalOpen] = useAtom(modalOpenAtom);
   const [modalType, setModalType] = useAtom(modalTypeAtom);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: productsData, isLoading } = useProducts({
     page: currentPage,
     limit: 10,
     search: searchQuery || undefined,
-    status: statusFilter !== "all" ? statusFilter : undefined,
-    category: categoryFilter !== "all" ? categoryFilter : undefined,
+    status: statusFilter !== 'all' ? statusFilter : undefined,
+    category: categoryFilter !== 'all' ? categoryFilter : undefined,
   });
 
   const { data: categories } = useCategories();
@@ -281,18 +284,18 @@ export const ProductsManagement: React.FC = () => {
 
   const handleCreateProduct = () => {
     setSelectedProduct(null);
-    setModalType("create");
+    setModalType('create');
     setModalOpen(true);
   };
 
   const handleEditProduct = (product: any) => {
     setSelectedProduct(product);
-    setModalType("edit");
+    setModalType('edit');
     setModalOpen(true);
   };
 
   const handleDeleteProduct = async (productId: string) => {
-    if (window.confirm("Are you sure you want to delete this product?")) {
+    if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await deleteProductMutation.mutateAsync(productId);
       } catch (error) {
@@ -337,7 +340,7 @@ export const ProductsManagement: React.FC = () => {
 
   const totalProducts = productsData?.pagination?.totalItems || 0;
   const activeProducts =
-    productsData?.data?.filter((p) => p.status === "active").length || 0;
+    productsData?.data?.filter((p) => p.status === 'active').length || 0;
   const lowStockCount =
     productsData?.data?.filter((p) => p.stock <= p.lowStockThreshold).length ||
     0;
@@ -523,7 +526,7 @@ export const ProductsManagement: React.FC = () => {
               <TableBody>
                 {productsData?.data?.map((product, index) => (
                   <ProductRow
-                    key={product._id}
+                    key={product?._id}
                     product={product}
                     index={index}
                     onEdit={handleEditProduct}
@@ -540,11 +543,11 @@ export const ProductsManagement: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="text-sm text-gray-600 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-blue-500" />
-                  Showing {(currentPage - 1) * 10 + 1} to{" "}
+                  Showing {(currentPage - 1) * 10 + 1} to{' '}
                   {Math.min(
                     currentPage * 10,
                     productsData.pagination.totalItems
-                  )}{" "}
+                  )}{' '}
                   of {productsData.pagination.totalItems} products
                 </div>
                 <div className="flex items-center space-x-2">
@@ -570,14 +573,14 @@ export const ProductsManagement: React.FC = () => {
                           <Button
                             key={pageNum}
                             variant={
-                              currentPage === pageNum ? "default" : "outline"
+                              currentPage === pageNum ? 'default' : 'outline'
                             }
                             size="sm"
                             onClick={() => setCurrentPage(pageNum)}
                             className={
                               currentPage === pageNum
-                                ? "bg-blue-600 hover:bg-blue-700"
-                                : "hover:bg-blue-50 hover:border-blue-300"
+                                ? 'bg-blue-600 hover:bg-blue-700'
+                                : 'hover:bg-blue-50 hover:border-blue-300'
                             }
                           >
                             {pageNum}
@@ -610,12 +613,12 @@ export const ProductsManagement: React.FC = () => {
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <Package className="w-5 h-5 text-blue-600" />
                 </div>
-                {modalType === "create" ? "Create New Product" : "Edit Product"}
+                {modalType === 'create' ? 'Create New Product' : 'Edit Product'}
               </DialogTitle>
             </DialogHeader>
             <ProductForm
               onClose={() => setModalOpen(false)}
-              isEdit={modalType === "edit"}
+              isEdit={modalType === 'edit'}
             />
           </DialogContent>
         </Dialog>

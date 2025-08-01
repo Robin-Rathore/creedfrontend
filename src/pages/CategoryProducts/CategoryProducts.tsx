@@ -31,7 +31,7 @@ import {
   useCategoryProducts,
 } from '@/queries/hooks/category';
 import { useCart } from '@/queries/hooks/user';
-import { userAtom } from '@/queries';
+import { addToCartAtom, userAtom } from '@/queries';
 import { useAtom } from 'jotai';
 
 export const CategoryProducts: React.FC = () => {
@@ -105,30 +105,30 @@ export const CategoryProducts: React.FC = () => {
   const handleAddToCart = (product: any) => {
     if (!product) return;
 
-    if (product.stock === 0) {
+    if (product?.stock === 0) {
       toast.error('Product is out of stock');
       return;
     }
 
     // Create cart item similar to ProductDetail component
     const cartItem = {
-      productId: product._id,
+      productId: product?._id,
       quantity: 1,
       variant:
-        product.variants && product.variants.length > 0
-          ? product.variants[0]
+        product?.variants && product?.variants.length > 0
+          ? product?.variants[0]
           : null,
       product: {
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        comparePrice: product.comparePrice,
-        images: product.images,
-        stock: product.stock,
-        slug: product.slug,
-        shortDescription: product.shortDescription,
-        description: product.description,
-        gst: product.gst || 0,
+        _id: product?._id,
+        name: product?.name,
+        price: product?.price,
+        comparePrice: product?.comparePrice,
+        images: product?.images,
+        stock: product?.stock,
+        slug: product?.slug,
+        shortDescription: product?.shortDescription,
+        description: product?.description,
+        gst: product?.gst || 0,
       },
     };
 
@@ -240,13 +240,37 @@ export const CategoryProducts: React.FC = () => {
                   </Badge>
                 )}
               </div>
+
+              {category.children.length > 0 && (
+                <div>
+                  <h2 className="text-lg font-semibold text-gray-900 mt-6 mb-2">
+                    Subcategories
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {category.children.map((child) => (
+                      <Link
+                        key={child._id}
+                        to={`/categories/${child.slug}`}
+                        className="inline-block"
+                      >
+                        <Badge
+                          variant="outline"
+                          className="hover:bg-[var(--lightest)] hover:border-[var(--medium)] transition-colors cursor-pointer"
+                        >
+                          {child.name}
+                        </Badge>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             {category.image?.url && (
               <div className="relative">
                 <img
                   src={category.image.url || '/placeholder.svg'}
                   alt={category.name}
-                  className="w-full h-64 object-cover rounded-lg shadow-sm"
+                  className="w-full md:h-104 h-64 object-cover rounded-lg shadow-sm"
                 />
               </div>
             )}
@@ -440,7 +464,7 @@ export const CategoryProducts: React.FC = () => {
               <AnimatePresence>
                 {productsData?.data?.map((product, index) => (
                   <motion.div
-                    key={product._id}
+                    key={product?._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
@@ -449,37 +473,37 @@ export const CategoryProducts: React.FC = () => {
                   >
                     <Card className="overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300">
                       <div className="relative overflow-hidden">
-                        <Link to={`/products/${product.slug}`}>
+                        <Link to={`/products/${product?.slug}`}>
                           <img
                             src={
-                              product.images?.[0]?.url ||
+                              product?.images?.[0]?.url ||
                               '/placeholder.svg?height=300&width=300'
                             }
-                            alt={product.name}
+                            alt={product?.name}
                             className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                         </Link>
 
                         {/* Badges */}
                         <div className="absolute top-3 left-3 flex flex-col gap-2">
-                          {product.isFeatured && (
+                          {product?.isFeatured && (
                             <Badge className="bg-[var(--medium)] text-white">
                               Featured
                             </Badge>
                           )}
-                          {product.comparePrice &&
-                            product.comparePrice > product.price && (
+                          {product?.comparePrice &&
+                            product?.comparePrice > product?.price && (
                               <Badge variant="destructive">
                                 -
                                 {Math.round(
-                                  ((product.comparePrice - product.price) /
-                                    product.comparePrice) *
+                                  ((product?.comparePrice - product?.price) /
+                                    product?.comparePrice) *
                                     100
                                 )}
                                 %
                               </Badge>
                             )}
-                          {product.stock === 0 && (
+                          {product?.stock === 0 && (
                             <Badge variant="secondary">Out of Stock</Badge>
                           )}
                         </div>
@@ -499,7 +523,7 @@ export const CategoryProducts: React.FC = () => {
                         <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
                             onClick={() => handleAddToCart(product)}
-                            disabled={product.stock === 0}
+                            disabled={product?.stock === 0}
                             className="w-full bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
                             size="sm"
                           >
@@ -511,9 +535,9 @@ export const CategoryProducts: React.FC = () => {
 
                       <CardContent className="p-4">
                         <div className="space-y-2">
-                          <Link to={`/products/${product.slug}`}>
+                          <Link to={`/products/${product?.slug}`}>
                             <h3 className="font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors line-clamp-2">
-                              {product.name}
+                              {product?.name}
                             </h3>
                           </Link>
 
@@ -524,7 +548,7 @@ export const CategoryProducts: React.FC = () => {
                                   key={i}
                                   className={`h-4 w-4 ${
                                     i <
-                                    Math.floor(product.ratings?.average || 0)
+                                    Math.floor(product?.ratings?.average || 0)
                                       ? 'text-yellow-400 fill-current'
                                       : 'text-gray-300'
                                   }`}
@@ -532,30 +556,30 @@ export const CategoryProducts: React.FC = () => {
                               ))}
                             </div>
                             <span className="text-sm text-gray-600">
-                              ({product.ratings?.count || 0})
+                              ({product?.ratings?.count || 0})
                             </span>
                           </div>
 
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <span className="text-lg font-bold text-gray-900">
-                                ${product.price.toLocaleString()}
+                                ₹{product?.price.toLocaleString()}
                               </span>
-                              {product.comparePrice &&
-                                product.comparePrice > product.price && (
+                              {product?.comparePrice &&
+                                product?.comparePrice > product?.price && (
                                   <span className="text-sm text-gray-500 line-through">
-                                    ${product.comparePrice.toLocaleString()}
+                                    ₹{product?.comparePrice.toLocaleString()}
                                   </span>
                                 )}
                             </div>
 
-                            {product.stock <= product.lowStockThreshold &&
-                              product.stock > 0 && (
+                            {product?.stock <= product?.lowStockThreshold &&
+                              product?.stock > 0 && (
                                 <Badge
                                   variant="outline"
                                   className="text-xs text-orange-600"
                                 >
-                                  Only {product.stock} left
+                                  Only {product?.stock} left
                                 </Badge>
                               )}
                           </div>
@@ -571,7 +595,7 @@ export const CategoryProducts: React.FC = () => {
               <AnimatePresence>
                 {productsData?.data?.map((product, index) => (
                   <motion.div
-                    key={product._id}
+                    key={product?._id}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.05 }}
@@ -581,15 +605,15 @@ export const CategoryProducts: React.FC = () => {
                       <CardContent className="p-4">
                         <div className="flex gap-4">
                           <Link
-                            to={`/products/${product.slug}`}
+                            to={`/products/${product?.slug}`}
                             className="flex-shrink-0"
                           >
                             <img
                               src={
-                                product.images?.[0]?.url ||
+                                product?.images?.[0]?.url ||
                                 '/placeholder.svg?height=120&width=120'
                               }
-                              alt={product.name}
+                              alt={product?.name}
                               className="w-24 h-24 object-cover rounded-lg"
                             />
                           </Link>
@@ -597,9 +621,9 @@ export const CategoryProducts: React.FC = () => {
                           <div className="flex-1 space-y-2">
                             <div className="flex items-start justify-between">
                               <div>
-                                <Link to={`/products/${product.slug}`}>
+                                <Link to={`/products/${product?.slug}`}>
                                   <h3 className="font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors">
-                                    {product.name}
+                                    {product?.name}
                                   </h3>
                                 </Link>
                               </div>
@@ -607,12 +631,13 @@ export const CategoryProducts: React.FC = () => {
                               <div className="text-right">
                                 <div className="flex items-center gap-2">
                                   <span className="text-lg font-bold text-gray-900">
-                                    ${product.price.toLocaleString()}
+                                    ₹{product?.price.toLocaleString()}
                                   </span>
-                                  {product.comparePrice &&
-                                    product.comparePrice > product.price && (
+                                  {product?.comparePrice &&
+                                    product?.comparePrice > product?.price && (
                                       <span className="text-sm text-gray-500 line-through">
-                                        ${product.comparePrice.toLocaleString()}
+                                        ₹
+                                        {product?.comparePrice.toLocaleString()}
                                       </span>
                                     )}
                                 </div>
@@ -620,7 +645,8 @@ export const CategoryProducts: React.FC = () => {
                             </div>
 
                             <p className="text-sm text-gray-600 line-clamp-2">
-                              {product.shortDescription || product.description}
+                              {product?.shortDescription ||
+                                product?.description}
                             </p>
 
                             <div className="flex items-center justify-between">
@@ -633,7 +659,7 @@ export const CategoryProducts: React.FC = () => {
                                         className={`h-4 w-4 ${
                                           i <
                                           Math.floor(
-                                            product.ratings?.average || 0
+                                            product?.ratings?.average || 0
                                           )
                                             ? 'text-yellow-400 fill-current'
                                             : 'text-gray-300'
@@ -642,17 +668,17 @@ export const CategoryProducts: React.FC = () => {
                                     ))}
                                   </div>
                                   <span className="text-sm text-gray-600">
-                                    ({product.ratings?.count || 0})
+                                    ({product?.ratings?.count || 0})
                                   </span>
                                 </div>
 
-                                {product.stock <= product.lowStockThreshold &&
-                                  product.stock > 0 && (
+                                {product?.stock <= product?.lowStockThreshold &&
+                                  product?.stock > 0 && (
                                     <Badge
                                       variant="outline"
                                       className="text-xs text-orange-600"
                                     >
-                                      Only {product.stock} left
+                                      Only {product?.stock} left
                                     </Badge>
                                   )}
                               </div>
@@ -667,7 +693,7 @@ export const CategoryProducts: React.FC = () => {
                                 </Button>
                                 <Button
                                   onClick={() => handleAddToCart(product)}
-                                  disabled={product.stock === 0}
+                                  disabled={product?.stock === 0}
                                   className="bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
                                   size="sm"
                                 >

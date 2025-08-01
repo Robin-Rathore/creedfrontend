@@ -17,30 +17,30 @@ export const FeaturedProductsSection: React.FC = () => {
   const handleAddToCart = (product: any) => {
     if (!product) return;
 
-    if (product.stock === 0) {
+    if (product?.stock === 0) {
       toast.error('Product is out of stock');
       return;
     }
 
     // Create cart item similar to ProductDetail component
     const cartItem = {
-      productId: product._id,
+      productId: product?._id,
       quantity: 1,
       variant:
-        product.variants && product.variants.length > 0
-          ? product.variants[0]
+        product?.variants && product?.variants.length > 0
+          ? product?.variants[0]
           : null,
       product: {
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        comparePrice: product.comparePrice,
-        images: product.images,
-        stock: product.stock,
-        slug: product.slug,
-        shortDescription: product.shortDescription,
-        description: product.description,
-        gst: product.gst || 0,
+        _id: product?._id,
+        name: product?.name,
+        price: product?.price,
+        comparePrice: product?.comparePrice,
+        images: product?.images,
+        stock: product?.stock,
+        slug: product?.slug,
+        shortDescription: product?.shortDescription,
+        description: product?.description,
+        gst: product?.gst || 0,
       },
     };
 
@@ -111,35 +111,35 @@ export const FeaturedProductsSection: React.FC = () => {
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-6">
             {featuredProducts.slice(0, 8).map((product) => (
               <Card
-                key={product._id}
+                key={product?._id}
                 className="group hover:shadow-lg lg:hover:shadow-xl transition-all duration-300 border hover:border-primary/20 h-full flex flex-col overflow-hidden"
               >
                 <CardContent className="p-0 flex flex-col h-full">
                   {/* Image Container */}
                   <div className="relative aspect-square overflow-hidden bg-muted/50">
                     <Link
-                      to={`/products/${product.slug}`}
+                      to={`/products/${product?.slug}`}
                       className="block w-full h-full"
                     >
                       <img
                         src={
-                          product.images[0]?.url ||
+                          product?.images[0]?.url ||
                           '/placeholder.svg?height=300&width=300'
                         }
-                        alt={product.images[0]?.alt || product.name}
+                        alt={product?.images[0]?.alt || product?.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </Link>
 
                     {/* Badges */}
                     <div className="absolute top-2 left-2 flex flex-col gap-1">
-                      {product.discountPercentage > 0 && (
+                      {product?.discountPercentage > 0 && (
                         <Badge className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1">
-                          -{product.discountPercentage}%
+                          -{product?.discountPercentage}%
                         </Badge>
                       )}
-                      {product.stock <= product.lowStockThreshold &&
-                        product.stock > 0 && (
+                      {product?.stock <= product?.lowStockThreshold &&
+                        product?.stock > 0 && (
                           <Badge
                             variant="outline"
                             className="bg-orange-100 border-orange-300 text-orange-800 text-xs px-2 py-1"
@@ -147,7 +147,7 @@ export const FeaturedProductsSection: React.FC = () => {
                             Low Stock
                           </Badge>
                         )}
-                      {product.stock === 0 && (
+                      {product?.stock === 0 && (
                         <Badge
                           variant="destructive"
                           className="text-xs px-2 py-1"
@@ -172,14 +172,14 @@ export const FeaturedProductsSection: React.FC = () => {
                         className="h-7 w-7 lg:h-8 lg:w-8 bg-white/90 backdrop-blur-sm hover:bg-white"
                         asChild
                       >
-                        <Link to={`/products/${product.slug}`}>
+                        <Link to={`/products/${product?.slug}`}>
                           <Eye className="h-3 w-3 lg:h-4 lg:w-4" />
                         </Link>
                       </Button>
                     </div>
 
                     {/* Quick Add to Cart - Bottom overlay */}
-                    {product.stock > 0 && (
+                    {product?.stock > 0 && (
                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <div className="p-2 lg:p-3">
                           <Button
@@ -202,28 +202,28 @@ export const FeaturedProductsSection: React.FC = () => {
                   <div className="p-3 lg:p-4 flex-1 flex flex-col">
                     <div className="flex-1">
                       {/* Brand */}
-                      {/* {product.brand && (
+                      {/* {product?.brand && (
                         <p className="text-xs lg:text-sm text-muted-foreground mb-1 uppercase tracking-wide">
-                          {product.brand}
+                          {product?.brand}
                         </p>
                       )} */}
 
                       {/* Product Name */}
-                      <Link to={`/products/${product.slug}`}>
+                      <Link to={`/products/${product?.slug}`}>
                         <h3 className="font-medium lg:font-semibold text-sm lg:text-base mb-2 line-clamp-2 group-hover:text-primary transition-colors leading-tight">
-                          {product.name}
+                          {product?.name}
                         </h3>
                       </Link>
 
                       {/* Rating */}
-                      {product.ratings.count > 0 && (
+                      {product?.ratings.count > 0 && (
                         <div className="flex items-center mb-2 lg:mb-3">
                           <div className="flex items-center">
                             {[...Array(5)].map((_, i) => (
                               <Star
                                 key={i}
                                 className={`h-3 w-3 ${
-                                  i < Math.floor(product.ratings.average)
+                                  i < Math.floor(product?.ratings.average)
                                     ? 'fill-yellow-400 text-yellow-400'
                                     : 'text-gray-300'
                                 }`}
@@ -231,15 +231,15 @@ export const FeaturedProductsSection: React.FC = () => {
                             ))}
                           </div>
                           <span className="text-xs text-muted-foreground ml-1 lg:ml-2">
-                            ({product.ratings.count})
+                            ({product?.ratings.count})
                           </span>
                         </div>
                       )}
 
                       {/* Short Description - Hidden on mobile */}
-                      {product.shortDescription && (
+                      {product?.shortDescription && (
                         <p className="lg:block text-xs text-muted-foreground mb-3 line-clamp-2">
-                          {product.shortDescription.slice(0, 40)}...
+                          {product?.shortDescription.slice(0, 40)}...
                         </p>
                       )}
                     </div>
@@ -250,20 +250,20 @@ export const FeaturedProductsSection: React.FC = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-1 lg:gap-2">
                           <span className="font-bold text-primary text-sm lg:text-base">
-                            ${product.price.toFixed(2)}
+                            ₹{product?.price.toFixed(2)}
                           </span>
-                          {product.comparePrice &&
-                            product.comparePrice > product.price && (
+                          {product?.comparePrice &&
+                            product?.comparePrice > product?.price && (
                               <span className="text-xs lg:text-sm text-muted-foreground line-through">
-                                ${product.comparePrice.toFixed(2)}
+                                ₹{product?.comparePrice.toFixed(2)}
                               </span>
                             )}
                         </div>
 
                         {/* Stock Count - Small indicator */}
-                        {product.stock > 0 && product.stock <= 20 && (
+                        {product?.stock > 0 && product?.stock <= 20 && (
                           <span className="hidden lg:block text-xs text-muted-foreground">
-                            {product.stock} left
+                            {product?.stock} left
                           </span>
                         )}
                       </div>
@@ -271,13 +271,13 @@ export const FeaturedProductsSection: React.FC = () => {
                       {/* Additional Info Row */}
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
                         {/* Sold Count */}
-                        {product.soldCount > 0 && (
-                          <span>{product.soldCount} sold</span>
+                        {product?.soldCount > 0 && (
+                          <span>{product?.soldCount} sold</span>
                         )}
 
                         {/* SKU - Hidden on mobile */}
                         <span className="hidden lg:inline text-xs">
-                          SKU: {product.sku}
+                          SKU: {product?.sku}
                         </span>
                       </div>
                     </div>
