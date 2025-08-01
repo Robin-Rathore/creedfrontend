@@ -76,11 +76,11 @@ export const ProductDetail: React.FC = () => {
   );
 
   useEffect(() => {
-    if (product?.variants && product.variants.length > 0) {
-      setSelectedVariant(product.variants[0]);
-      if (product.variants[0].size) setSelectedSize(product.variants[0].size);
-      if (product.variants[0].color)
-        setSelectedColor(product.variants[0].color);
+    if (product?.variants && product?.variants.length > 0) {
+      setSelectedVariant(product?.variants[0]);
+      if (product?.variants[0].size) setSelectedSize(product?.variants[0].size);
+      if (product?.variants[0].color)
+        setSelectedColor(product?.variants[0].color);
     }
   }, [product]);
 
@@ -88,20 +88,20 @@ export const ProductDetail: React.FC = () => {
     if (!product) return;
 
     const cartItem = {
-      productId: product._id,
+      productId: product?._id,
       quantity,
       variant: selectedVariant,
       product: {
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        comparePrice: product.comparePrice,
-        images: product.images,
-        stock: selectedVariant?.stock || product.stock,
-        slug: product.slug,
-        shortDescription: product.shortDescription,
-        description: product.description,
-        gst: product.gst || 0, // Ensure GST is included
+        _id: product?._id,
+        name: product?.name,
+        price: product?.price,
+        comparePrice: product?.comparePrice,
+        images: product?.images,
+        stock: selectedVariant?.stock || product?.stock,
+        slug: product?.slug,
+        shortDescription: product?.shortDescription,
+        description: product?.description,
+        gst: product?.gst || 0, // Ensure GST is included
       },
     };
 
@@ -119,10 +119,10 @@ export const ProductDetail: React.FC = () => {
 
     try {
       if (isInWishlist) {
-        await removeFromWishlistMutation.mutateAsync(product._id);
+        await removeFromWishlistMutation.mutateAsync(product?._id);
         toast.success('Removed from wishlist');
       } else {
-        await addToWishlistMutation.mutateAsync(product._id);
+        await addToWishlistMutation.mutateAsync(product?._id);
         toast.success('Added to wishlist');
       }
     } catch (error) {
@@ -141,7 +141,7 @@ export const ProductDetail: React.FC = () => {
 
     try {
       await createReviewMutation.mutateAsync({
-        productId: product._id,
+        productId: product?._id,
         ...reviewForm,
       });
       setReviewForm({ rating: 5, title: '', comment: '' });
@@ -226,13 +226,13 @@ export const ProductDetail: React.FC = () => {
           </Link>
           <span>/</span>
           <Link
-            to={`/categories/${product.category?.slug}`}
+            to={`/categories/${product?.category?.slug}`}
             className="hover:text-[var(--medium)]"
           >
-            {product.category?.name}
+            {product?.category?.name}
           </Link>
           <span>/</span>
-          <span className="text-gray-900">{product.name}</span>
+          <span className="text-gray-900">{product?.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -246,22 +246,22 @@ export const ProductDetail: React.FC = () => {
             <div className="relative aspect-square bg-white rounded-2xl overflow-hidden shadow-lg">
               <img
                 src={
-                  product.images?.[selectedImageIndex]?.url ||
+                  product?.images?.[selectedImageIndex]?.url ||
                   '/placeholder.svg?height=600&width=600'
                 }
-                alt={product.name}
+                alt={product?.name}
                 className="w-full h-full object-cover"
               />
 
               {/* Image Navigation */}
-              {product.images && product.images.length > 1 && (
+              {product?.images && product?.images.length > 1 && (
                 <>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() =>
                       setSelectedImageIndex((prev) =>
-                        prev > 0 ? prev - 1 : product.images.length - 1
+                        prev > 0 ? prev - 1 : product?.images.length - 1
                       )
                     }
                     className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
@@ -273,7 +273,7 @@ export const ProductDetail: React.FC = () => {
                     size="sm"
                     onClick={() =>
                       setSelectedImageIndex((prev) =>
-                        prev < product.images.length - 1 ? prev + 1 : 0
+                        prev < product?.images.length - 1 ? prev + 1 : 0
                       )
                     }
                     className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white shadow-lg"
@@ -284,22 +284,23 @@ export const ProductDetail: React.FC = () => {
               )}
 
               {/* Discount Badge */}
-              {product.comparePrice && product.comparePrice > product.price && (
-                <Badge className="absolute top-4 left-4 bg-red-500 text-white">
-                  {Math.round(
-                    ((product.comparePrice - product.price) /
-                      product.comparePrice) *
-                      100
-                  )}
-                  % OFF
-                </Badge>
-              )}
+              {product?.comparePrice &&
+                product?.comparePrice > product?.price && (
+                  <Badge className="absolute top-4 left-4 bg-red-500 text-white">
+                    {Math.round(
+                      ((product?.comparePrice - product?.price) /
+                        product?.comparePrice) *
+                        100
+                    )}
+                    % OFF
+                  </Badge>
+                )}
             </div>
 
             {/* Thumbnail Images */}
-            {product.images && product.images.length > 1 && (
+            {product?.images && product?.images.length > 1 && (
               <div className="flex gap-2 overflow-x-auto pb-2">
-                {product.images.map((image, index) => (
+                {product?.images.map((image, index) => (
                   <button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
@@ -311,7 +312,7 @@ export const ProductDetail: React.FC = () => {
                   >
                     <img
                       src={image.url || '/placeholder.svg?height=80&width=80'}
-                      alt={`${product.name} ${index + 1}`}
+                      alt={`${product?.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -329,7 +330,7 @@ export const ProductDetail: React.FC = () => {
             {/* Title and Rating */}
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {product.name}
+                {product?.name}
               </h1>
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
@@ -349,17 +350,17 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <Badge
                   className={`${
-                    product.stock > 10
+                    product?.stock > 10
                       ? 'bg-green-100 text-green-800'
-                      : product.stock > 0
+                      : product?.stock > 0
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-red-100 text-red-800'
                   }`}
                 >
-                  {product.stock > 10
+                  {product?.stock > 10
                     ? 'In Stock'
-                    : product.stock > 0
-                    ? `${product.stock} left`
+                    : product?.stock > 0
+                    ? `${product?.stock} left`
                     : 'Out of Stock'}
                 </Badge>
               </div>
@@ -368,27 +369,28 @@ export const ProductDetail: React.FC = () => {
             {/* Price */}
             <div className="flex items-center gap-4">
               <span className="text-3xl font-bold text-gray-900">
-                ${product.price.toFixed(2)}
+                ₹{product?.price.toFixed(2)}
               </span>
-              {product.comparePrice && product.comparePrice > product.price && (
-                <span className="text-xl text-gray-500 line-through">
-                  ${product.comparePrice.toFixed(2)}
-                </span>
-              )}
+              {product?.comparePrice &&
+                product?.comparePrice > product?.price && (
+                  <span className="text-xl text-gray-500 line-through">
+                    ₹{product?.comparePrice.toFixed(2)}
+                  </span>
+                )}
             </div>
 
             {/* Short Description */}
-            {product.shortDescription && (
+            {product?.shortDescription && (
               <p className="text-gray-600 text-lg leading-relaxed">
-                {product.shortDescription}
+                {product?.shortDescription}
               </p>
             )}
 
             {/* Variants */}
-            {product.variants && product.variants.length > 0 && (
+            {product?.variants && product?.variants.length > 0 && (
               <div className="space-y-4">
                 {/* Size Selection */}
-                {product.variants.some((v) => v.size) && (
+                {product?.variants.some((v) => v.size) && (
                   <div>
                     <Label className="text-base font-medium mb-3 block">
                       Size
@@ -396,7 +398,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="flex gap-2">
                       {[
                         ...new Set(
-                          product.variants.map((v) => v.size).filter(Boolean)
+                          product?.variants.map((v) => v.size).filter(Boolean)
                         ),
                       ].map((size) => (
                         <Button
@@ -406,7 +408,7 @@ export const ProductDetail: React.FC = () => {
                           }
                           onClick={() => {
                             setSelectedSize(size);
-                            const variant = product.variants.find(
+                            const variant = product?.variants.find(
                               (v) =>
                                 v.size === size &&
                                 (!selectedColor || v.color === selectedColor)
@@ -427,7 +429,7 @@ export const ProductDetail: React.FC = () => {
                 )}
 
                 {/* Color Selection */}
-                {product.variants.some((v) => v.color) && (
+                {product?.variants.some((v) => v.color) && (
                   <div>
                     <Label className="text-base font-medium mb-3 block">
                       Color
@@ -435,7 +437,7 @@ export const ProductDetail: React.FC = () => {
                     <div className="flex gap-2">
                       {[
                         ...new Set(
-                          product.variants.map((v) => v.color).filter(Boolean)
+                          product?.variants.map((v) => v.color).filter(Boolean)
                         ),
                       ].map((color) => (
                         <Button
@@ -445,7 +447,7 @@ export const ProductDetail: React.FC = () => {
                           }
                           onClick={() => {
                             setSelectedColor(color);
-                            const variant = product.variants.find(
+                            const variant = product?.variants.find(
                               (v) =>
                                 v.color === color &&
                                 (!selectedSize || v.size === selectedSize)
@@ -489,14 +491,14 @@ export const ProductDetail: React.FC = () => {
                     <Input
                       type="number"
                       min="1"
-                      max={selectedVariant?.stock || product.stock}
+                      max={selectedVariant?.stock || product?.stock}
                       value={quantity}
                       onChange={(e) =>
                         setQuantity(
                           Math.max(
                             1,
                             Math.min(
-                              selectedVariant?.stock || product.stock,
+                              selectedVariant?.stock || product?.stock,
                               Number.parseInt(e.target.value) || 1
                             )
                           )
@@ -510,13 +512,13 @@ export const ProductDetail: React.FC = () => {
                       onClick={() =>
                         setQuantity((prev) =>
                           Math.min(
-                            selectedVariant?.stock || product.stock,
+                            selectedVariant?.stock || product?.stock,
                             prev + 1
                           )
                         )
                       }
                       disabled={
-                        quantity >= (selectedVariant?.stock || product.stock)
+                        quantity >= (selectedVariant?.stock || product?.stock)
                       }
                       className="h-10 w-10 p-0"
                     >
@@ -530,7 +532,7 @@ export const ProductDetail: React.FC = () => {
               <div className="flex gap-3">
                 <Button
                   onClick={handleAddToCart}
-                  disabled={product.stock === 0}
+                  disabled={product?.stock === 0}
                   className="flex-1 bg-[var(--medium)] hover:bg-[var(--dark)] text-white h-12 text-lg group"
                 >
                   <ShoppingCart className="w-5 h-5 mr-2 group-hover:scale-110 transition-transform" />
@@ -570,7 +572,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Free Shipping</p>
-                  <p className="text-sm text-gray-600">On orders over $50</p>
+                  <p className="text-sm text-gray-600">On orders over ₹50</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -618,8 +620,8 @@ export const ProductDetail: React.FC = () => {
                     <div
                       dangerouslySetInnerHTML={{
                         __html:
-                          product.description ||
-                          product.shortDescription ||
+                          product?.description ||
+                          product?.shortDescription ||
                           'No description available.',
                       }}
                     />
@@ -632,8 +634,8 @@ export const ProductDetail: React.FC = () => {
               <Card className="border-0 shadow-lg">
                 <CardContent className="p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {product.specifications &&
-                      Object.entries(product.specifications).map(
+                    {product?.specifications &&
+                      Object.entries(product?.specifications).map(
                         ([key, value]) => (
                           <div
                             key={key}
@@ -648,20 +650,20 @@ export const ProductDetail: React.FC = () => {
                       )}
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="font-medium text-gray-900">SKU</span>
-                      <span className="text-gray-600">{product.sku}</span>
+                      <span className="text-gray-600">{product?.sku}</span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="font-medium text-gray-900">
                         Category
                       </span>
                       <span className="text-gray-600">
-                        {product.category?.name}
+                        {product?.category?.name}
                       </span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="font-medium text-gray-900">Tags</span>
                       <div className="flex gap-1">
-                        {product.tags?.map((tag, index) => (
+                        {product?.tags?.map((tag, index) => (
                           <Badge
                             key={index}
                             variant="outline"

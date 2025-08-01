@@ -34,7 +34,7 @@ export const CartSummary: React.FC = () => {
 
     cartItems.forEach((item) => {
       // Get the GST rate from the product (12% or 18%)
-      const gstRate = item.product.gst || 18; // Default to 18% if not specified
+      const gstRate = item.product?.gst || 18; // Default to 18% if not specified
 
       // Calculate GST for this item
       const itemGST = (item.itemTotal * gstRate) / 100;
@@ -51,7 +51,7 @@ export const CartSummary: React.FC = () => {
     const gstBreakdown = { 12: 0, 18: 0 };
 
     cartItems.forEach((item) => {
-      const gstRate = item.product.gst || 18;
+      const gstRate = item.product?.gst || 18;
       const itemGST = (item.itemTotal * gstRate) / 100;
 
       if (gstRate === 12) {

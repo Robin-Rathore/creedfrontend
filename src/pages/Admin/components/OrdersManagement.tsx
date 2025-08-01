@@ -819,7 +819,7 @@ export const OrdersManagement: React.FC = () => {
                         >
                           <img
                             src={
-                              item.product.images[0]?.url ||
+                              item.product?.images[0]?.url ||
                               '/placeholder.svg?height=60&width=60'
                             }
                             alt={item.name}

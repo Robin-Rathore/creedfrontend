@@ -57,7 +57,7 @@ export const addToCartAtom = atom(
     const currentItems = get(cartItemsAtom);
     const existingItemIndex = currentItems.findIndex(
       (item) =>
-        item.product._id === newItem.productId &&
+        item.product?._id === newItem.productId &&
         item.variant === newItem.variant?._id
     );
 
@@ -69,7 +69,7 @@ export const addToCartAtom = atom(
         quantity: updatedItems[existingItemIndex].quantity + newItem.quantity,
         itemTotal:
           (updatedItems[existingItemIndex].quantity + newItem.quantity) *
-          newItem.product.price,
+          newItem.product?.price,
       };
       set(cartItemsAtom, updatedItems);
     } else {
@@ -83,7 +83,7 @@ export const addToCartAtom = atom(
         size: newItem.variant?.size,
         color: newItem.variant?.color,
         variant: newItem.variant?._id,
-        itemTotal: newItem.quantity * newItem.product.price,
+        itemTotal: newItem.quantity * newItem.product?.price,
       };
       set(cartItemsAtom, [...currentItems, cartItem]);
     }
@@ -96,7 +96,7 @@ export const updateCartItemAtom = atom(
     const currentItems = get(cartItemsAtom);
     const updatedItems = currentItems.map((item) =>
       item._id === itemId
-        ? { ...item, quantity, itemTotal: quantity * item.product.price }
+        ? { ...item, quantity, itemTotal: quantity * item.product?.price }
         : item
     );
     set(cartItemsAtom, updatedItems);

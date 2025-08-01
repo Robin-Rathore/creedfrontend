@@ -30,30 +30,30 @@ export const WishlistGrid: React.FC = () => {
   const handleAddToCart = (product: any) => {
     if (!product) return;
 
-    if (product.stock === 0) {
+    if (product?.stock === 0) {
       toast.error('Product is out of stock');
       return;
     }
 
     // Create cart item similar to ProductDetail component
     const cartItem = {
-      productId: product._id,
+      productId: product?._id,
       quantity: 1,
       variant:
-        product.variants && product.variants.length > 0
-          ? product.variants[0]
+        product?.variants && product?.variants.length > 0
+          ? product?.variants[0]
           : null,
       product: {
-        _id: product._id,
-        name: product.name,
-        price: product.price,
-        comparePrice: product.comparePrice,
-        images: product.images,
-        stock: product.stock,
-        slug: product.slug,
-        shortDescription: product.shortDescription,
-        description: product.description,
-        gst: product.gst || 0,
+        _id: product?._id,
+        name: product?.name,
+        price: product?.price,
+        comparePrice: product?.comparePrice,
+        images: product?.images,
+        stock: product?.stock,
+        slug: product?.slug,
+        shortDescription: product?.shortDescription,
+        description: product?.description,
+        gst: product?.gst || 0,
       },
     };
 
@@ -111,7 +111,7 @@ export const WishlistGrid: React.FC = () => {
 
           return (
             <motion.div
-              key={product._id}
+              key={product?._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9 }}
@@ -121,24 +121,24 @@ export const WishlistGrid: React.FC = () => {
             >
               <Card className="overflow-hidden border-0 shadow-sm hover:shadow-lg transition-all duration-300">
                 <div className="relative overflow-hidden">
-                  <Link to={`/products/${product.slug}`}>
+                  <Link to={`/products/${product?.slug}`}>
                     <img
                       src={
-                        product.images?.[0]?.url ||
+                        product?.images?.[0]?.url ||
                         '/placeholder.svg?height=300&width=300'
                       }
-                      alt={product.name}
+                      alt={product?.name}
                       className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </Link>
 
                   {/* Discount Badge */}
-                  {product.comparePrice &&
-                    product.comparePrice > product.price && (
+                  {product?.comparePrice &&
+                    product?.comparePrice > product?.price && (
                       <Badge className="absolute top-3 left-3 bg-red-500 text-white">
                         {Math.round(
-                          ((product.comparePrice - product.price) /
-                            product.comparePrice) *
+                          ((product?.comparePrice - product?.price) /
+                            product?.comparePrice) *
                             100
                         )}
                         % OFF
@@ -146,7 +146,7 @@ export const WishlistGrid: React.FC = () => {
                     )}
 
                   {/* Status Badge */}
-                  {product.stock === 0 && (
+                  {product?.stock === 0 && (
                     <Badge
                       variant="secondary"
                       className="absolute top-3 right-12 bg-gray-800 text-white"
@@ -159,7 +159,7 @@ export const WishlistGrid: React.FC = () => {
                   <Button
                     size="sm"
                     variant="secondary"
-                    onClick={() => handleRemoveFromWishlist(product._id)}
+                    onClick={() => handleRemoveFromWishlist(product?._id)}
                     disabled={removeFromWishlist.isPending}
                     className="absolute top-3 right-3 h-8 w-8 p-0 bg-white/90 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
                   >
@@ -170,28 +170,28 @@ export const WishlistGrid: React.FC = () => {
                   <div className="absolute bottom-3 left-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       onClick={() => handleAddToCart(product)}
-                      disabled={product.stock === 0}
+                      disabled={product?.stock === 0}
                       className="w-full bg-[var(--medium)] hover:bg-[var(--dark)] text-white"
                       size="sm"
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
+                      {product?.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
                     </Button>
                   </div>
                 </div>
 
                 <CardContent className="p-4">
                   <div className="space-y-2">
-                    <Link to={`/products/${product.slug}`}>
+                    <Link to={`/products/${product?.slug}`}>
                       <h3 className="font-semibold text-gray-900 hover:text-[var(--medium)] transition-colors line-clamp-2">
-                        {product.name}
+                        {product?.name}
                       </h3>
                     </Link>
 
                     {/* Category */}
-                    {product.category && (
+                    {product?.category && (
                       <p className="text-sm text-gray-500">
-                        {product.category.name}
+                        {product?.category.name}
                       </p>
                     )}
 
@@ -202,7 +202,7 @@ export const WishlistGrid: React.FC = () => {
                           <Star
                             key={i}
                             className={`h-4 w-4 ${
-                              i < Math.floor(product.ratings?.average || 0)
+                              i < Math.floor(product?.ratings?.average || 0)
                                 ? 'text-yellow-400 fill-current'
                                 : 'text-gray-300'
                             }`}
@@ -210,7 +210,7 @@ export const WishlistGrid: React.FC = () => {
                         ))}
                       </div>
                       <span className="text-sm text-gray-600">
-                        ({product.ratings?.count || 0})
+                        ({product?.ratings?.count || 0})
                       </span>
                     </div>
 
@@ -218,19 +218,19 @@ export const WishlistGrid: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-lg font-bold text-gray-900">
-                          ₹{product.price.toFixed(2)}
+                          ₹{product?.price.toFixed(2)}
                         </span>
-                        {product.comparePrice &&
-                          product.comparePrice > product.price && (
+                        {product?.comparePrice &&
+                          product?.comparePrice > product?.price && (
                             <span className="text-sm text-gray-500 line-through">
-                              ₹{product.comparePrice.toFixed(2)}
+                              ₹{product?.comparePrice.toFixed(2)}
                             </span>
                           )}
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleRemoveFromWishlist(product._id)}
+                        onClick={() => handleRemoveFromWishlist(product?._id)}
                         disabled={removeFromWishlist.isPending}
                         className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
                       >
@@ -240,13 +240,13 @@ export const WishlistGrid: React.FC = () => {
 
                     {/* Stock Status */}
                     {/* <div className="text-sm">
-                      {product.stock > 10 ? (
+                      {product?.stock > 10 ? (
                         <span className="text-green-600 font-medium">
                           In Stock
                         </span>
-                      ) : product.stock > 0 ? (
+                      ) : product?.stock > 0 ? (
                         <span className="text-yellow-600 font-medium">
-                          Only {product.stock} left
+                          Only {product?.stock} left
                         </span>
                       ) : (
                         <span className="text-red-600 font-medium">

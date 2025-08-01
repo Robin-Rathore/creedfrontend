@@ -146,17 +146,20 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
         return 'bg-gray-100 text-gray-700 border-gray-200';
     }
   };
-  const stockStatus = getStockStatus(product.stock, product.lowStockThreshold);
+  const stockStatus = getStockStatus(
+    product?.stock,
+    product?.lowStockThreshold
+  );
 
-  console.log('Product data:', product.images[0]?.url);
+  console.log('Product data:', product?.images[0]?.url);
   return (
     <TableRow className="hover:bg-gray-50/50 transition-colors duration-150 group">
       <TableCell className="py-4">
         <div className="flex items-center space-x-4">
           <div className="relative">
             <img
-              src={product.images[0]?.url}
-              alt={product.name}
+              src={product?.images[0]?.url}
+              alt={product?.name}
               className="w-12 h-12 rounded-xl object-cover border-2 border-gray-100 group-hover:border-gray-200 transition-colors duration-150"
             />
             <div className="absolute -top-2 -right-2 w-4 h-4 bg-blue-500 text-white rounded-full flex items-center justify-center text-xs font-bold">
@@ -165,11 +168,11 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
           </div>
           <div>
             <div className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-150">
-              {product.name}
+              {product?.name}
             </div>
             <div className="text-sm text-gray-500 flex items-center gap-2">
               <span className="font-mono bg-gray-100 px-2 py-1 rounded text-xs">
-                {product.sku}
+                {product?.sku}
               </span>
             </div>
           </div>
@@ -180,17 +183,17 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
           variant="outline"
           className="font-medium border-blue-200 text-blue-700 bg-blue-50 hover:bg-blue-100 transition-colors duration-150"
         >
-          {product.category.name}
+          {product?.category.name}
         </Badge>
       </TableCell>
       <TableCell>
         <div className="space-y-1">
           <div className="font-bold text-gray-900 text-lg">
-            ₹{product.price}
+            ₹{product?.price}
           </div>
-          {product.comparePrice && (
+          {product?.comparePrice && (
             <div className="text-sm text-gray-500 line-through">
-              ₹{product.comparePrice}
+              ₹{product?.comparePrice}
             </div>
           )}
         </div>
@@ -198,7 +201,7 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
       <TableCell>
         <div className="flex items-center space-x-3">
           <span className="font-bold text-lg text-gray-900">
-            {product.stock}
+            {product?.stock}
           </span>
           <Badge className={`${stockStatus.color} font-semibold shadow-sm`}>
             {stockStatus.label}
@@ -208,15 +211,15 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
       <TableCell>
         <Badge
           className={`${getStatusColor(
-            product.status
+            product?.status
           )} font-semibold shadow-sm capitalize`}
         >
-          {product.status}
+          {product?.status}
         </Badge>
       </TableCell>
       <TableCell>
         <div className="text-sm text-gray-600 font-medium">
-          {new Date(product.createdAt).toLocaleDateString('en-US', {
+          {new Date(product?.createdAt).toLocaleDateString('en-US', {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
@@ -246,7 +249,7 @@ const ProductRow = ({ product, onEdit, onDelete, index }) => {
               <span className="font-medium">View Details</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => onDelete(product._id)}
+              onClick={() => onDelete(product?._id)}
               className="cursor-pointer hover:bg-red-50 text-red-600"
             >
               <Trash2 className="mr-3 h-4 w-4" />
@@ -523,7 +526,7 @@ export const ProductsManagement: React.FC = () => {
               <TableBody>
                 {productsData?.data?.map((product, index) => (
                   <ProductRow
-                    key={product._id}
+                    key={product?._id}
                     product={product}
                     index={index}
                     onEdit={handleEditProduct}
