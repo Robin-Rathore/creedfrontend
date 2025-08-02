@@ -32,13 +32,13 @@ export const FeaturesSection: React.FC = () => {
     {
       icon: Sparkles,
       title: 'Premium Quality',
-      description: 'Curated luxury products from trusted brands',
+      description: 'Curated luxury products',
       gradient: 'from-purple-500 to-pink-500',
     },
     {
       icon: Users,
       title: 'Expert Support',
-      description: '24/7 customer service by fragrance specialists',
+      description: '24/7 customer service',
       gradient: 'from-orange-500 to-red-500',
     },
   ];
@@ -137,7 +137,7 @@ export const FeaturesSection: React.FC = () => {
           <div className="flex flex-wrap justify-center gap-4">
             <button
               onClick={() => navigate('/products')}
-              className="px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              className="px-8 py-3 bg-gradient-to-r from-[#4a7f5e] to-[#2d5040] text-white font-semibold rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-300"
             >
               Shop Collection
             </button>

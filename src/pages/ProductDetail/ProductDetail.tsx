@@ -42,11 +42,56 @@ import { useAuth } from '@/queries/hooks/auth/useAuth';
 import { useAtom } from 'jotai';
 import { addToCartAtom } from '@/queries/store/cart';
 import { toast } from 'react-hot-toast';
+import { marked } from 'marked';
+
+const parseMarkdown = (text) => {
+  if (!text) return '';
+
+  let html = text
+    // Headers
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+
+    // Bold
+    .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
+
+    // Italic
+    .replace(/\*(.*?)\*/gim, '<em>$1</em>')
+
+    // Lists - bullet points
+    .replace(/^\- (.*$)/gim, '<li>$1</li>')
+    .replace(/^\* (.*$)/gim, '<li>$1</li>')
+
+    // Lists - numbered
+    .replace(/^\d+\. (.*$)/gim, '<li>$1</li>')
+
+    // Blockquotes
+    .replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>')
+
+    // Line breaks
+    .replace(/\n/gim, '<br/>');
+
+  // Wrap consecutive <li> elements in <ul>
+  html = html.replace(
+    /(<li>.*?<\/li>)(\s*<br\s*\/?>)*(\s*<li>.*?<\/li>)*/gim,
+    (match) => {
+      return '<ul>' + match.replace(/<br\s*\/?>/g, '') + '</ul>';
+    }
+  );
+
+  return html;
+};
 
 export const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
+
+  marked.setOptions({
+    breaks: true, // Convert line breaks to <br>
+    gfm: true, // GitHub Flavored Markdown
+  });
 
   // Fixed: Use useProductBySlug instead of useProducts
   const { data: product, isLoading } = useProductBySlug(slug!);
@@ -71,9 +116,17 @@ export const ProductDetail: React.FC = () => {
 
   // Removed the [0] access since product is now a single object, not an array
   const reviews = reviewsData?.data || [];
-  const isInWishlist = wishlistData?.some(
-    (item) => item?.product?._id === product?._id
-  );
+
+  console.log('Wishlist Data:', wishlistData);
+  const isInWishlist = wishlistData?.some((item) => {
+    // Handle different possible structures
+    const itemProductId = item?.product?._id || item?.productId || item?._id;
+    const currentProductId = product?._id || product?.id;
+
+    return String(itemProductId) === String(currentProductId);
+  });
+
+  console.log('Inwishlist:', isInWishlist);
 
   useEffect(() => {
     if (product?.variants && product?.variants.length > 0) {
@@ -618,11 +671,13 @@ export const ProductDetail: React.FC = () => {
                 <CardContent className="p-8">
                   <div className="prose max-w-none">
                     <div
+                      className="markdown-content"
                       dangerouslySetInnerHTML={{
-                        __html:
+                        __html: parseMarkdown(
                           product?.description ||
-                          product?.shortDescription ||
-                          'No description available.',
+                            product?.shortDescription ||
+                            'No description available.'
+                        ),
                       }}
                     />
                   </div>
@@ -634,6 +689,7 @@ export const ProductDetail: React.FC = () => {
               <Card className="border-0 shadow-lg">
                 <CardContent className="p-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Custom Specifications */}
                     {product?.specifications &&
                       Object.entries(product?.specifications).map(
                         ([key, value]) => (
@@ -648,10 +704,13 @@ export const ProductDetail: React.FC = () => {
                           </div>
                         )
                       )}
+
+                    {/* Basic Product Info */}
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="font-medium text-gray-900">SKU</span>
                       <span className="text-gray-600">{product?.sku}</span>
                     </div>
+
                     <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="font-medium text-gray-900">
                         Category
@@ -660,20 +719,202 @@ export const ProductDetail: React.FC = () => {
                         {product?.category?.name}
                       </span>
                     </div>
-                    <div className="flex justify-between py-2 border-b border-gray-100">
-                      <span className="font-medium text-gray-900">Tags</span>
-                      <div className="flex gap-1">
-                        {product?.tags?.map((tag, index) => (
-                          <Badge
-                            key={index}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
+
+                    {product?.subcategory && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Subcategory
+                        </span>
+                        <span className="text-gray-600">
+                          {product?.subcategory?.name}
+                        </span>
                       </div>
+                    )}
+
+                    {product?.brand && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">Brand</span>
+                        <span className="text-gray-600">{product?.brand}</span>
+                      </div>
+                    )}
+
+                    {/* Physical Properties */}
+                    {product?.weight?.value && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Weight
+                        </span>
+                        <span className="text-gray-600">
+                          {product?.weight?.value} {product?.weight?.unit}
+                        </span>
+                      </div>
+                    )}
+
+                    {product?.capacity?.value && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Capacity
+                        </span>
+                        <span className="text-gray-600">
+                          {product?.capacity?.value} {product?.capacity?.unit}
+                        </span>
+                      </div>
+                    )}
+
+                    {product?.dimensions &&
+                      (product?.dimensions?.length ||
+                        product?.dimensions?.width ||
+                        product?.dimensions?.height) && (
+                        <div className="flex justify-between py-2 border-b border-gray-100">
+                          <span className="font-medium text-gray-900">
+                            Dimensions
+                          </span>
+                          <span className="text-gray-600">
+                            {product?.dimensions?.length &&
+                            product?.dimensions?.width &&
+                            product?.dimensions?.height
+                              ? `${product.dimensions.length} × ${product.dimensions.width} × ${product.dimensions.height} ${product.dimensions.unit}`
+                              : [
+                                  product?.dimensions?.length &&
+                                    `L: ${product.dimensions.length}${product.dimensions.unit}`,
+                                  product?.dimensions?.width &&
+                                    `W: ${product.dimensions.width}${product.dimensions.unit}`,
+                                  product?.dimensions?.height &&
+                                    `H: ${product.dimensions.height}${product.dimensions.unit}`,
+                                ]
+                                  .filter(Boolean)
+                                  .join(', ')}
+                          </span>
+                        </div>
+                      )}
+
+                    {/* Stock Information */}
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="font-medium text-gray-900">
+                        Stock Status
+                      </span>
+                      <span
+                        className={`text-sm px-2 py-1 rounded-full ${
+                          product?.stock === 0
+                            ? 'bg-red-100 text-red-800'
+                            : product?.stock <= product?.lowStockThreshold
+                            ? 'bg-yellow-100 text-yellow-800'
+                            : 'bg-green-100 text-green-800'
+                        }`}
+                      >
+                        {product?.stock === 0
+                          ? 'Out of Stock'
+                          : product?.stock <= product?.lowStockThreshold
+                          ? `Low Stock (${product?.stock})`
+                          : `In Stock (${product?.stock})`}
+                      </span>
                     </div>
+
+                    {/* Product Type & Shipping */}
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="font-medium text-gray-900">
+                        Product Type
+                      </span>
+                      <span className="text-gray-600">
+                        {product?.isDigital ? 'Digital' : 'Physical'}
+                      </span>
+                    </div>
+
+                    {!product?.isDigital && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Shipping Required
+                        </span>
+                        <span className="text-gray-600">
+                          {product?.shippingRequired ? 'Yes' : 'No'}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Tax Information */}
+                    {product?.taxable && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Taxable
+                        </span>
+                        <span className="text-gray-600">Yes</span>
+                      </div>
+                    )}
+
+                    {product?.gst && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">GST</span>
+                        <span className="text-gray-600">{product?.gst}%</span>
+                      </div>
+                    )}
+
+                    {/* Sales Information */}
+                    {product?.soldCount > 0 && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Units Sold
+                        </span>
+                        <span className="text-gray-600">
+                          {product?.soldCount}
+                        </span>
+                      </div>
+                    )}
+
+                    {product?.ratings?.count > 0 && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Rating
+                        </span>
+                        <span className="text-gray-600">
+                          {product?.ratings?.average?.toFixed(1)} / 5.0 (
+                          {product?.ratings?.count} reviews)
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Features */}
+                    {product?.features && product?.features?.length > 0 && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">
+                          Features
+                        </span>
+                        <div className="flex flex-col gap-1 text-right">
+                          {product?.features
+                            ?.slice(0, 3)
+                            .map((feature, index) => (
+                              <span
+                                key={index}
+                                className="text-gray-600 text-sm"
+                              >
+                                {feature}
+                              </span>
+                            ))}
+                          {product?.features?.length > 3 && (
+                            <span className="text-gray-500 text-xs">
+                              +{product?.features?.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tags */}
+                    {product?.tags && product?.tags?.length > 0 && (
+                      <div className="flex justify-between py-2 border-b border-gray-100">
+                        <span className="font-medium text-gray-900">Tags</span>
+                        <div className="flex gap-1 flex-wrap justify-end">
+                          {product?.tags?.map((tag, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

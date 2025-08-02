@@ -92,7 +92,9 @@ export const OrderDetail: React.FC = () => {
     );
   }
 
-  const canCancel = ['pending', 'confirmed'].includes(order.status);
+  const canCancel =
+    ['pending', 'confirmed'].includes(order.status) &&
+    order.payment.status !== 'confirmed';
   const canReturn = order.status === 'delivered' && !order.returnRequested;
 
   const getStatusColor = (status: string) => {
