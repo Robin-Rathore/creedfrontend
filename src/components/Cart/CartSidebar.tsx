@@ -79,7 +79,7 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
   // };
 
   // const gstBreakdown = getGSTBreakdown();
-  const shippingCost = 59;
+  const shippingCost = cartSubtotal >= 500 ? 0 : 59;
 
   // Calculate totals with coupon discount
   const subtotalAfterDiscount = appliedCoupon
@@ -444,7 +444,9 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
                       <div className="flex justify-between">
                         <span className="text-gray-600">Shipping</span>
                         <span className="font-medium">
-                          ₹{shippingCost.toFixed(2)}
+                          {shippingCost === 0
+                            ? 'Free'
+                            : `₹${shippingCost.toFixed(2)}`}
                         </span>
                       </div>
 

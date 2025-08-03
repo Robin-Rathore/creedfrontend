@@ -77,14 +77,14 @@ export const CartSummary: React.FC = () => {
 
   // const tax = calculateGST();
   // const gstBreakdown = getGSTBreakdown();
-  const shipping = 59.0;
 
+  const shippingCost = cartSubtotal >= 500 ? 0 : 59;
   // Calculate totals with coupon discount
   const subtotalAfterDiscount = appliedCoupon
     ? cartSubtotal - appliedCoupon.discountAmount
     : cartSubtotal;
 
-  const total = subtotalAfterDiscount + shipping;
+  const total = subtotalAfterDiscount + shippingCost;
 
   const handleApplyCoupon = async () => {
     if (!promoCode.trim()) return;
@@ -260,16 +260,15 @@ export const CartSummary: React.FC = () => {
                   </span>
                 </motion.div>
               )}
-
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Shipping</span>
                 <span className="font-medium">
-                  {shipping === 0 ? (
+                  {shippingCost === 0 ? (
                     <Badge className="bg-green-100 text-green-800 text-xs">
                       Free
                     </Badge>
                   ) : (
-                    `₹${shipping.toFixed(2)}`
+                    `₹${shippingCost.toFixed(2)}`
                   )}
                 </span>
               </div>
