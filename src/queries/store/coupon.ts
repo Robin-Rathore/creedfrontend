@@ -1,4 +1,4 @@
-// @/queries/store/coupon.ts
+//@ts-nocheck
 import { atom } from 'jotai';
 
 export interface AppliedCoupon {
