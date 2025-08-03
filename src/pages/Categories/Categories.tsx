@@ -214,9 +214,9 @@ export const Categories: React.FC = () => {
                           {category.description?.slice(0, 50)}...
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs lg:text-sm font-semibold text-blue-600 bg-blue-50 px-2 lg:px-3 py-1 rounded-full">
+                          {/* <span className="text-xs lg:text-sm font-semibold text-blue-600 bg-blue-50 px-2 lg:px-3 py-1 rounded-full">
                             {category.productCount || 0} products
-                          </span>
+                          </span> */}
                         </div>
                       </CardContent>
                     </a>
@@ -292,9 +292,9 @@ export const Categories: React.FC = () => {
                           {category.description.slice(0, 50)}...
                         </p>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs lg:text-sm font-semibold text-gray-500 bg-gray-50 px-2 lg:px-3 py-1 rounded-full">
+                          {/* <span className="text-xs lg:text-sm font-semibold text-gray-500 bg-gray-50 px-2 lg:px-3 py-1 rounded-full">
                             {category.productCount || 0} products
-                          </span>
+                          </span> */}
                         </div>
                       </CardContent>
                     </a>
@@ -347,9 +347,9 @@ export const Categories: React.FC = () => {
                               <p className="text-gray-600 text-xs lg:text-sm line-clamp-2 mb-3 leading-relaxed">
                                 {category.description.slice(0, 50)}...
                               </p>
-                              <span className="text-xs lg:text-sm font-semibold text-gray-500 bg-gray-50 px-2 lg:px-3 py-1 rounded-full">
-                                {category.productCount || 0} products
-                              </span>
+                              {/* <span className="text-xs lg:text-sm font-semibold text-gray-500 bg-gray-50 px-2 lg:px-3 py-1 rounded-full">
+                                {category.productCount || 0} products....
+                              </span> */}
                             </div>
                             <div className="ml-3 lg:ml-4">
                               <div className="bg-blue-50 group-hover:bg-blue-100 rounded-full p-2 lg:p-3 transition-colors">

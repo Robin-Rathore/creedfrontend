@@ -30,9 +30,15 @@ import {
   useCategoryBySlug,
   useCategoryProducts,
 } from '@/queries/hooks/category';
-import { useCart } from '@/queries/hooks/user';
-import { addToCartAtom, userAtom } from '@/queries';
+import {
+  useAddToWishlist,
+  useCart,
+  useRemoveFromWishlist,
+  useWishlist,
+} from '@/queries/hooks/user';
+import { addToCartAtom, useAuth, userAtom } from '@/queries';
 import { useAtom } from 'jotai';
+import { toast } from 'sonner';
 
 export const CategoryProducts: React.FC = () => {
   const { slug } = useParams();
@@ -52,6 +58,40 @@ export const CategoryProducts: React.FC = () => {
   const { data: category, isLoading: categoryLoading } = useCategoryBySlug(
     slug!
   );
+
+  const { data: wishlistData } = useWishlist();
+
+  const { isAuthenticated, user } = useAuth();
+  const addToWishlistMutation = useAddToWishlist();
+  const removeFromWishlistMutation = useRemoveFromWishlist();
+  const handleWishlistToggle = async (product) => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+
+    if (!product) return;
+
+    const isInWishlist = wishlistData?.some((item) => {
+      // Handle different possible structures
+      const itemProductId = item?.product?._id || item?.productId || item?._id;
+      const currentProductId = product?._id || product?.id;
+
+      return String(itemProductId) === String(currentProductId);
+    });
+
+    try {
+      if (isInWishlist) {
+        await removeFromWishlistMutation.mutateAsync(product?._id);
+        toast.success('Removed from wishlist');
+      } else {
+        await addToWishlistMutation.mutateAsync(product?._id);
+        toast.success('Added to wishlist');
+      }
+    } catch (error) {
+      console.error('Wishlist error:', error);
+    }
+  };
 
   // Then fetch products for this specific category
   const { data: productsData, isLoading: productsLoading } =
@@ -228,12 +268,12 @@ export const CategoryProducts: React.FC = () => {
                 {category.description}
               </p>
               <div className="flex items-center gap-4">
-                <Badge className="bg-[var(--lightest)] text-[var(--medium)] border-[var(--light)]">
+                {/* <Badge className="bg-[var(--lightest)] text-[var(--medium)] border-[var(--light)]">
                   {productsData?.pagination?.totalItems ||
                     productsData?.count ||
                     0}{' '}
                   Products
-                </Badge>
+                </Badge> */}
                 {category.isPopular && (
                   <Badge className="bg-[var(--medium)] text-white">
                     Popular Category
@@ -241,7 +281,7 @@ export const CategoryProducts: React.FC = () => {
                 )}
               </div>
 
-              {category.children.length > 0 && (
+              {/* {category.children.length > 0 && (
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900 mt-6 mb-2">
                     Subcategories
@@ -263,7 +303,7 @@ export const CategoryProducts: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              )}
+              )} */}
             </div>
             {category.image?.url && (
               <div className="relative">
@@ -511,11 +551,12 @@ export const CategoryProducts: React.FC = () => {
                         {/* Action Buttons */}
                         <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                           <Button
+                            onClick={() => handleWishlistToggle(product)}
                             size="sm"
                             variant="secondary"
-                            className="h-8 w-8 p-0"
+                            className="h-8 w-8 p-0 text-red-500 border-red-200 hover:bg-red-50"
                           >
-                            <Heart className="h-4 w-4" />
+                            <Heart className="h-4 w-4 fill-current" />
                           </Button>
                         </div>
 
@@ -685,6 +726,7 @@ export const CategoryProducts: React.FC = () => {
 
                               <div className="flex items-center gap-2">
                                 <Button
+                                  onClick={() => handleWishlistToggle(product)}
                                   size="sm"
                                   variant="outline"
                                   className="h-8 w-8 p-0 bg-transparent"

@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { X, Upload, Loader2 } from 'lucide-react';
+import { X, Upload, Loader2, Plus } from 'lucide-react';
 import { productFormAtom, selectedProductAtom } from '../state/adminAtoms';
 import {
   useCreateProduct,
@@ -28,6 +28,17 @@ interface ProductFormProps {
   onClose: () => void;
   isEdit?: boolean;
 }
+
+const CAPACITY_UNITS = [
+  { value: 'L', label: 'Liters (L)' },
+  { value: 'mL', label: 'Milliliters (mL)' },
+  { value: 'gal', label: 'Gallons (gal)' },
+];
+const WEIGHT_UNITS = [
+  { value: 'kg', label: 'Kilograms (kg)' },
+  { value: 'g', label: 'Grams (g)' },
+  { value: 'lb', label: 'Pounds (lb)' },
+];
 
 export const ProductForm: React.FC<ProductFormProps> = ({
   onClose,
@@ -41,6 +52,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   const [features, setFeatures] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState('');
   const [currentFeature, setCurrentFeature] = useState('');
+  const [variants, setVariants] = useState<any[]>([]);
+  const [specifications, setSpecifications] = useState<{
+    [key: string]: string;
+  }>({});
+  const [newSpecKey, setNewSpecKey] = useState('');
+  const [newSpecValue, setNewSpecValue] = useState('');
 
   const createProductMutation = useCreateProduct();
   const updateProductMutation = useUpdateProduct();
@@ -57,31 +74,39 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   useEffect(() => {
     if (isEdit && selectedProduct) {
       setFormData({
-        name: selectedproduct?.name,
-        description: selectedproduct?.description,
-        shortDescription: selectedproduct?.shortDescription || '',
-        price: selectedproduct?.price.toString(),
-        comparePrice: selectedproduct?.comparePrice?.toString() || '',
-        costPrice: selectedproduct?.costPrice?.toString() || '',
-        category: selectedproduct?.category._id,
-        subcategory: selectedproduct?.subcategory?._id || '',
-        brand: selectedproduct?.brand || '',
-        sku: selectedproduct?.sku,
-        stock: selectedproduct?.stock.toString(),
-        lowStockThreshold: selectedproduct?.lowStockThreshold.toString(),
-        tags: selectedproduct?.tags.join(', '),
-        features: selectedproduct?.features.join(', '),
-        specifications: JSON.stringify(selectedproduct?.specifications),
-        seoTitle: selectedproduct?.seoTitle || '',
-        seoDescription: selectedproduct?.seoDescription || '',
-        isDigital: selectedproduct?.isDigital,
-        shippingRequired: selectedproduct?.shippingRequired,
-        taxable: selectedproduct?.taxable,
-        isFeatured: selectedproduct?.isFeatured,
+        name: selectedProduct?.name,
+        description: selectedProduct?.description,
+        shortDescription: selectedProduct?.shortDescription || '',
+        price: selectedProduct?.price.toString(),
+        comparePrice: selectedProduct?.comparePrice?.toString() || '',
+        costPrice: selectedProduct?.costPrice?.toString() || '',
+        category: selectedProduct?.category._id,
+        subcategory: selectedProduct?.subcategory?._id || '',
+        brand: selectedProduct?.brand || '',
+        sku: selectedProduct?.sku,
+        stock: selectedProduct?.stock.toString(),
+        lowStockThreshold: selectedProduct?.lowStockThreshold.toString(),
+        weight: selectedProduct?.weight?.toString() || '',
+        capacity: selectedProduct?.capacity?.toString() || '',
+        dimensions: selectedProduct?.dimensions || '',
+        tags: selectedProduct?.tags.join(', '),
+        features: selectedProduct?.features.join(', '),
+        specifications: JSON.stringify(selectedProduct?.specifications || {}),
+        seoTitle: selectedProduct?.seoTitle || '',
+        seoDescription: selectedProduct?.seoDescription || '',
+        variants: JSON.stringify(selectedProduct?.variants || []),
+        isDigital: selectedProduct?.isDigital,
+        shippingRequired: selectedProduct?.shippingRequired,
+        taxable: selectedProduct?.taxable,
+        isFeatured: selectedProduct?.isFeatured,
+        gst: selectedProduct?.gst?.toString() || '',
+        taxClass: selectedProduct?.taxClass || '',
       });
-      setTags(selectedproduct?.tags);
-      setFeatures(selectedproduct?.features);
-      setImagePreviews(selectedproduct?.images.map((img) => img.url));
+      setTags(selectedProduct?.tags || []);
+      setFeatures(selectedProduct?.features || []);
+      setVariants(selectedProduct?.variants || []);
+      setSpecifications(selectedProduct?.specifications || {});
+      setImagePreviews(selectedProduct?.images?.map((img) => img.url) || []);
     }
   }, [isEdit, selectedProduct, setFormData]);
 
@@ -129,6 +154,52 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     setFeatures(features.filter((feature) => feature !== featureToRemove));
   };
 
+  const addSpecification = () => {
+    if (
+      newSpecKey.trim() &&
+      newSpecValue.trim() &&
+      !specifications[newSpecKey.trim()]
+    ) {
+      setSpecifications((prev) => ({
+        ...prev,
+        [newSpecKey.trim()]: newSpecValue.trim(),
+      }));
+      setNewSpecKey('');
+      setNewSpecValue('');
+    }
+  };
+
+  const removeSpecification = (keyToRemove: string) => {
+    const newSpecs = { ...specifications };
+    delete newSpecs[keyToRemove];
+    setSpecifications(newSpecs);
+  };
+
+  const addVariant = () => {
+    setVariants((prev) => [
+      ...prev,
+      {
+        name: '',
+        options: [],
+        price: '',
+        stock: '',
+        sku: '',
+      },
+    ]);
+  };
+
+  const removeVariant = (index: number) => {
+    setVariants((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updateVariant = (index: number, field: string, value: any) => {
+    setVariants((prev) =>
+      prev.map((variant, i) =>
+        i === index ? { ...variant, [field]: value } : variant
+      )
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -138,6 +209,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     console.log('Images:', images); // Debug log
     console.log('Tags:', tags); // Debug log
     console.log('Features:', features); // Debug log
+    console.log('Specifications:', specifications); // Debug log
+    console.log('Variants:', variants); // Debug log
 
     // Validation checks
     if (!formData.name?.trim()) {
@@ -164,12 +237,6 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       return;
     }
 
-    if (!formData.sku?.trim()) {
-      console.error('SKU is required');
-      alert('SKU is required');
-      return;
-    }
-
     if (!formData.stock || parseInt(formData.stock) < 0) {
       console.error('Valid stock quantity is required');
       alert('Valid stock quantity is required');
@@ -187,13 +254,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
       console.log('Preparing submission data...'); // Debug log
 
       if (isEdit && selectedProduct) {
-        console.log('Updating existing product:', selectedproduct?._id); // Debug log
+        console.log('Updating existing product:', selectedProduct?._id); // Debug log
 
         // Prepare product data object
         const productData = {
           ...formData,
           tags: tags.join(','),
           features: features.join(','),
+          specifications: JSON.stringify(specifications),
+          variants: JSON.stringify(variants),
         };
 
         // Remove any undefined, null, or empty string values
@@ -206,7 +275,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
 
         // Prepare the data structure for update mutation
         const updateData = {
-          id: selectedproduct?._id,
+          id: selectedProduct?._id,
           productData: productData,
           // Only include images if new ones were selected
           ...(images.length > 0 && { images }),
@@ -217,13 +286,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
         const result = await updateProductMutation.mutateAsync(updateData);
         console.log('Update result:', result); // Debug log
       } else {
-        console.log('Creating new product?...'); // Debug log
+        console.log('Creating new product...'); // Debug log
 
         // Prepare product data object
         const productData = {
           ...formData,
           tags: tags.join(','),
           features: features.join(','),
+          specifications: JSON.stringify(specifications),
+          variants: JSON.stringify(variants),
         };
 
         // Remove any undefined, null, or empty string values
@@ -269,7 +340,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     createProductMutation.isPending || updateProductMutation.isPending;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
       <Card>
         <CardHeader>
           <CardTitle>
@@ -277,185 +348,305 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Information */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Product Name *</Label>
-                <Input
-                  id="name"
-                  value={formData.name || ''}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  required
-                  maxLength={200}
-                />
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Basic Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Product Name *</Label>
+                  <Input
+                    id="name"
+                    value={formData.name || ''}
+                    onChange={(e) => handleInputChange('name', e.target.value)}
+                    required
+                    maxLength={200}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="brand">Brand</Label>
+                  <Input
+                    id="brand"
+                    value={formData.brand || ''}
+                    onChange={(e) => handleInputChange('brand', e.target.value)}
+                    placeholder="Brand name"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="sku">SKU *</Label>
-                <Input
-                  id="sku"
-                  value={formData.sku || ''}
-                  onChange={(e) => handleInputChange('sku', e.target.value)}
-                  required
-                  placeholder="Unique product identifier"
-                />
-              </div>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="gst">GST</Label>
-                <Input
-                  id="gst"
-                  value={formData.gst || ''}
-                  onChange={(e) => handleInputChange('gst', e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="lowStockThreshold">Low Stock Threshold</Label>
-                <Input
-                  id="lowStockThreshold"
-                  type="number"
-                  min="0"
-                  value={formData.lowStockThreshold || '10'}
+                <Label htmlFor="description">Description *</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description || ''}
                   onChange={(e) =>
-                    handleInputChange('lowStockThreshold', e.target.value)
+                    handleInputChange('description', e.target.value)
                   }
+                  rows={4}
+                  required
+                  maxLength={2000}
                 />
               </div>
-            </div>
 
-            {/* Description */}
-            <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
-              <Textarea
-                id="description"
-                value={formData.description || ''}
-                onChange={(e) =>
-                  handleInputChange('description', e.target.value)
-                }
-                rows={4}
-                required
-                maxLength={2000}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="shortDescription">Short Description</Label>
-              <Textarea
-                id="shortDescription"
-                value={formData.shortDescription || ''}
-                onChange={(e) =>
-                  handleInputChange('shortDescription', e.target.value)
-                }
-                rows={2}
-                maxLength={500}
-              />
+              <div className="space-y-2">
+                <Label htmlFor="shortDescription">Short Description</Label>
+                <Textarea
+                  id="shortDescription"
+                  value={formData.shortDescription || ''}
+                  onChange={(e) =>
+                    handleInputChange('shortDescription', e.target.value)
+                  }
+                  rows={2}
+                  maxLength={500}
+                />
+              </div>
             </div>
 
             {/* Pricing */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="price">Price *</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.price || ''}
-                  onChange={(e) => handleInputChange('price', e.target.value)}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="comparePrice">Compare Price</Label>
-                <Input
-                  id="comparePrice"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.comparePrice || ''}
-                  onChange={(e) =>
-                    handleInputChange('comparePrice', e.target.value)
-                  }
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="costPrice">Cost Price</Label>
-                <Input
-                  id="costPrice"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  value={formData.costPrice || ''}
-                  onChange={(e) =>
-                    handleInputChange('costPrice', e.target.value)
-                  }
-                />
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">Pricing</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="price">Price *</Label>
+                  <Input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.price || ''}
+                    onChange={(e) => handleInputChange('price', e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="comparePrice">Compare Price</Label>
+                  <Input
+                    id="comparePrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.comparePrice || ''}
+                    onChange={(e) =>
+                      handleInputChange('comparePrice', e.target.value)
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="costPrice">Cost Price</Label>
+                  <Input
+                    id="costPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.costPrice || ''}
+                    onChange={(e) =>
+                      handleInputChange('costPrice', e.target.value)
+                    }
+                  />
+                </div>
               </div>
             </div>
 
             {/* Category */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="category">Category *</Label>
-                <Select
-                  value={formData.category || ''}
-                  onValueChange={(value) =>
-                    handleInputChange('category', value)
-                  }
-                  required
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.map((category) => (
-                      <SelectItem key={category._id} value={category._id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="subcategory">Subcategory</Label>
-                <Select
-                  value={formData.subcategory || ''}
-                  onValueChange={(value) =>
-                    handleInputChange('subcategory', value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select subcategory" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.map((category) => (
-                      <SelectItem key={category._id} value={category._id}>
-                        {category.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Category & Classification
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="category">Category *</Label>
+                  <Select
+                    value={formData.category || ''}
+                    onValueChange={(value) =>
+                      handleInputChange('category', value)
+                    }
+                    required
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category) => (
+                        <SelectItem key={category._id} value={category._id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {/* <div className="space-y-2">
+                  <Label htmlFor="subcategory">Subcategory</Label>
+                  <Select
+                    value={formData.subcategory || ''}
+                    onValueChange={(value) =>
+                      handleInputChange('subcategory', value)
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select subcategory" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories?.map((category) => (
+                        <SelectItem key={category._id} value={category._id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div> */}
               </div>
             </div>
 
-            {/* Stock */}
-            <div className="space-y-2">
-              <Label htmlFor="stock">Stock *</Label>
-              <Input
-                id="stock"
-                type="number"
-                min="0"
-                value={formData.stock || ''}
-                onChange={(e) => handleInputChange('stock', e.target.value)}
-                required
-              />
+            {/* Inventory */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Inventory & Shipping
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="stock">Stock *</Label>
+                  <Input
+                    id="stock"
+                    type="number"
+                    min="0"
+                    value={formData.stock || ''}
+                    onChange={(e) => handleInputChange('stock', e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="lowStockThreshold">Low Stock Threshold</Label>
+                  <Input
+                    id="lowStockThreshold"
+                    type="number"
+                    min="0"
+                    value={formData.lowStockThreshold || '10'}
+                    onChange={(e) =>
+                      handleInputChange('lowStockThreshold', e.target.value)
+                    }
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="weight-value">Weight</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    id="weight-value"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.weight?.value || ''}
+                    onChange={(e) =>
+                      handleInputChange('weight', {
+                        ...formData.weight,
+                        value: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    placeholder="Enter weight"
+                  />
+                  <Select
+                    value={formData.weight?.unit || 'kg'}
+                    onValueChange={(value) =>
+                      handleInputChange('weight', {
+                        ...formData.weight,
+                        unit: value,
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {WEIGHT_UNITS.map((unit) => (
+                        <SelectItem key={unit.value} value={unit.value}>
+                          {unit.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="capacity-value">Capacity</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    id="capacity-value"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.capacity?.value || ''}
+                    onChange={(e) =>
+                      handleInputChange('capacity', {
+                        ...formData.capacity,
+                        value: parseFloat(e.target.value) || 0,
+                      })
+                    }
+                    placeholder="Enter capacity"
+                  />
+                  <Select
+                    value={formData.capacity?.unit || 'L'}
+                    onValueChange={(value) =>
+                      handleInputChange('capacity', {
+                        ...formData.capacity,
+                        unit: value,
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select unit" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CAPACITY_UNITS.map((unit) => (
+                        <SelectItem key={unit.value} value={unit.value}>
+                          {unit.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
 
-            {/* Images - Required for new products */}
-            <div className="space-y-2">
-              <Label htmlFor="images">Product Images {!isEdit && '*'}</Label>
+            {/* Tax Information */}
+            <div className="space-y-4">
+              <h3 ClassName="text-lg font-semibold border-b pb-2">
+                Tax Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="gst">GST (%)</Label>
+                  <Input
+                    id="gst"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    value={formData.gst || ''}
+                    onChange={(e) => handleInputChange('gst', e.target.value)}
+                    placeholder="GST percentage"
+                  />
+                </div>
+                {/* <div className="space-y-2">
+                  <Label htmlFor="taxClass">Tax Class</Label>
+                  <Input
+                    id="taxClass"
+                    value={formData.taxClass || ''}
+                    onChange={(e) =>
+                      handleInputChange('taxClass', e.target.value)
+                    }
+                    placeholder="Tax classification"
+                  />
+                </div> */}
+              </div>
+            </div>
+
+            {/* Images */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Product Images {!isEdit && '*'}
+              </h3>
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-6">
                 <input
                   id="images"
@@ -500,8 +691,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             </div>
 
             {/* Tags */}
-            <div className="space-y-2">
-              <Label>Tags</Label>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">Tags</h3>
               <div className="flex space-x-2">
                 <Input
                   value={currentTag}
@@ -533,8 +724,8 @@ export const ProductForm: React.FC<ProductFormProps> = ({
             </div>
 
             {/* Features */}
-            <div className="space-y-2">
-              <Label>Features</Label>
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">Features</h3>
               <div className="flex space-x-2">
                 <Input
                   value={currentFeature}
@@ -565,9 +756,119 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               </div>
             </div>
 
+            {/* Specifications */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Specifications
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <Input
+                  value={newSpecKey}
+                  onChange={(e) => setNewSpecKey(e.target.value)}
+                  placeholder="Specification name"
+                />
+                <Input
+                  value={newSpecValue}
+                  onChange={(e) => setNewSpecValue(e.target.value)}
+                  placeholder="Specification value"
+                />
+                <Button type="button" onClick={addSpecification}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Spec
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {Object.entries(specifications).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className="flex items-center justify-between p-3 bg-gray-50 rounded"
+                  >
+                    <div>
+                      <strong>{key}:</strong> {value}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeSpecification(key)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Variants */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold border-b pb-2">
+                  Product Variants
+                </h3>
+                <Button type="button" onClick={addVariant} variant="outline">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Variant
+                </Button>
+              </div>
+              {variants.map((variant, index) => (
+                <Card key={index} className="p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <Label>Variant {index + 1}</Label>
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="sm"
+                      onClick={() => removeVariant(index)}
+                    >
+                      <X className="h-3 w-3" />
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <Input
+                      placeholder="Variant name"
+                      value={variant.name}
+                      onChange={(e) =>
+                        updateVariant(index, 'name', e.target.value)
+                      }
+                    />
+                    <Input
+                      placeholder="Options (comma separated)"
+                      value={variant.options?.join(', ') || ''}
+                      onChange={(e) =>
+                        updateVariant(
+                          index,
+                          'options',
+                          e.target.value.split(',').map((s) => s.trim())
+                        )
+                      }
+                    />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="Price"
+                      value={variant.price}
+                      onChange={(e) =>
+                        updateVariant(index, 'price', e.target.value)
+                      }
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Stock"
+                      value={variant.stock}
+                      onChange={(e) =>
+                        updateVariant(index, 'stock', e.target.value)
+                      }
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+
             {/* SEO */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">SEO Settings</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">
+                SEO Settings
+              </h3>
               <div className="space-y-2">
                 <Label htmlFor="seoTitle">SEO Title</Label>
                 <Input
@@ -576,6 +877,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   onChange={(e) =>
                     handleInputChange('seoTitle', e.target.value)
                   }
+                  maxLength={60}
                 />
               </div>
               <div className="space-y-2">
@@ -587,13 +889,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     handleInputChange('seoDescription', e.target.value)
                   }
                   rows={3}
+                  maxLength={160}
                 />
               </div>
             </div>
 
             {/* Settings */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Product Settings</h3>
+              <h3 className="text-lg font-semibold border-b pb-2">
+                Product Settings
+              </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <label className="flex items-center space-x-2">
                   <input
@@ -618,7 +923,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={formData.shippingRequired || false}
+                    checked={formData.shippingRequired !== false}
                     onChange={(e) =>
                       handleInputChange('shippingRequired', e.target.checked)
                     }
@@ -628,7 +933,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                 <label className="flex items-center space-x-2">
                   <input
                     type="checkbox"
-                    checked={formData.taxable || false}
+                    checked={formData.taxable !== false}
                     onChange={(e) =>
                       handleInputChange('taxable', e.target.checked)
                     }

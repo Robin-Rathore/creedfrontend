@@ -394,11 +394,13 @@ const OrderCard = ({ order, index }: any) => {
                     {order.status === 'delivered' && (
                       <DropdownMenuItem>Request Return</DropdownMenuItem>
                     )}
-                    {['pending', 'confirmed'].includes(order.status) && (
-                      <DropdownMenuItem className="text-red-600">
-                        Cancel Order
-                      </DropdownMenuItem>
-                    )}
+
+                    {['pending', 'confirmed'].includes(order.status) &&
+                      order.payment.status !== 'confirmed' && (
+                        <DropdownMenuItem className="text-red-600">
+                          Cancel Order
+                        </DropdownMenuItem>
+                      )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>

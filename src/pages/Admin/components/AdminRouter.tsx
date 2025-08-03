@@ -12,6 +12,7 @@ import { ProductsManagement } from './ProductsManagement';
 import { CategoriesManagement } from './CategoriesManagement';
 import { OrdersManagement } from './OrdersManagement';
 import { UsersManagement } from './UsersManagement';
+import { CouponManagement } from './CouponManagement';
 import { AnalyticsManagement } from './AnalyticsManagement';
 
 const Dashboard: React.FC = () => {
@@ -56,6 +57,7 @@ export const AdminRouter: React.FC = () => {
             <Route path="/products" element={<ProductsManagement />} />
             <Route path="/categories" element={<CategoriesManagement />} />
             <Route path="/orders" element={<OrdersManagement />} />
+            <Route path="/coupons" element={<CouponManagement />} />
             <Route path="/users" element={<UsersManagement />} />
             <Route path="/analytics" element={<AnalyticsManagement />} />
             <Route path="*" element={<Navigate to="/admin" replace />} />

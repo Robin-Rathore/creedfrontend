@@ -17,6 +17,7 @@ import {
   LogOut,
   X,
   Menu,
+  Ticket,
 } from 'lucide-react';
 import { sidebarOpenAtom } from '../state/adminAtoms';
 import { useLogout } from '@/queries/hooks/auth/useAuth';
@@ -54,6 +55,12 @@ export const Sidebar: React.FC = () => {
       // badge: "12",
     },
     {
+      name: 'Coupons',
+      href: '/admin/coupons',
+      icon: Ticket,
+      current: location.pathname.startsWith('/admin/coupons'),
+    },
+    {
       name: 'Users',
       href: '/admin/users',
       icon: Users,
@@ -65,12 +72,12 @@ export const Sidebar: React.FC = () => {
       icon: BarChart3,
       current: location.pathname.startsWith('/admin/analytics'),
     },
-    {
-      name: 'Settings',
-      href: '/admin/settings',
-      icon: Settings,
-      current: location.pathname.startsWith('/admin/settings'),
-    },
+    // {
+    //   name: 'Settings',
+    //   href: '/admin/settings',
+    //   icon: Settings,
+    //   current: location.pathname.startsWith('/admin/settings'),
+    // },
   ];
 
   const handleLogout = () => {

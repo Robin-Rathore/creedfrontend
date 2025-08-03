@@ -74,7 +74,9 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order, index }) => {
     }
   };
 
-  const canCancel = ['pending', 'processing'].includes(order.status);
+  const canCancel =
+    ['pending', 'confirmed'].includes(order.status) &&
+    order.payment.status !== 'confirmed';
   const canReturn = order.status === 'delivered' && !order.returnRequested;
 
   return (
