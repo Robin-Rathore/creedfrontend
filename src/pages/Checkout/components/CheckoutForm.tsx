@@ -16,9 +16,25 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { CreditCard, Truck, Shield, Banknote, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { motion } from 'framer-motion';
+import {
+  CreditCard,
+  Truck,
+  Shield,
+  Banknote,
+  Loader2,
+  Tag,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
 import { useAtom } from 'jotai';
 import { cartItemsAtom, cartSubtotalAtom } from '@/queries/store/cart';
+import {
+  appliedCouponAtom,
+  setCouponAtom,
+  removeCouponAtom,
+} from '@/queries/store/coupon';
 import { useAddresses } from '@/queries/hooks/user/useAddresses';
 import { useProfile } from '@/queries/hooks/user/useProfile';
 import { useCreateOrder } from '@/queries/hooks/order/useOrderMutations';
@@ -27,6 +43,7 @@ import {
   useVerifyRazorpayPayment,
   useProcessCODOrder,
 } from '@/queries/hooks/payment/usePayment';
+import { useValidateCoupon } from '@/queries/hooks/coupon';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 
@@ -57,6 +74,9 @@ interface CheckoutFormData {
 export const CheckoutForm: React.FC = () => {
   const [cartItems] = useAtom(cartItemsAtom);
   const [cartSubtotal] = useAtom(cartSubtotalAtom);
+  const [appliedCoupon] = useAtom(appliedCouponAtom);
+  const [, setCoupon] = useAtom(setCouponAtom);
+  const [, removeCoupon] = useAtom(removeCouponAtom);
   const { data: addresses } = useAddresses();
   const { data: profile } = useProfile();
   const navigate = useNavigate();
@@ -65,6 +85,7 @@ export const CheckoutForm: React.FC = () => {
   const createRazorpayOrderMutation = useCreateRazorpayOrder();
   const verifyRazorpayPaymentMutation = useVerifyRazorpayPayment();
   const processCODOrderMutation = useProcessCODOrder();
+  const validateCouponMutation = useValidateCoupon();
 
   const [formData, setFormData] = useState<CheckoutFormData>({
     firstName: '',
@@ -86,7 +107,10 @@ export const CheckoutForm: React.FC = () => {
 
   const [selectedAddress, setSelectedAddress] = useState<string>('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [couponDiscount, setCouponDiscount] = useState(0);
+
+  // Coupon states
+  const [promoCode, setPromoCode] = useState('');
+  const [couponError, setCouponError] = useState<string>('');
 
   // Load user profile data
   useEffect(() => {
@@ -100,6 +124,14 @@ export const CheckoutForm: React.FC = () => {
       }));
     }
   }, [profile]);
+
+  // Set coupon code in form data when applied coupon changes
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      couponCode: appliedCoupon?.code || '',
+    }));
+  }, [appliedCoupon]);
 
   // Load Razorpay script
   useEffect(() => {
@@ -120,64 +152,43 @@ export const CheckoutForm: React.FC = () => {
       time: '5-7 business days',
       description: 'can deliver before the expected date',
     },
-    // {
-    //   id: 'express',
-    //   name: 'Express Shipping',
-    //   price: 79,
-    //   time: '2-3 business days',
-    //   description: 'Fast delivery',
-    // },
-    // {
-    //   id: 'overnight',
-    //   name: 'Overnight Shipping',
-    //   price: 99,
-    //   time: '1 business day',
-    //   description: 'Next day delivery',
-    // },
   ];
 
-  const calculateGST = () => {
-    let totalGST = 0;
+  // const calculateGST = () => {
+  //   let totalGST = 0;
 
-    cartItems.forEach((item) => {
-      // Get the GST rate from the product (12% or 18%)
-      const gstRate = item.product?.gst || 18; // Default to 18% if not specified
+  //   cartItems.forEach((item) => {
+  //     const gstRate = item.product?.gst || 18;
+  //     const itemGST = (item.itemTotal * gstRate) / 100;
+  //     totalGST += itemGST;
+  //   });
 
-      // Calculate GST for this item
-      const itemGST = (item.itemTotal * gstRate) / 100;
-      totalGST += itemGST;
-    });
+  //   return Math.round(totalGST);
+  // };
 
-    return Math.round(totalGST); // Round to nearest rupee
-  };
+  // const getGSTBreakdown = () => {
+  //   const gstBreakdown = { 12: 0, 18: 0 };
 
-  console.log('Cart Items:', cartItems);
+  //   cartItems.forEach((item) => {
+  //     const gstRate = item.product?.gst || 18;
+  //     const itemGST = (item.itemTotal * gstRate) / 100;
 
-  // Get detailed GST breakdown by rate
-  const getGSTBreakdown = () => {
-    const gstBreakdown = { 12: 0, 18: 0 };
+  //     if (gstRate === 12) {
+  //       gstBreakdown[12] += itemGST;
+  //     } else {
+  //       gstBreakdown[18] += itemGST;
+  //     }
+  //   });
 
-    cartItems.forEach((item) => {
-      const gstRate = item.product?.gst || 18;
-      const itemGST = (item.itemTotal * gstRate) / 100;
+  //   return {
+  //     gst12: Math.round(gstBreakdown[12]),
+  //     gst18: Math.round(gstBreakdown[18]),
+  //     total: Math.round(gstBreakdown[12] + gstBreakdown[18]),
+  //   };
+  // };
 
-      if (gstRate === 12) {
-        gstBreakdown[12] += itemGST;
-      } else {
-        gstBreakdown[18] += itemGST;
-      }
-    });
-
-    return {
-      gst12: Math.round(gstBreakdown[12]),
-      gst18: Math.round(gstBreakdown[18]),
-      total: Math.round(gstBreakdown[12] + gstBreakdown[18]),
-    };
-  };
-
-  // Replace the existing tax calculation
-  const tax = calculateGST();
-  const gstBreakdown = getGSTBreakdown();
+  // const tax = calculateGST();
+  // const gstBreakdown = getGSTBreakdown();
 
   const selectedShipping = shippingOptions.find(
     (option) => option.id === formData.shippingMethod
@@ -186,7 +197,72 @@ export const CheckoutForm: React.FC = () => {
     cartSubtotal >= 500 && formData.shippingMethod === 'standard'
       ? 0
       : selectedShipping?.price || 0;
-  const total = cartSubtotal + shippingCost + tax - couponDiscount;
+
+  // Calculate totals with coupon discount
+  const subtotalAfterDiscount = appliedCoupon
+    ? cartSubtotal - appliedCoupon.discountAmount
+    : cartSubtotal;
+
+  const total = subtotalAfterDiscount + shippingCost;
+
+  // Coupon handlers
+  const handleApplyCoupon = async () => {
+    if (!promoCode.trim()) return;
+
+    setCouponError('');
+
+    try {
+      const response = await validateCouponMutation.mutateAsync({
+        code: promoCode.toUpperCase(),
+        orderAmount: cartSubtotal,
+        cartItems: cartItems.map((item) => ({
+          productId: item.product?._id,
+          quantity: item.quantity,
+          price: item.product?.price,
+        })),
+      });
+
+      if (response.success) {
+        const couponData = response.data;
+        const discountAmount = response.data.discountAmount;
+
+        setCoupon({
+          code: couponData.code,
+          type: couponData.type,
+          value: couponData.value,
+          discountAmount: discountAmount,
+          description: couponData.description,
+        });
+
+        setPromoCode('');
+        setCouponError('');
+        toast.success(
+          `Coupon applied! You saved ₹${discountAmount.toFixed(2)}`
+        );
+      } else {
+        setCouponError(response.message || 'Invalid coupon code');
+      }
+    } catch (error: any) {
+      console.error('Coupon validation error:', error);
+      setCouponError(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to validate coupon. Please try again.'
+      );
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    setCouponError('');
+    toast.success('Coupon removed');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleApplyCoupon();
+    }
+  };
 
   const handleAddressSelect = (addressId: string) => {
     const address = addresses?.find((addr) => addr._id === addressId);
@@ -241,7 +317,7 @@ export const CheckoutForm: React.FC = () => {
         phone: formData.phone,
       },
       paymentMethod: formData.paymentMethod,
-      couponCode: formData.couponCode,
+      couponCode: appliedCoupon?.code || formData.couponCode,
       shippingMethod: formData.shippingMethod,
       notes: formData.notes,
     };
@@ -253,17 +329,12 @@ export const CheckoutForm: React.FC = () => {
     try {
       setIsProcessing(true);
 
-      // Create order first
       const order = await createOrder();
-
-      // Create Razorpay order
       const razorpayOrder = await createRazorpayOrderMutation.mutateAsync({
         amount: total,
         currency: 'INR',
         orderId: order._id,
       });
-
-      console.log('Razorpay Order Response:', razorpayOrder); // Debug log
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -271,12 +342,9 @@ export const CheckoutForm: React.FC = () => {
         currency: razorpayOrder.currency,
         name: 'Creed Store',
         description: 'Order Payment',
-        order_id: razorpayOrder.razorpayOrderId, // ← Changed from .id to .razorpayOrderId
+        order_id: razorpayOrder.razorpayOrderId,
         handler: async (response: any) => {
           try {
-            console.log('Full Payment Response:', response);
-            console.log('Available keys:', Object.keys(response));
-
             await verifyRazorpayPaymentMutation.mutateAsync({
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
@@ -284,6 +352,8 @@ export const CheckoutForm: React.FC = () => {
               orderId: order._id,
             });
 
+            // Clear applied coupon after successful order
+            removeCoupon();
             toast.success('Payment successful!');
             navigate(`/orders/${order._id}`);
           } catch (error) {
@@ -318,14 +388,13 @@ export const CheckoutForm: React.FC = () => {
     try {
       setIsProcessing(true);
 
-      // Create order
       const order = await createOrder();
-
-      // Process COD order
       await processCODOrderMutation.mutateAsync({
         orderId: order._id,
       });
 
+      // Clear applied coupon after successful order
+      removeCoupon();
       toast.success('Order placed successfully!');
       navigate(`/orders/${order._id}`);
     } catch (error) {
@@ -536,7 +605,7 @@ export const CheckoutForm: React.FC = () => {
           </Card>
 
           {/* Shipping Methods */}
-          <Card className="border-0 shadow-lg">
+          {/* <Card className="border-0 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-blue-50 to-white">
               <CardTitle className="flex items-center gap-2">
                 <Truck className="w-5 h-5 text-blue-600" />
@@ -577,7 +646,7 @@ export const CheckoutForm: React.FC = () => {
                 ))}
               </RadioGroup>
             </CardContent>
-          </Card>
+          </Card> */}
 
           {/* Payment Method */}
           <Card className="border-0 shadow-lg">
@@ -679,8 +748,7 @@ export const CheckoutForm: React.FC = () => {
                   <img
                     src={
                       item.product?.images?.[0]?.url ||
-                      '/placeholder.svg?height=60&width=60' ||
-                      '/placeholder.svg'
+                      '/placeholder.svg?height=60&width=60'
                     }
                     alt={item.product?.name}
                     className="w-15 h-15 object-cover rounded-lg"
@@ -718,12 +786,100 @@ export const CheckoutForm: React.FC = () => {
 
             <Separator />
 
+            {/* Promo Code Section */}
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Enter coupon code"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                  onKeyPress={handleKeyPress}
+                  className="flex-1"
+                  disabled={validateCouponMutation.isPending}
+                />
+                <Button
+                  onClick={handleApplyCoupon}
+                  disabled={
+                    !promoCode.trim() || validateCouponMutation.isPending
+                  }
+                  variant="outline"
+                  className="border-blue-600 text-blue-600 hover:bg-blue-50 bg-transparent min-w-[80px]"
+                >
+                  {validateCouponMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    'Apply'
+                  )}
+                </Button>
+              </div>
+
+              {/* Coupon Error */}
+              {couponError && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertCircle className="w-4 h-4 text-red-600" />
+                  <AlertDescription className="text-red-800">
+                    {couponError}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Applied Coupon */}
+              {appliedCoupon && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg"
+                >
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-600" />
+                    <div>
+                      <span className="text-sm font-medium text-green-800">
+                        {appliedCoupon.code} Applied
+                      </span>
+                      {appliedCoupon.description && (
+                        <p className="text-xs text-green-600 mt-1">
+                          {appliedCoupon.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleRemoveCoupon}
+                    className="text-green-600 hover:text-green-700 h-6 px-2"
+                  >
+                    Remove
+                  </Button>
+                </motion.div>
+              )}
+            </div>
+
+            <Separator />
+
             {/* Order Totals */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span>Subtotal</span>
                 <span>₹{cartSubtotal.toFixed(2)}</span>
               </div>
+
+              {appliedCoupon && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex justify-between text-sm"
+                >
+                  <span className="text-green-600 flex items-center gap-1">
+                    <Tag className="w-3 h-3" />
+                    Coupon Discount ({appliedCoupon.code})
+                  </span>
+                  <span className="font-medium text-green-600">
+                    -₹{appliedCoupon.discountAmount.toFixed(2)}
+                  </span>
+                </motion.div>
+              )}
+
               <div className="flex justify-between text-sm">
                 <span>Shipping</span>
                 <span>
@@ -733,29 +889,29 @@ export const CheckoutForm: React.FC = () => {
               <span className="text-[11px] font-bold text-green-900">
                 Orders can be cancelled before processing.
               </span>
-              {gstBreakdown.gst12 > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span>GST (12%)</span>
-                  <span>₹{gstBreakdown.gst12.toFixed(2)}</span>
-                </div>
-              )}
-              {gstBreakdown.gst18 > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span>GST (18%)</span>
-                  <span>₹{gstBreakdown.gst18.toFixed(2)}</span>
-                </div>
-              )}
-              {couponDiscount > 0 && (
-                <div className="flex justify-between text-sm text-green-600">
-                  <span>Discount</span>
-                  <span>-₹{couponDiscount.toFixed(2)}</span>
-                </div>
-              )}
+              <div className="flex justify-between text-sm">
+                <span>GST </span>
+                <span>All taxes included</span>
+              </div>
               <Separator />
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total</span>
                 <span>₹{total.toFixed(2)}</span>
               </div>
+
+              {/* Savings Display */}
+              {appliedCoupon && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center p-2 bg-green-50 rounded-lg"
+                >
+                  <span className="text-sm text-green-800 font-medium">
+                    🎉 You saved ₹{appliedCoupon.discountAmount.toFixed(2)} with
+                    this coupon!
+                  </span>
+                </motion.div>
+              )}
             </div>
 
             {/* Security Badge */}

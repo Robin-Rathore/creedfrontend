@@ -8,7 +8,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { X, Plus, Minus, ShoppingBag, Trash2, ArrowRight } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import {
+  X,
+  Plus,
+  Minus,
+  ShoppingBag,
+  Trash2,
+  ArrowRight,
+  Tag,
+  Loader2,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
 import { useAtom } from 'jotai';
 import {
   cartItemsAtom,
@@ -16,6 +28,13 @@ import {
   updateCartItemAtom,
   removeFromCartAtom,
 } from '@/queries/store/cart';
+import {
+  appliedCouponAtom,
+  setCouponAtom,
+  removeCouponAtom,
+} from '@/queries/store/coupon';
+import { useValidateCoupon } from '@/queries/hooks/coupon';
+import { toast } from 'sonner';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -30,53 +49,44 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
   const [cartSubtotal] = useAtom(cartSubtotalAtom);
   const [, updateCartItem] = useAtom(updateCartItemAtom);
   const [, removeFromCart] = useAtom(removeFromCartAtom);
+  const [appliedCoupon] = useAtom(appliedCouponAtom);
+  const [, setCoupon] = useAtom(setCouponAtom);
+  const [, removeCoupon] = useAtom(removeCouponAtom);
   const [promoCode, setPromoCode] = useState('');
+  const [couponError, setCouponError] = useState<string>('');
 
-  const calculateGST = () => {
-    let totalGST = 0;
+  const validateCouponMutation = useValidateCoupon();
 
-    cartItems.forEach((item) => {
-      // Get the GST rate from the product (12% or 18%)
-      const gstRate = item?.product?.gst || 18; // Default to 18% if not specified
+  // const getGSTBreakdown = () => {
+  //   const gstBreakdown = { 12: 0, 18: 0 };
 
-      // Calculate GST for this item
-      const itemGST = (item?.itemTotal * gstRate) / 100;
-      totalGST += itemGST;
-    });
+  //   cartItems.forEach((item) => {
+  //     const gstRate = item?.product?.gst || 18;
+  //     const itemGST = (item.itemTotal * gstRate) / 100;
 
-    return Math.round(totalGST); // Round to nearest rupee
-  };
+  //     if (gstRate === 12) {
+  //       gstBreakdown[12] += itemGST;
+  //     } else {
+  //       gstBreakdown[18] += itemGST;
+  //     }
+  //   });
 
-  console.log('Cart Items:', cartItems);
+  //   return {
+  //     gst12: Math.round(gstBreakdown[12]),
+  //     gst18: Math.round(gstBreakdown[18]),
+  //     total: Math.round(gstBreakdown[12] + gstBreakdown[18]),
+  //   };
+  // };
 
-  // Get detailed GST breakdown by rate
-  const getGSTBreakdown = () => {
-    const gstBreakdown = { 12: 0, 18: 0 };
-
-    cartItems.forEach((item) => {
-      const gstRate = item?.product?.gst || 18;
-      const itemGST = (item.itemTotal * gstRate) / 100;
-
-      if (gstRate === 12) {
-        gstBreakdown[12] += itemGST;
-      } else {
-        gstBreakdown[18] += itemGST;
-      }
-    });
-
-    return {
-      gst12: Math.round(gstBreakdown[12]),
-      gst18: Math.round(gstBreakdown[18]),
-      total: Math.round(gstBreakdown[12] + gstBreakdown[18]),
-    };
-  };
-
-  // Replace the existing tax calculation
-  const tax = calculateGST();
-  const gstBreakdown = getGSTBreakdown();
-
+  // const gstBreakdown = getGSTBreakdown();
   const shippingCost = 59;
-  const total = cartSubtotal + shippingCost + tax;
+
+  // Calculate totals with coupon discount
+  const subtotalAfterDiscount = appliedCoupon
+    ? cartSubtotal - appliedCoupon.discountAmount
+    : cartSubtotal;
+
+  const total = subtotalAfterDiscount + shippingCost;
 
   const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
@@ -85,6 +95,65 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
 
   const handleRemoveItem = (itemId: string) => {
     removeFromCart(itemId);
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!promoCode.trim()) return;
+
+    setCouponError('');
+
+    try {
+      const response = await validateCouponMutation.mutateAsync({
+        code: promoCode.toUpperCase(),
+        orderAmount: cartSubtotal,
+        cartItems: cartItems.map((item) => ({
+          productId: item.product?._id,
+          quantity: item.quantity,
+          price: item.product?.price,
+        })),
+      });
+
+      if (response.success) {
+        // Match your actual API response structure
+        const couponData = response.data;
+        const discountAmount = response.data.discountAmount;
+
+        setCoupon({
+          code: couponData.code,
+          type: couponData.type,
+          value: couponData.value,
+          discountAmount: discountAmount,
+          description: couponData.description,
+        });
+
+        setPromoCode('');
+        setCouponError('');
+        toast.success(
+          `Coupon applied! You saved ₹${discountAmount.toFixed(2)}`
+        );
+      } else {
+        setCouponError(response.message || 'Invalid coupon code');
+      }
+    } catch (error: any) {
+      console.error('Coupon validation error:', error);
+      setCouponError(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to validate coupon. Please try again.'
+      );
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    removeCoupon();
+    setCouponError('');
+    toast.success('Coupon removed');
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleApplyCoupon();
+    }
   };
 
   return (
@@ -250,10 +319,10 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
 
                               <div className="text-right">
                                 <div className="font-semibold text-gray-900">
-                                  ${item?.itemTotal?.toFixed(2)}
+                                  ₹{item?.itemTotal?.toFixed(2)}
                                 </div>
                                 <div className="text-xs text-gray-600">
-                                  ${item?.product?.price?.toFixed(2)} each
+                                  ₹{item?.product?.price?.toFixed(2)} each
                                 </div>
                               </div>
                             </div>
@@ -276,71 +345,137 @@ export const CartSidebar: React.FC<CartSidebarProps> = ({
 
                   {/* Footer */}
                   <div className="border-t bg-white p-6 space-y-4">
-                    {/* Promo Code */}
-                    {/* <div className="flex gap-2">
-                      <Input
-                        placeholder="Promo code"
-                        value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
-                        className="flex-1"
-                      />
-                      <Button
-                        variant="outline"
-                        className="border-[var(--medium)] text-[var(--medium)] hover:bg-[var(--lightest)] bg-transparent"
-                      >
-                        Apply
-                      </Button>
-                    </div> */}
+                    {/* Promo Code Section */}
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="Coupon code"
+                          value={promoCode}
+                          onChange={(e) =>
+                            setPromoCode(e.target.value.toUpperCase())
+                          }
+                          onKeyPress={handleKeyPress}
+                          className="flex-1"
+                          disabled={validateCouponMutation.isPending}
+                        />
+                        <Button
+                          onClick={handleApplyCoupon}
+                          disabled={
+                            !promoCode.trim() ||
+                            validateCouponMutation.isPending
+                          }
+                          variant="outline"
+                          className="border-[var(--medium)] text-[var(--medium)] hover:bg-[var(--lightest)] bg-transparent min-w-[70px]"
+                        >
+                          {validateCouponMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            'Apply'
+                          )}
+                        </Button>
+                      </div>
+
+                      {/* Coupon Error */}
+                      {couponError && (
+                        <Alert className="border-red-200 bg-red-50 py-2">
+                          <AlertCircle className="w-4 h-4 text-red-600" />
+                          <AlertDescription className="text-red-800 text-sm">
+                            {couponError}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+
+                      {/* Applied Coupon */}
+                      {appliedCoupon && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg"
+                        >
+                          <div className="flex items-center gap-2">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <div>
+                              <span className="text-sm font-medium text-green-800">
+                                {appliedCoupon.code}
+                              </span>
+                              <p className="text-xs text-green-600">
+                                -₹{appliedCoupon.discountAmount.toFixed(2)}{' '}
+                                saved
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleRemoveCoupon}
+                            className="text-green-600 hover:text-green-700 h-6 px-2"
+                          >
+                            Remove
+                          </Button>
+                        </motion.div>
+                      )}
+                    </div>
 
                     {/* Order Summary */}
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Subtotal</span>
                         <span className="font-medium">
-                          ${cartSubtotal?.toFixed(2)}
+                          ₹{cartSubtotal?.toFixed(2)}
                         </span>
                       </div>
+
+                      {appliedCoupon && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="flex justify-between"
+                        >
+                          <span className="text-green-600 flex items-center gap-1">
+                            <Tag className="w-3 h-3" />
+                            Coupon ({appliedCoupon.code})
+                          </span>
+                          <span className="font-medium text-green-600">
+                            -₹{appliedCoupon.discountAmount.toFixed(2)}
+                          </span>
+                        </motion.div>
+                      )}
+
                       <div className="flex justify-between">
                         <span className="text-gray-600">Shipping</span>
-                        <span className="font-medium">59.00</span>
+                        <span className="font-medium">
+                          ₹{shippingCost.toFixed(2)}
+                        </span>
                       </div>
+
                       <div className="flex justify-between">
-                        <span className="text-gray-600">Tax</span>
-                        <span className="font-medium">${tax?.toFixed(2)}</span>
+                        <span className="text-gray-600">Tax (GST)</span>
+                        <span className="font-medium">All taxes included</span>
                       </div>
+
                       <Separator />
+
                       <div className="flex justify-between text-base font-semibold">
                         <span>Total</span>
                         <span className="text-[var(--medium)]">
-                          ${total?.toFixed(2)}
+                          ₹{total?.toFixed(2)}
                         </span>
                       </div>
-                    </div>
 
-                    {/* Free Shipping Progress */}
-                    {/* {shipping > 0 && (
-                      <div className="bg-blue-50 rounded-lg p-3">
-                        {/* <div className="flex justify-between text-sm mb-2">
-                          <span className="text-blue-800 font-medium">
-                            Free shipping at $50
+                      {/* Savings Display */}
+                      {appliedCoupon && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="text-center p-2 bg-green-50 rounded-lg"
+                        >
+                          <span className="text-xs text-green-800 font-medium">
+                            🎉 You saved ₹
+                            {appliedCoupon.discountAmount.toFixed(2)}!
                           </span>
-                          <span className="font-medium text-blue-600">
-                            ${(50 - cartSubtotal).toFixed(2)} to go
-                          </span>
-                        </div> */}
-                    {/* <div className="w-full bg-blue-200 rounded-full h-2">
-                          <div
-                            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                            style={{
-                              width: `${Math.min(
-                                (cartSubtotal / 50) * 100,
-                                100
-                              )}%`,
-                            }}
-                          ></div>
-                        </div> */}
-                    {/* </div> */}
-                    {/* )} */}
+                        </motion.div>
+                      )}
+                    </div>
 
                     {/* Action Buttons */}
                     <div className="space-y-2">

@@ -624,8 +624,8 @@ export const ProductDetail: React.FC = () => {
                   <Truck className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Free Shipping</p>
-                  <p className="text-sm text-gray-600">On orders over ₹50</p>
+                  <p className="font-medium text-gray-900">Fast Shipping</p>
+                  <p className="text-sm text-gray-600"></p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -633,8 +633,8 @@ export const ProductDetail: React.FC = () => {
                   <RotateCcw className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">Easy Returns</p>
-                  <p className="text-sm text-gray-600">30-day policy</p>
+                  <p className="font-medium text-gray-900">Long Life</p>
+                  <p className="text-sm text-gray-600"></p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -643,7 +643,7 @@ export const ProductDetail: React.FC = () => {
                 </div>
                 <div>
                   <p className="font-medium text-gray-900">Secure Payment</p>
-                  <p className="text-sm text-gray-600">SSL protected</p>
+                  <p className="text-sm text-gray-600"></p>
                 </div>
               </div>
             </div>
@@ -789,7 +789,7 @@ export const ProductDetail: React.FC = () => {
                       )}
 
                     {/* Stock Information */}
-                    <div className="flex justify-between py-2 border-b border-gray-100">
+                    {/* <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="font-medium text-gray-900">
                         Stock Status
                       </span>
@@ -808,19 +808,19 @@ export const ProductDetail: React.FC = () => {
                           ? `Low Stock (${product?.stock})`
                           : `In Stock (${product?.stock})`}
                       </span>
-                    </div>
+                    </div> */}
 
                     {/* Product Type & Shipping */}
-                    <div className="flex justify-between py-2 border-b border-gray-100">
+                    {/* <div className="flex justify-between py-2 border-b border-gray-100">
                       <span className="font-medium text-gray-900">
                         Product Type
                       </span>
                       <span className="text-gray-600">
                         {product?.isDigital ? 'Digital' : 'Physical'}
                       </span>
-                    </div>
+                    </div> */}
 
-                    {!product?.isDigital && (
+                    {/* {!product?.isDigital && (
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-900">
                           Shipping Required
@@ -829,7 +829,7 @@ export const ProductDetail: React.FC = () => {
                           {product?.shippingRequired ? 'Yes' : 'No'}
                         </span>
                       </div>
-                    )}
+                    )} */}
 
                     {/* Tax Information */}
                     {product?.taxable && (
@@ -841,15 +841,15 @@ export const ProductDetail: React.FC = () => {
                       </div>
                     )}
 
-                    {product?.gst && (
+                    {/* {product?.gst && (
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-900">GST</span>
                         <span className="text-gray-600">{product?.gst}%</span>
                       </div>
-                    )}
+                    )} */}
 
                     {/* Sales Information */}
-                    {product?.soldCount > 0 && (
+                    {/* {product?.soldCount > 0 && (
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-900">
                           Units Sold
@@ -858,7 +858,7 @@ export const ProductDetail: React.FC = () => {
                           {product?.soldCount}
                         </span>
                       </div>
-                    )}
+                    )} */}
 
                     {product?.ratings?.count > 0 && (
                       <div className="flex justify-between py-2 border-b border-gray-100">
@@ -899,7 +899,7 @@ export const ProductDetail: React.FC = () => {
                     )}
 
                     {/* Tags */}
-                    {product?.tags && product?.tags?.length > 0 && (
+                    {/* {product?.tags && product?.tags?.length > 0 && (
                       <div className="flex justify-between py-2 border-b border-gray-100">
                         <span className="font-medium text-gray-900">Tags</span>
                         <div className="flex gap-1 flex-wrap justify-end">
@@ -914,7 +914,7 @@ export const ProductDetail: React.FC = () => {
                           ))}
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </CardContent>
               </Card>
