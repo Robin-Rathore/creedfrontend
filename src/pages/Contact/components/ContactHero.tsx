@@ -12,7 +12,7 @@ export const ContactHero: React.FC = () => {
       icon: MapPin,
       title: 'Visit Our Plant',
       details: [
-        '1/139, Shivalik Ganga Vihar, Navodya Nagar, Haridwar, Uttarakhand 249408',
+        'Plot-28A, Sector 2, IIE Sidcul, Haridwar, Uttarakhand 249403',
       ],
     },
     {

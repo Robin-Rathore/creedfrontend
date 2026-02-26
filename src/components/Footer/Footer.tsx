@@ -12,7 +12,7 @@ import {
   Youtube,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import Logo from '../../images/CREEDMedium.png';
+import Logo from '../../images/CREEDLOGO.png';
 
 export const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -181,9 +181,9 @@ export const Footer: React.FC = () => {
               <div className="flex items-start space-x-3">
                 <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
                 <span className="text-sm text-muted-foreground">
-                  1/139, Shivalik Ganga Vihar
+                  Plot-28A, Sector 2, IIE Sidcul
                   <br />
-                  Navodya Nagar, Haridwar, Uttarakhand 249408
+                  Haridwar, Uttarakhand 249403
                 </span>
               </div>
             </div>

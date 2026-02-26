@@ -30,7 +30,7 @@ import { useLogout } from '@/queries/hooks/auth/useAuth';
 import { useAtom } from 'jotai';
 import { cartCountAtom } from '@/queries/store/cart';
 import { CartSidebar } from '@/components/Cart';
-import Logo from '../../images/CREEDMedium.png';
+import Logo from '../../images/CREEDLOGO.png';
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
