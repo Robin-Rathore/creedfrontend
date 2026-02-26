@@ -291,7 +291,7 @@ export const ContactForm: React.FC = () => {
             <Card className="border-0 shadow-lg overflow-hidden">
               <Link
                 to={
-                  'https://www.google.com/maps/place/Shivalik+ganga+vihar+phase+II+gate+no1+Navodaya+nagar/data=!4m2!3m1!1s0x0:0x5897177876527078?sa=X&ved=1t:2428&ictx=111'
+                  'https://www.google.com/maps/search/Plot+28A+Sector+2+IIE+Sidcul+Haridwar+249403'
                 }
               >
                 <div className="h-64 bg-gray-200 relative">

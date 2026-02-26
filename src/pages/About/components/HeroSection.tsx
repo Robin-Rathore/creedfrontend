@@ -42,14 +42,7 @@ export const HeroSection: React.FC = () => {
               transition={{ delay: 0.4, duration: 0.8 }}
               className="text-lg text-gray-600 leading-relaxed"
             >
-              Trust Homewares Pvt Ltd is an Indian brand delivering high-quality
-              homeware products under the name Creed. Our collection includes
-              stainless steel tiffins, casseroles, single wall and double wall
-              bottles, water jugs, kids bottles, and more — designed for
-              everyday use. We blend durability, utility, and modern design to
-              meet your lifestyle needs. With a strong focus on quality and
-              customer satisfaction, we aim to make daily life simpler, smarter,
-              and more stylish.
+              Welcome to CREED – the new name in trusted homeware. Backed by the vision of Trust Homewares Pvt. Ltd., CREED brings to life a philosophy built on reliability, innovation, and everyday comfort. From casseroles to tiffins and thermosteel bottles, our products are crafted to deliver strength and freshness that families can count on. With our new manufacturing unit, we are proud to offer dealers and distributors not just products, but a promise – a promise of quality, consistency, and growth together.
             </motion.p>
 
             <motion.div

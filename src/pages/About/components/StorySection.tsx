@@ -76,9 +76,7 @@ export const StorySection: React.FC = () => {
             Our Story
           </h2>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            From humble beginnings to becoming a trusted name in the aquatic
-            industry, our journey has been driven by passion, innovation, and an
-            unwavering commitment to our customers.
+            At CREED, we don't just deliver products — we deliver trust. As we begin this new journey in manufacturing, we invite you to grow with us. Together, we can bring reliable, innovative, and everyday‑essential homeware to every household. With CREED, your success is our promise, and our creed is simple: strong partnerships, stronger trust.
           </p>
         </motion.div>
 
