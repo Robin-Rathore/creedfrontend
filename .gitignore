@@ -6,9 +6,3 @@ dist-ssr
 .env
 .env.local
 .env.production
-
-# Large media files - host these on a CDN instead
-src/images/*.mp4
-src/images/*.mov
-src/images/*.avi
-src/images/*.mkv
