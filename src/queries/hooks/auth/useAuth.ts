@@ -58,6 +58,23 @@ export const useLogin = () => {
   })
 }
 
+export const useGoogleLogin = () => {
+  const [, login] = useAtom(loginAtom)
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: { credential: string }): Promise<LoginResponse> =>
+      apiClient.post("/auth/google", data),
+    onSuccess: (response) => {
+      login({
+        user: response.user,
+        token: response.token,
+      })
+      toast.success(response.message)
+      queryClient.invalidateQueries({ queryKey: queryKeys.auth.user })
+    },
+  })
+}
 
 export const useRegister = () => {
   const [, login] = useAtom(loginAtom)
