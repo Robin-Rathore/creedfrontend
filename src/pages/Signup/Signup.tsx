@@ -1,7 +1,10 @@
 //@ts-nocheck
 import type React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAtom } from 'jotai';
+import { GoogleLogin } from '@react-oauth/google';
+import { useGoogleLogin } from '@/queries/hooks/auth/useAuth';
+import { toast } from 'react-hot-toast';
 import {
   Card,
   CardContent,
@@ -16,6 +19,8 @@ import { signupStepAtom } from './state/signupAtoms';
 
 export const Signup: React.FC = () => {
   const [step] = useAtom(signupStepAtom);
+  const navigate = useNavigate();
+  const googleLoginMutation = useGoogleLogin();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 px-4">
@@ -48,7 +53,43 @@ export const Signup: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {step === 'form' ? <SignupForm /> : <OTPVerification />}
+            {step === 'form' ? (
+              <>
+                <SignupForm />
+                <div className="relative my-4">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+                <div className="flex justify-center mt-4 w-full">
+                  <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+                      if (credentialResponse.credential) {
+                        try {
+                          await googleLoginMutation.mutateAsync({
+                            credential: credentialResponse.credential,
+                          });
+                          navigate('/');
+                        } catch (err) {
+                          // Handled by mutation or toast
+                        }
+                      }
+                    }}
+                    onError={() => {
+                      toast.error('Google authentication failed');
+                    }}
+                    useOneTap
+                  />
+                </div>
+              </>
+            ) : (
+              <OTPVerification />
+            )}
 
             {step === 'form' && (
               <div className="mt-6 text-center">

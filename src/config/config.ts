@@ -7,13 +7,12 @@
 //   API_BASE_URL: "http://localhost:3000",
 // };
 
+const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
 export const config = {
-  API_BASE_URL: 'https://creedhomewares.in',
-  api: 'https://creedhomewares.in/api',
+  API_BASE_URL: isLocal ? 'http://localhost:3000' : 'https://creedhomewares.in',
+  api: isLocal ? 'http://localhost:3000/api' : 'https://creedhomewares.in/api',
 
-  // api: 'http://localhost:3000/api',
-
-  // API_BASE_URL: 'http://localhost:3000',
 
   RAZORPAY_KEY_ID: 'rzp_test_1234567890',
   APP_NAME: 'Creed Store',

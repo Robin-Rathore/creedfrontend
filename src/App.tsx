@@ -8,6 +8,7 @@ import {
   Navigate,
 } from 'react-router-dom';
 import { useAtom } from 'jotai';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryProvider, AuthProvider } from './providers';
 import { Header } from './components/Header/Header';
 import { Footer } from './components/Footer/Footer';
@@ -297,11 +298,13 @@ const AppContent: React.FC = () => {
 // Root App Component
 const App: React.FC = () => {
   return (
-    <QueryProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </QueryProvider>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+      <QueryProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </QueryProvider>
+    </GoogleOAuthProvider>
   );
 };
 
